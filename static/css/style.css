@@ -1,0 +1,3774 @@
+/* WMS Mockup — コンポーネント・レイアウトスタイル */
+/* 全スタイルは tokens.css の var(--ds-xxx) を参照すること */
+
+/* === Reset === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* === Base === */
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 0.875rem; /* Body M = 14px */
+  line-height: 1.5;
+  color: var(--ds-text);
+  background-color: var(--ds-surface-sunken);
+}
+
+/* === Typography === */
+.heading-xl { font-size: 1.75rem; font-weight: 700; line-height: 2rem;   color: var(--ds-text); }
+.heading-l  { font-size: 1.5rem;  font-weight: 700; line-height: 1.75rem; color: var(--ds-text); }
+.heading-m  { font-size: 1.25rem; font-weight: 700; line-height: 1.5rem;  color: var(--ds-text); }
+.heading-s  { font-size: 1rem;    font-weight: 700; line-height: 1.25rem; color: var(--ds-text); }
+.body-m     { font-size: 0.875rem; font-weight: 400; line-height: 1.5; }
+.body-s     { font-size: 0.75rem;  font-weight: 400; line-height: 1.25rem; }
+.text-subtle { color: var(--ds-text-subtle); }
+.text-danger { color: var(--ds-text-danger); }
+.text-right  { text-align: right; }
+.text-center { text-align: center; }
+
+/* スクリーンリーダー専用（見出しはあるが視覚的には表示しない列など） */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* === App Layout (CSS Grid) === */
+.app-layout {
+  display: grid;
+  grid-template-rows: 3rem 1fr;
+  min-height: 100vh;
+}
+
+/* === Header (Atlassian グローバルナビ) === */
+.app-header {
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ds-space-300);
+  background-color: var(--ds-nav-bg);
+  gap: var(--ds-space-200);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-header-logo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ds-text-inverse);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.app-header-spacer { flex: 1; }
+
+.app-header-user {
+  font-size: 0.875rem;
+  color: var(--ds-nav-text);
+}
+
+
+/* === App Body === */
+.app-body {
+  grid-row: 2;
+  display: flex;
+  min-height: 0;
+}
+
+/* === Sidebar (Side Navigation) === */
+.app-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: var(--ds-surface);
+  border-right: 1px solid var(--ds-border);
+  padding: var(--ds-space-200) 0;
+}
+
+.side-nav-label {
+  padding: var(--ds-space-150) var(--ds-space-200) var(--ds-space-075);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--ds-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.side-nav-group {
+  margin-bottom: var(--ds-space-150);
+}
+
+.side-nav-group-label {
+  padding: var(--ds-space-075) var(--ds-space-200) var(--ds-space-050);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--ds-text-subtlest);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.side-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  margin: 0 var(--ds-space-100);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--ds-text);
+  text-decoration: none;
+  border-radius: 3px;
+  transition: background-color 0.15s;
+}
+.side-nav-item:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+.side-nav-item.active {
+  background-color: var(--ds-nav-active-bg);
+  color: var(--ds-nav-active-text);
+  font-weight: 600;
+}
+
+.side-nav-item--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: default;
+}
+
+.side-nav-sub-group {
+  display: flex;
+  flex-direction: column;
+  margin-left: calc(var(--ds-space-150) + 0.5rem);
+}
+
+.side-nav-sub-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  margin: 0 var(--ds-space-100);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--ds-text-subtle);
+  text-decoration: none;
+  border-radius: 3px;
+  transition: background-color 0.15s;
+}
+.side-nav-sub-item:hover {
+  background-color: var(--ds-background-neutral-hovered);
+  color: var(--ds-text);
+}
+.side-nav-sub-item.active,
+.side-nav-sub-item[aria-current="page"] {
+  background-color: var(--ds-nav-active-bg);
+  color: var(--ds-nav-active-text);
+  font-weight: 600;
+}
+
+/* === Main Content === */
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ds-space-400);
+  background-color: var(--ds-surface-sunken);
+}
+
+.page-header {
+  margin-bottom: var(--ds-space-400);
+}
+
+/* === Section Card (elevation.surface.raised) === */
+.section-card {
+  background-color: var(--ds-surface-raised);
+  box-shadow: var(--ds-shadow-raised);
+  border-radius: 3px;
+  padding: var(--ds-space-300);
+  margin-bottom: var(--ds-space-300);
+}
+
+.section-card:last-child {
+  margin-bottom: 0;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--ds-border);
+  margin: var(--ds-space-150) 0 var(--ds-space-300);
+}
+
+.section-action-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--ds-space-200);
+}
+
+.section-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 見出しと付随情報（対象日など）をまとめて左側に配置するグループ */
+.schedule-heading-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+/* 一覧の絞り込み対象日を見出し横に表示するバッジ */
+.schedule-target-date {
+  padding: var(--ds-space-050) var(--ds-space-100);
+  background-color: var(--ds-background-neutral);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* 数量と単位区分を1セルにまとめる。数量部分を固定幅の右寄せにすることで、
+   列幅に関係なく桁が揃い、ヘッダーもセル中央に置くだけで値の真上に来る。 */
+.qty-cell {
+  white-space: nowrap;
+  width: 1px; /* 列自体はできるだけ内容幅まで縮める */
+  text-align: center; /* 列が想定より広がっても、数値+単位のまとまりを中央に置きヘッダーの真下に揃える */
+}
+
+/* .schedule-table th の text-align: left に詳細度で勝つため th を含める */
+.schedule-table th.qty-col {
+  text-align: center;
+}
+
+.qty-value {
+  display: inline-block;
+  width: 2.5rem; /* 5桁程度の数字を想定した固定幅 */
+  text-align: right;
+}
+
+.qty-unit {
+  display: inline-block;
+  width: 2.5rem; /* 単位区分（2〜3文字程度）が収まる固定幅 */
+  padding-left: var(--ds-space-050);
+  text-align: left;
+}
+
+/* === Buttons === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+  padding: 0 var(--ds-space-150);
+  height: 2rem; /* 32px */
+  border-radius: 3px;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+  text-decoration: none;
+}
+
+/* 押せないボタンは見た目でも分かるようにする（hover 色も出さない） */
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background-color: var(--ds-background-brand-bold);
+  color: var(--ds-text-inverse);
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--ds-background-brand-bold-hovered);
+}
+
+.btn-default {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text);
+  border: 1px solid var(--ds-border);
+}
+.btn-default:hover:not(:disabled) {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+/* === File Upload Widget === */
+.file-upload-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-200);
+  flex-wrap: wrap;
+}
+
+.file-input-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: 0 var(--ds-space-150);
+  height: 2rem; /* 32px — ボタンと高さを揃える */
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  cursor: pointer;
+  min-width: 280px;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.file-input-label:hover {
+  background-color: var(--ds-background-input-hovered);
+  border-color: var(--ds-border-focused);
+}
+
+/* ネイティブ input[type=file] を視覚的に隠す（アクセシビリティ対応: スクリーンリーダー到達可能） */
+.file-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.file-label-text {
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-label-text.has-file {
+  color: var(--ds-text);
+}
+
+/* === Download Widget === */
+.download-description {
+  color: var(--ds-text-subtle);
+  margin-bottom: var(--ds-space-200);
+}
+
+/* === Current File Row (SCR-002) === */
+.current-file-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  background-color: var(--ds-background-neutral);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  margin-bottom: var(--ds-space-200);
+}
+
+.current-file-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+}
+
+.current-file-path {
+  font-size: 0.75rem;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  color: var(--ds-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === Off-canvas Panel (SCR-002) === */
+.offcanvas-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(9, 30, 66, 0.54);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 200;
+}
+
+.offcanvas-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.offcanvas-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 760px;
+  background-color: var(--ds-surface-overlay);
+  box-shadow: var(--ds-shadow-overlay);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+  z-index: 201;
+}
+
+.offcanvas-panel.is-open {
+  transform: translateX(0);
+}
+
+.offcanvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ds-space-200) var(--ds-space-300);
+  border-bottom: 1px solid var(--ds-border);
+  flex-shrink: 0;
+}
+
+.offcanvas-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ds-text-subtle);
+  padding: var(--ds-space-050);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.offcanvas-close-btn:hover {
+  background-color: var(--ds-background-neutral-hovered);
+  color: var(--ds-text);
+}
+
+.offcanvas-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ds-space-300);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-200);
+}
+
+/* === Common Form Input === */
+.form-input {
+  height: 2rem;
+  padding: 0 var(--ds-space-150);
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  font-size: 0.875rem;
+  transition: border-color 0.15s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--ds-border-focused);
+}
+.form-textarea {
+  height: auto;
+  min-height: 4.5rem;
+  padding: var(--ds-space-100) var(--ds-space-150);
+  resize: vertical;
+  font-family: inherit;
+}
+.form-input::placeholder {
+  color: var(--ds-text-subtle);
+}
+
+/* === Filter Input (SCR-002) === */
+.filter-input {
+  width: 100%;
+}
+
+/* === Definition Table (SCR-002) === */
+.definition-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.definition-table th {
+  text-align: left;
+  padding: var(--ds-space-100) var(--ds-space-150);
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+  font-weight: 600;
+  border-bottom: 2px solid var(--ds-border);
+  white-space: nowrap;
+}
+
+.definition-table td {
+  padding: var(--ds-space-100) var(--ds-space-150);
+  border-bottom: 1px solid var(--ds-border);
+  color: var(--ds-text);
+}
+
+.definition-table tr:last-child td {
+  border-bottom: none;
+}
+
+.definition-table tbody tr:hover td {
+  background-color: var(--ds-background-neutral);
+}
+
+.definition-table tr.hidden {
+  display: none;
+}
+
+/* === Mapping Type Badge (SCR-002) === */
+.mapping-type-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mapping-type-badge.standard {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+.mapping-type-badge.special {
+  background-color: var(--ds-background-information);
+  color: var(--ds-text-information);
+}
+
+/* === Misc Code Section (SCR-002) === */
+.misc-code-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-150);
+}
+
+.misc-code-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-200);
+}
+
+.misc-code-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  width: 8rem;
+  flex-shrink: 0;
+}
+
+.template-input {
+  flex: 1;
+  height: 2rem;
+  padding: 0 var(--ds-space-150);
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  font-size: 0.875rem;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  transition: border-color 0.15s;
+}
+
+.template-input:focus {
+  outline: none;
+  border-color: var(--ds-border-focused);
+}
+
+.template-input::placeholder {
+  color: var(--ds-text-subtle);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.placeholder-hints {
+  margin-top: var(--ds-space-200);
+  padding-top: var(--ds-space-200);
+  border-top: 1px solid var(--ds-border);
+}
+
+.placeholder-hints-label {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+  margin-bottom: var(--ds-space-100);
+}
+
+.placeholder-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-075);
+  margin-bottom: var(--ds-space-100);
+}
+
+.placeholder-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--ds-space-050) var(--ds-space-100);
+  background-color: var(--ds-background-neutral);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  color: var(--ds-text-brand);
+  user-select: all;
+  cursor: text;
+}
+
+.placeholder-example {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.section-footer-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--ds-space-300);
+  padding-top: var(--ds-space-200);
+  border-top: 1px solid var(--ds-border);
+}
+
+/* === Misc Code Name Input (SCR-002 機能3) === */
+.misc-code-name-input {
+  width: 8rem;
+  flex-shrink: 0;
+  height: 2rem;
+  padding: 0 var(--ds-space-150);
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: border-color 0.15s;
+}
+
+.misc-code-name-input:focus {
+  outline: none;
+  border-color: var(--ds-border-focused);
+}
+
+.misc-code-name-input::placeholder {
+  color: var(--ds-text-subtle);
+  font-weight: 400;
+}
+
+/* === Icon-only Subtle Button (削除ボタン等) === */
+.btn-icon-subtle {
+  background: transparent;
+  border: none;
+  color: var(--ds-text-subtle);
+  width: 2rem;
+  padding: 0;
+  flex-shrink: 0;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.btn-icon-subtle:hover {
+  background-color: var(--ds-background-danger-hovered, rgba(255,86,48,.12));
+  color: var(--ds-text-danger);
+}
+
+/* === Add Entry Button (追加ボタン) === */
+.btn-add-entry {
+  background-color: transparent;
+  color: var(--ds-text-brand);
+  border: 1px dashed var(--ds-border-brand, var(--ds-background-brand-bold));
+  transition: background-color 0.15s;
+}
+
+.btn-add-entry:hover {
+  background-color: var(--ds-background-brand-subtlest, rgba(24,104,219,.08));
+}
+
+/* === Schedule Page Fixed Layout (SCR-003) === */
+/* <body class="schedule-page"> のスコープ内のみに適用し、他画面への影響ゼロ */
+.schedule-page,
+.schedule-page .app-layout {
+  height: 100%;     /* app-layout の min-height: 100vh を上書きして伸張を防止 */
+  overflow: hidden;
+}
+
+.schedule-page .app-body {
+  overflow: hidden; /* app-body が縦に伸びるのを防ぐ */
+}
+
+.schedule-main {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-sections {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-300);
+  min-height: 0;
+}
+
+/* 各セクションカードを均等分割 */
+.schedule-section-half {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0; /* section-card の margin-bottom を上書き */
+}
+
+/* === Schedule Control Row (SCR-003) === */
+.schedule-control-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-300);
+  margin-bottom: var(--ds-space-300);
+  flex-wrap: wrap;
+}
+
+.schedule-date-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+}
+
+.schedule-date-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  white-space: nowrap;
+}
+
+.schedule-search-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+}
+
+.schedule-search-input {
+  width: 16rem;
+}
+
+.date-input {
+  /* form-input で共通スタイル適用 */
+}
+
+.schedule-updated-at {
+  margin-left: auto;
+}
+
+/* === Schedule Table (SCR-003) === */
+.schedule-table-wrapper {
+  flex: 1;
+  overflow: auto; /* 縦スクロール（行あふれ）＋横スクロール（列あふれ）両対応 */
+  min-height: 0;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.schedule-table th {
+  text-align: left;
+  padding: var(--ds-space-100) var(--ds-space-150);
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+  font-weight: 600;
+  /* border-collapse: collapse ではボーダーがテーブル側に属し sticky ヘッダーに追従しないため、
+     下線は box-shadow で描画する */
+  box-shadow: inset 0 -2px 0 var(--ds-border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.schedule-table td {
+  padding: var(--ds-space-100) var(--ds-space-150);
+  border-bottom: 1px solid var(--ds-border);
+  color: var(--ds-text);
+  vertical-align: middle;
+}
+
+.schedule-table tr:last-child td {
+  border-bottom: none;
+}
+
+.schedule-table tbody tr:hover td {
+  background-color: var(--ds-background-neutral);
+}
+
+/* === Remarks Input (SCR-003) === */
+.remarks-input {
+  width: 160px;
+  height: 1.75rem;
+  padding: 0 var(--ds-space-100);
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  font-size: 0.875rem;
+  transition: border-color 0.15s;
+}
+
+.remarks-input:focus {
+  outline: none;
+  border-color: var(--ds-border-focused);
+}
+
+.remarks-input::placeholder {
+  color: var(--ds-text-subtle);
+}
+
+/* 確定済み状態: ボーダー・背景を非表示にしてテキストのみ表示 */
+.remarks-input.is-confirmed {
+  border-color: transparent;
+  background-color: transparent;
+  cursor: text;
+}
+
+/* ホバー時: 再編集できることを示す薄いボーダーを表示 */
+.remarks-input.is-confirmed:hover {
+  border-color: var(--ds-border);
+}
+
+/* === 在庫一覧 (SCR-004) === */
+
+.inventory-filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-150);
+  margin-bottom: var(--ds-space-200);
+}
+
+.inventory-text-filter {
+  width: 320px;
+}
+
+.inventory-status-filter {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-200);
+}
+
+.status-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* === Common Data Table === */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table thead th {
+  padding: var(--ds-space-100) var(--ds-space-150);
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  background-color: var(--ds-background-neutral);
+  border-bottom: 2px solid var(--ds-border);
+  white-space: nowrap;
+}
+.data-table tbody td {
+  padding: var(--ds-space-100) var(--ds-space-150);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  border-bottom: 1px solid var(--ds-border);
+  white-space: nowrap;
+}
+.data-table tbody tr:hover {
+  background-color: var(--ds-background-neutral);
+}
+.data-table tbody tr.hidden {
+  display: none;
+}
+
+/* === Table Scroll Wrapper === */
+.table-scroll-x {
+  overflow-x: auto;
+}
+
+.inventory-table {
+  /* data-table で共通スタイル適用 */
+}
+
+.btn-detail {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--ds-space-100);
+  height: 1.75rem;
+  border-radius: 3px;
+  border: 1px solid var(--ds-border);
+  background-color: var(--ds-surface);
+  color: var(--ds-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s;
+  white-space: nowrap;
+}
+.btn-detail:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0 var(--ds-space-100);
+  border-radius: 2em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  white-space: nowrap;
+}
+.status-badge--information {
+  background-color: var(--ds-background-information);
+  color: var(--ds-text-information);
+}
+.status-badge--success {
+  background-color: var(--ds-background-success);
+  color: var(--ds-text-success);
+}
+.status-badge--subtle {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+.status-badge--warning {
+  background-color: var(--ds-background-warning);
+  color: var(--ds-text-warning);
+}
+
+/* === 移動履歴テーブル (SCR-004-2) === */
+
+.history-table-wrap {
+  /* table-scroll-x で共通スタイル適用 */
+}
+
+.quantity-positive {
+  color: var(--ds-text-success);
+  font-weight: 600;
+}
+
+.quantity-negative {
+  color: var(--ds-text-danger);
+  font-weight: 600;
+}
+
+/* === SCR-006 ページ専用: メイン領域を暗くしてスマートフォンフレームを際立たせる === */
+.inbound-check-page .app-main {
+  background-color: var(--ds-background-phone-stage);
+}
+
+/* === スマートフォンフレーム (SCR-006) === */
+
+.phone-frame-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--ds-space-400);
+  min-height: 100%;
+}
+
+.phone-frame {
+  width: 390px;
+  height: 844px;
+  border-radius: 2.5rem;
+  background-color: var(--ds-surface-raised);
+  box-shadow: var(--ds-shadow-overlay);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.phone-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.phone-header {
+  height: 48px;
+  background-color: var(--ds-nav-bg);
+  color: var(--ds-text-inverse);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ds-space-200);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.phone-header-back {
+  background: transparent;
+  border: none;
+  color: var(--ds-text-inverse);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+  transition: background-color 0.15s;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.phone-header-back:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.phone-header-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.phone-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--ds-border);
+  height: 44px;
+  flex-shrink: 0;
+  background-color: var(--ds-surface-raised);
+}
+
+.phone-tab {
+  flex: 1;
+  padding: 0 var(--ds-space-100);
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+
+.phone-tab.active {
+  border-bottom-color: var(--ds-background-brand-bold);
+  color: var(--ds-text-brand);
+  font-weight: 600;
+}
+
+.phone-body {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--ds-surface-sunken);
+}
+
+/* === 車両行 (SCR-006) === */
+
+.vehicle-row {
+  padding: var(--ds-space-150);
+  border-bottom: 1px solid var(--ds-border);
+  cursor: pointer;
+  background-color: var(--ds-surface-raised);
+  transition: background-color 0.15s;
+}
+
+.vehicle-row:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+.vehicle-row.checked {
+  background-color: var(--ds-background-success);
+  cursor: default;
+}
+
+.vehicle-row.checked:hover {
+  background-color: var(--ds-background-success);
+}
+
+.vehicle-row-top {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  margin-bottom: var(--ds-space-075);
+}
+
+.vehicle-row.checked .vehicle-row-top {
+  color: var(--ds-text-success);
+}
+
+.vehicle-check-icon {
+  display: none;
+  color: var(--ds-text-success);
+  font-weight: 700;
+}
+
+.vehicle-row.checked .vehicle-check-icon {
+  display: inline;
+}
+
+.vehicle-row-meta {
+  font-size: 0.8125rem;
+  color: var(--ds-text-subtle);
+  margin-bottom: var(--ds-space-075);
+}
+
+.vehicle-row-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+}
+
+.vehicle-row-qty {
+  color: var(--ds-text);
+}
+
+.vehicle-row.checked .vehicle-row-qty {
+  color: var(--ds-text-success);
+}
+
+.vehicle-row-arrow {
+  color: var(--ds-text-subtle);
+  font-size: 1.125rem;
+}
+
+.vehicle-row.checked .vehicle-row-arrow {
+  display: none;
+}
+
+/* === 商品行 (SCR-006) === */
+
+.product-row {
+  padding: var(--ds-space-150);
+  border-bottom: 1px solid var(--ds-border);
+  cursor: pointer;
+  background-color: var(--ds-surface-raised);
+  transition: background-color 0.15s;
+  user-select: none;
+}
+
+.product-row:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+.product-row.checked {
+  background-color: var(--ds-background-success);
+  cursor: default;
+}
+
+.product-row.checked:hover {
+  background-color: var(--ds-background-success);
+}
+
+.product-row-loc {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+  margin-bottom: var(--ds-space-050);
+}
+
+.product-row.checked .product-row-loc {
+  color: var(--ds-text-success);
+  opacity: 0.8;
+}
+
+.product-row-code {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+  font-size: 0.875rem;
+  margin-bottom: var(--ds-space-050);
+}
+
+.product-row.checked .product-row-code {
+  color: var(--ds-text-success);
+}
+
+.product-check-icon {
+  display: none;
+  color: var(--ds-text-success);
+  font-weight: 700;
+}
+
+.product-row.checked .product-check-icon {
+  display: inline;
+}
+
+.product-row-qty {
+  text-align: right;
+  font-size: 0.8125rem;
+  color: var(--ds-text-subtle);
+}
+
+.product-row.checked .product-row-qty {
+  color: var(--ds-text-success);
+}
+
+/* 棚入れモーダル（SCR-006-2） */
+
+.putaway-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--ds-background-neutral);
+  opacity: 0.7;
+  z-index: 10;
+}
+
+.putaway-modal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+}
+
+.putaway-modal-card {
+  background-color: var(--ds-surface-overlay);
+  border-radius: var(--ds-border-radius-200);
+  box-shadow: var(--ds-shadow-overlay);
+  padding: var(--ds-space-300);
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-200);
+}
+
+.putaway-modal-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  text-align: center;
+  margin: 0;
+}
+
+.putaway-modal-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-200);
+  border: 2px dashed var(--ds-border);
+  border-radius: var(--ds-border-radius-100);
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.putaway-modal-qr:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+.putaway-modal-shelf-code {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ds-text);
+  letter-spacing: 0.05em;
+}
+
+.putaway-modal-cancel {
+  width: 100%;
+  padding: var(--ds-space-100) var(--ds-space-200);
+  background: none;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-border-radius-100);
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+  cursor: pointer;
+}
+
+.putaway-modal-cancel:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+/* === SCR-005: 棚ロケ定義 === */
+
+/* タブバー */
+.page-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--ds-border);
+  margin-bottom: var(--ds-space-300);
+}
+
+.page-tab {
+  padding: var(--ds-space-100) var(--ds-space-200);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  color: var(--ds-text-subtle);
+  font-size: 0.875rem;
+  transition: color 0.1s;
+}
+
+.page-tab.active {
+  color: var(--ds-text-brand);
+  border-bottom-color: var(--ds-background-brand-bold);
+  font-weight: 600;
+}
+
+.page-tab:hover:not(.active) {
+  color: var(--ds-text);
+  background-color: var(--ds-background-neutral);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* 棚ロケ・バース追加フォーム */
+.shelf-add-form {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+  margin-bottom: var(--ds-space-200);
+  flex-wrap: wrap;
+}
+
+.shelf-add-form label {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+}
+
+.shelf-input-name {
+  width: 200px;
+}
+
+/* ドラッグ&ドロップ（ピッキング経路） */
+.pick-route-row {
+  cursor: default;
+}
+
+.pick-route-row.dragging {
+  opacity: 0.4;
+}
+
+.pick-route-row.drag-over-top {
+  border-top: 2px solid var(--ds-background-brand-bold);
+}
+
+.pick-route-row.drag-over-bottom {
+  border-bottom: 2px solid var(--ds-background-brand-bold);
+}
+
+.drag-handle {
+  cursor: grab;
+  color: var(--ds-text-disabled);
+  padding: 0 var(--ds-space-100);
+  user-select: none;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* 削除ボタン */
+.btn-delete {
+  font-size: 0.75rem;
+  color: var(--ds-text-danger);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 2px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-delete:hover {
+  background-color: var(--ds-background-danger);
+  border-color: var(--ds-text-danger);
+}
+
+/* === 棚移動検品 (SCR-008) === */
+
+.transfer-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  padding: var(--ds-space-100);
+}
+
+.transfer-header-row {
+  display: flex;
+  gap: var(--ds-space-100);
+  flex-shrink: 0;
+  margin-bottom: var(--ds-space-075);
+}
+
+.transfer-col-header {
+  flex: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.transfer-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.transfer-row {
+  display: flex;
+  gap: var(--ds-space-100);
+  align-items: stretch;
+  margin-bottom: var(--ds-space-100);
+}
+
+.transfer-row-source,
+.transfer-row-dest {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.transfer-row .shelf-frame {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.transfer-row-dest .shelf-frame {
+  cursor: default;
+}
+
+.transfer-col-empty {
+  text-align: center;
+  color: var(--ds-text-subtle);
+  font-size: 0.75rem;
+  padding: var(--ds-space-300) var(--ds-space-100);
+  line-height: 1.6;
+}
+
+.shelf-frame {
+  border: 1px solid var(--ds-border);
+  border-radius: 4px;
+  margin-bottom: var(--ds-space-100);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.shelf-frame.active {
+  border: 2px solid var(--ds-border-focused);
+  background-color: var(--ds-background-information);
+}
+
+.shelf-frame-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px var(--ds-space-100);
+  background-color: var(--ds-background-neutral);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.shelf-frame.active .shelf-frame-header {
+  background-color: rgba(0, 82, 204, 0.08);
+}
+
+.shelf-frame-active-badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--ds-text-information);
+}
+
+.shelf-frame-products {
+  padding: 2px 0;
+}
+
+.shelf-product-row {
+  padding: 3px var(--ds-space-100);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ds-text);
+}
+
+.shelf-product-qty {
+  color: var(--ds-text-subtle);
+}
+
+.dest-slot-empty {
+  flex: 1;
+  border: 1px dashed var(--ds-border);
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.scan-bar {
+  flex-shrink: 0;
+  padding: var(--ds-space-100);
+  border-top: 1px solid var(--ds-border);
+  background-color: var(--ds-surface);
+}
+
+.scan-mode-indicator {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  margin-bottom: var(--ds-space-075);
+}
+
+.scan-mode-indicator.mode-source {
+  background-color: var(--ds-background-warning);
+  color: var(--ds-text-warning);
+}
+
+.scan-mode-indicator.mode-dest {
+  background-color: var(--ds-background-information);
+  color: var(--ds-text-information);
+}
+
+.scan-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  font-size: 0.8125rem;
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  outline: none;
+}
+
+.scan-input:focus {
+  border-color: var(--ds-border-focused);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+}
+
+/* ============================================================
+   SCR-009: 棚卸メニュー
+   ============================================================ */
+
+.inventory-count-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--ds-space-200);
+  padding: var(--ds-space-200);
+}
+
+.inventory-count-menu-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-200);
+  padding: var(--ds-space-300);
+  background-color: var(--ds-surface-raised);
+  border: 1px solid var(--ds-border);
+  border-radius: 4px;
+  box-shadow: var(--ds-shadow-raised);
+  text-decoration: none;
+  color: var(--ds-text);
+  transition: box-shadow 0.15s;
+}
+.inventory-count-menu-card:hover {
+  box-shadow: var(--ds-shadow-overlay);
+  border-color: var(--ds-border-focused);
+}
+.inventory-count-menu-card.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.inventory-count-menu-card-icon {
+  flex-shrink: 0;
+  color: var(--ds-icon);
+}
+
+.inventory-count-menu-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+}
+
+.inventory-count-menu-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ds-text);
+}
+
+.inventory-count-menu-card-desc {
+  font-size: 0.8125rem;
+  color: var(--ds-text-subtle);
+}
+
+.inventory-count-menu-card-badge {
+  display: inline-block;
+  margin-top: var(--ds-space-050);
+  padding: 2px 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 3px;
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+
+/* ============================================================
+   SCR-009: 差異管理
+   ============================================================ */
+
+.diff-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  flex-wrap: wrap;
+  margin-bottom: var(--ds-space-200);
+}
+
+.btn-filter-toggle {
+  border: 1px solid var(--ds-border);
+  background-color: var(--ds-surface);
+  color: var(--ds-text-subtle);
+}
+.btn-filter-toggle:hover {
+  background-color: var(--ds-background-neutral);
+}
+.btn-filter-toggle.active {
+  background-color: var(--ds-background-warning);
+  border-color: var(--ds-text-warning);
+  color: var(--ds-text-warning);
+  font-weight: 600;
+}
+
+.diff-search-input {
+  min-width: 220px;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  font-size: 0.875rem;
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  outline: none;
+}
+.diff-search-input:focus {
+  border-color: var(--ds-border-focused);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+}
+
+.diff-toolbar-right {
+  margin-left: auto;
+  display: flex;
+  gap: var(--ds-space-100);
+}
+
+.diff-table-wrap {
+  /* table-scroll-x で共通スタイル適用 */
+}
+
+.diff-table {
+  /* data-table で共通スタイル適用 */
+}
+.diff-table tbody td {
+  padding: var(--ds-space-075) var(--ds-space-150); /* vertical padding を縮小 */
+}
+
+.diff-row-warning td {
+  background-color: var(--ds-background-warning);
+}
+.diff-table tbody .diff-row-warning:hover td {
+  filter: brightness(0.97);
+}
+
+.diff-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.diff-status-badge.unchecked {
+  color: var(--ds-text-subtle);
+}
+.diff-status-badge.checked {
+  color: var(--ds-text-success);
+}
+
+/* ============================================================
+   SCR-009-1: 棚卸作業（棚一覧）
+   ============================================================ */
+
+.inventory-count-page .app-main {
+  background-color: var(--ds-background-phone-stage);
+}
+
+.shelf-filter-bar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-150);
+  border-bottom: 1px solid var(--ds-border);
+  background-color: var(--ds-surface);
+}
+
+.shelf-filter-toggle {
+  width: fit-content;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: var(--ds-space-050) var(--ds-space-150);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: var(--ds-surface);
+  color: var(--ds-text-subtle);
+  transition: background-color 0.1s, color 0.1s;
+}
+.shelf-filter-toggle:hover {
+  background-color: var(--ds-background-neutral);
+}
+.shelf-filter-toggle.active {
+  background-color: var(--ds-background-selected);
+  border-color: var(--ds-border-selected);
+  color: var(--ds-text-selected);
+}
+
+.shelf-filter-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  font-size: 0.8125rem;
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  outline: none;
+}
+.shelf-filter-search:focus {
+  border-color: var(--ds-border-focused);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+}
+
+.shelf-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ds-space-150);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-100);
+}
+
+.shelf-card {
+  border: 1px solid var(--ds-border);
+  border-radius: 6px;
+  padding: var(--ds-space-100) var(--ds-space-150);
+  background-color: var(--ds-surface);
+  flex-shrink: 0;
+}
+.shelf-card.completed {
+  background-color: var(--ds-background-success);
+  border-color: var(--ds-border-success);
+}
+
+.shelf-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ds-space-075);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text);
+}
+
+.shelf-card-badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background-color: var(--ds-background-success-bold);
+  color: var(--ds-text-inverse);
+}
+
+.shelf-card-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+}
+
+.shelf-progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--ds-background-neutral);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.shelf-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.2s;
+}
+.shelf-progress-bar-fill.fill-incomplete {
+  background-color: var(--ds-background-information-bold);
+}
+.shelf-progress-bar-fill.fill-complete {
+  background-color: var(--ds-background-success-bold);
+}
+
+.shelf-progress-text {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.scan-bar-label {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--ds-text-subtle);
+  margin-bottom: var(--ds-space-075);
+}
+
+/* ============================================================
+   SCR-009-1-1: 棚卸作業（商品一覧）
+   ============================================================ */
+
+/* モーダルの基準点として position: relative を付与 */
+.phone-frame {
+  position: relative;
+}
+
+.phone-header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.3;
+}
+
+/* phone-header-center 内では absolute 配置を解除 */
+.phone-header-center .phone-header-title {
+  position: static;
+  transform: none;
+  left: auto;
+  font-size: 0.875rem;
+}
+
+.phone-header-sub {
+  font-size: 0.6875rem;
+  color: var(--ds-text-inverse);
+  opacity: 0.8;
+}
+
+.count-item-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.count-item-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.count-item-table thead th {
+  position: sticky;
+  top: 0;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  text-align: left;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  background-color: var(--ds-background-neutral);
+  border-bottom: 2px solid var(--ds-border);
+  white-space: nowrap;
+  z-index: 1;
+}
+.count-item-table thead th.col-num {
+  text-align: right;
+  width: 3rem;
+}
+.count-item-table thead th.col-status {
+  text-align: center;
+  width: 4rem;
+}
+
+.count-item-table tbody td {
+  padding: var(--ds-space-075) var(--ds-space-100);
+  color: var(--ds-text);
+  border-bottom: 1px solid var(--ds-border);
+  vertical-align: middle;
+}
+.count-item-table tbody td.col-num {
+  text-align: right;
+}
+.count-item-table tbody td.col-status {
+  text-align: center;
+}
+
+.count-item-table tbody tr.entered td {
+  background-color: var(--ds-background-success);
+}
+
+.count-item-status {
+  display: inline-block;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.count-item-status.empty {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+.count-item-status.entered {
+  background-color: var(--ds-background-success-bold);
+  color: var(--ds-text-inverse);
+}
+
+.count-complete-bar {
+  flex-shrink: 0;
+  border-top: 1px solid var(--ds-border);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  display: flex;
+  justify-content: flex-end;
+  background-color: var(--ds-surface);
+}
+
+.count-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 30, 66, 0.54);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.count-modal {
+  background-color: var(--ds-surface-raised);
+  border-radius: 8px;
+  padding: var(--ds-space-300);
+  width: 280px;
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.count-modal-product-code {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.count-modal-product-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  margin-top: var(--ds-space-050);
+}
+
+.count-modal-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  margin: var(--ds-space-200) 0 var(--ds-space-075);
+}
+
+.count-modal-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  border: 1px solid var(--ds-border-input);
+  border-radius: 3px;
+  background-color: var(--ds-background-input);
+  color: var(--ds-text);
+  outline: none;
+}
+.count-modal-input:focus {
+  border-color: var(--ds-border-focused);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+}
+
+.count-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-200);
+}
+
+/* ============================================================
+   SCR-004-3: 在庫修正
+   ============================================================ */
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--ds-space-100);
+  height: 1.75rem;
+  border-radius: 3px;
+  border: 1px solid var(--ds-border);
+  background-color: var(--ds-surface);
+  color: var(--ds-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s;
+  white-space: nowrap;
+}
+.btn-edit:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-200);
+  max-width: 480px;
+}
+
+.edit-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+}
+
+.edit-form-label {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+  font-weight: 600;
+}
+
+.edit-form-actions {
+  display: flex;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-200);
+}
+
+/* === SCR-005 入荷予定確定 === */
+.btn-danger {
+  background-color: var(--ds-background-danger-bold);
+  color: var(--ds-text-inverse);
+}
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--ds-background-danger-bold-hovered);
+}
+
+.schedule-location-select {
+  width: 7.5rem;
+}
+
+.schedule-qty-input {
+  width: 4.5rem;
+  text-align: right;
+}
+
+.schedule-row--cancelled {
+  opacity: 0.4;
+}
+.schedule-row--cancelled td {
+  text-decoration: line-through;
+}
+.schedule-row--selected {
+  background: var(--ds-background-selected);
+}
+.schedule-row--cancelled.schedule-row--selected {
+  opacity: 1;
+  background: var(--ds-background-selected);
+}
+
+/* === SCR-011 出荷確定 受注グループ行 / 商品明細行 === */
+.schedule-order-row {
+  background: var(--ds-surface-sunken);
+  font-weight: var(--ds-font-weight-semibold);
+  border-top: 2px solid var(--ds-border);
+}
+
+.schedule-item-row td:nth-child(2),
+.schedule-item-row td:nth-child(3),
+.schedule-item-row td:nth-child(4),
+.schedule-item-row td:nth-child(5) {
+  border-right: none;
+}
+
+/* === SCR-004 手動入力フォーム === */
+.manual-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-space-200);
+}
+
+.manual-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-075);
+}
+
+.manual-form-field--full {
+  grid-column: 1 / -1;
+}
+
+.manual-form-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+}
+
+.manual-form-required {
+  color: var(--ds-text-danger);
+  margin-left: var(--ds-space-025);
+}
+
+.manual-form-qty {
+  max-width: 8rem;
+}
+
+.manual-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-100);
+}
+
+/* === SCR-009 商品明細テーブル === */
+.item-section-header {
+  margin-top: var(--ds-space-300);
+  margin-bottom: var(--ds-space-100);
+}
+
+.item-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-border-radius);
+  overflow: hidden;
+}
+
+.item-table-header,
+.item-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 90px 70px 90px 110px 130px 44px;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-075) var(--ds-space-100);
+  align-items: center;
+}
+
+.item-table-header {
+  background-color: var(--ds-surface-sunken);
+}
+
+.item-table-header-cell {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+}
+
+.item-row {
+  border-top: 1px solid var(--ds-border);
+}
+
+/* SCR-005 入荷予定登録: 商品コード・商品名がselectのため固定幅にし、特記事項を可変幅にする */
+.item-table--inbound .item-table-header,
+.item-table--inbound .item-row {
+  grid-template-columns: 110px 110px 70px 90px 110px 110px 1fr 44px;
+}
+
+.item-add-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--ds-space-150);
+}
+
+/* === Information Banner === */
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-150) var(--ds-space-200);
+  background-color: var(--ds-background-information);
+  border-radius: var(--ds-border-radius);
+  color: var(--ds-text);
+  font-size: 0.875rem;
+  margin-bottom: var(--ds-space-300);
+}
+
+.info-banner svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--ds-icon-information);
+}
+
+.info-banner p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.info-banner a {
+  color: var(--ds-link);
+  text-decoration: underline;
+}
+
+.info-banner a:hover {
+  color: var(--ds-link-pressed);
+}
+
+/* === SCR-006 Warning Banner === */
+.warning-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-100);
+  background: var(--ds-background-warning);
+  border: 1px solid var(--ds-border-warning);
+  border-radius: 3px;
+  padding: var(--ds-space-150) var(--ds-space-200);
+  margin-bottom: var(--ds-space-300);
+}
+
+.warning-banner svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--ds-icon-warning);
+}
+
+/* === SCR-007 入荷履歴 === */
+
+.history-control-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-200);
+  margin-bottom: var(--ds-space-300);
+  flex-wrap: wrap;
+}
+
+.history-date-range {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-050);
+}
+
+.history-date-separator {
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  white-space: nowrap;
+}
+
+.history-section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-200);
+}
+
+.history-total-count {
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+}
+
+.history-table-wrapper {
+  overflow-x: auto;
+}
+
+.history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-050);
+  padding: var(--ds-space-200) 0 var(--ds-space-300);
+}
+
+.history-pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 var(--ds-space-100);
+  border-radius: 3px;
+  border: 1px solid var(--ds-border);
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  white-space: nowrap;
+}
+
+.history-pagination-btn:hover:not(:disabled) {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+.history-pagination-btn.is-active {
+  background-color: var(--ds-background-brand-bold);
+  color: var(--ds-text-inverse);
+  border-color: var(--ds-background-brand-bold);
+}
+
+.history-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.warning-banner p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* === ヘッダー ユーザーメニュー (ADM) === */
+.btn-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--ds-nav-text);
+  cursor: pointer;
+  padding: var(--ds-space-050);
+  border-radius: 3px;
+  opacity: 0.75;
+}
+
+.btn-theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  opacity: 1;
+}
+
+.app-header-user-menu {
+  position: relative;
+}
+
+.app-header-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-050);
+  background: none;
+  border: none;
+  color: var(--ds-nav-text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: var(--ds-space-050) var(--ds-space-100);
+  border-radius: 3px;
+}
+
+.app-header-user-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.app-header-user-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 10rem;
+  background-color: var(--ds-surface-overlay);
+  box-shadow: var(--ds-shadow-overlay);
+  border-radius: 3px;
+  z-index: 200;
+  padding: var(--ds-space-100) 0;
+}
+
+.app-header-user-dropdown.is-open {
+  display: block;
+}
+
+.user-dropdown-item {
+  display: block;
+  padding: var(--ds-space-100) var(--ds-space-200);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.user-dropdown-item:hover {
+  background-color: var(--ds-background-neutral-hovered);
+}
+
+/* === ADM-001 ユーザー一覧 === */
+.user-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-300);
+}
+
+.user-status-badge {
+  display: inline-block;
+  padding: 2px var(--ds-space-075);
+  border-radius: 2px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.user-status-badge--active {
+  background-color: var(--ds-background-success);
+  color: var(--ds-text-success);
+}
+
+.user-status-badge--inactive {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+
+.user-ops {
+  display: flex;
+  gap: var(--ds-space-050);
+  align-items: center;
+}
+
+/* === ADM-002 ユーザー登録・編集 === */
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-200);
+  max-width: 480px;
+}
+
+/* === SCR-003 取引先定義 === */
+.supplier-search-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  margin-bottom: var(--ds-space-200);
+}
+
+.upload-error-message {
+  margin-top: var(--ds-space-150);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  background-color: var(--ds-background-danger);
+  color: var(--ds-text-danger);
+  border-radius: 3px;
+  font-size: 0.875rem;
+}
+
+.upload-success-banner {
+  margin-top: var(--ds-space-150);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  background-color: var(--ds-background-success);
+  color: var(--ds-text-success);
+  border-radius: 3px;
+  font-size: 0.875rem;
+}
+
+.user-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+}
+
+.user-form-label {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+  font-weight: 600;
+}
+
+.user-form-error {
+  font-size: 0.75rem;
+  color: var(--ds-text-danger);
+  display: none;
+}
+
+.user-form-error.is-visible {
+  display: block;
+}
+
+.user-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-200);
+}
+
+.form-input.is-readonly {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+  cursor: not-allowed;
+}
+
+/* === 引き当てチェック (SCR-010) === */
+
+.schedule-date-separator {
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+  padding: 0 var(--ds-space-050, 4px);
+  flex-shrink: 0;
+}
+
+/* サマリー行 */
+.allocation-summary-row {
+  cursor: pointer;
+}
+
+.allocation-summary-row:hover td {
+  background-color: var(--ds-background-neutral);
+}
+
+.allocation-checkbox-cell {
+  width: 2rem;
+  text-align: center;
+  padding: var(--ds-space-100) var(--ds-space-075);
+}
+
+.allocation-print-cell {
+  width: 10rem;
+  text-align: center;
+  padding: var(--ds-space-100) var(--ds-space-150);
+  vertical-align: middle;
+}
+
+.allocation-expand-cell {
+  width: 2rem;
+  text-align: center;
+  padding: var(--ds-space-100) var(--ds-space-075);
+}
+
+.allocation-expand-icon {
+  display: inline-block;
+  font-size: 0.6rem;
+  color: var(--ds-text-subtle);
+  transition: transform 0.15s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+.allocation-expand-icon--open {
+  transform: rotate(90deg);
+}
+
+/* バッジ */
+.allocation-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.allocation-badge--ok {
+  background-color: var(--ds-background-success-bold);
+  color: var(--ds-text-inverse);
+}
+
+.allocation-badge--ng {
+  background-color: var(--ds-background-danger-bold);
+  color: var(--ds-text-inverse);
+}
+
+/* 明細行 */
+.allocation-detail-row > td {
+  padding: 0;
+  background-color: var(--ds-background-input);
+  border-bottom: 2px solid var(--ds-border);
+}
+
+/* 明細行ホバー抑制（サマリー行の .schedule-table tbody tr:hover を上書き） */
+.allocation-detail-row:hover > td {
+  background-color: var(--ds-background-input);
+}
+
+.allocation-detail-inner {
+  padding: var(--ds-space-075) var(--ds-space-300);
+}
+
+.allocation-detail-header,
+.allocation-detail-item {
+  display: grid;
+  grid-template-columns: 7rem auto 9rem 6rem 6rem 5rem;
+  gap: var(--ds-space-150);
+  padding: var(--ds-space-075) 0;
+  font-size: 0.8125rem;
+}
+
+.allocation-detail-header {
+  color: var(--ds-text-subtle);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.allocation-detail-item {
+  border-bottom: 1px solid var(--ds-border);
+  color: var(--ds-text);
+}
+
+.allocation-detail-item:last-child {
+  border-bottom: none;
+}
+
+.allocation-detail-item--ng-boundary {
+  border-left: 3px solid var(--ds-background-danger-bold);
+  padding-left: 5px; /* space.075(6px) - 3px ボーダー分 */
+}
+
+/* 引き当てチェックの表。
+   明細（展開行）の「結果」を伝票行の「引き当て結果」と縦一列に揃えるため、
+   table-layout:fixed + colgroup で列幅を確定させる。
+   明細行の td は colspan で「引き当て結果」列の右端までを占め、明細グリッドの
+   最終列を --allocation-col-result と同じ幅にすることで、両者のOK/NGが揃う */
+.allocation-table {
+  --allocation-col-check: 2.5rem;
+  --allocation-col-expand: 2.5rem;
+  --allocation-col-date: 7rem;
+  --allocation-col-order: 10rem;
+  --allocation-col-ordered-at: 10rem;
+  --allocation-col-result: 7rem;
+  --allocation-col-status: 8rem;
+  --allocation-col-print: 11rem;
+
+  table-layout: fixed;
+  /* 明細グリッドが必要とする幅を下回らないようにする（下回った分は横スクロール） */
+  min-width: 78rem;
+}
+
+.allocation-col-check {
+  width: var(--allocation-col-check);
+}
+.allocation-col-expand {
+  width: var(--allocation-col-expand);
+}
+.allocation-col-date {
+  width: var(--allocation-col-date);
+}
+.allocation-col-order {
+  width: var(--allocation-col-order);
+}
+.allocation-col-ordered-at {
+  width: var(--allocation-col-ordered-at);
+}
+.allocation-col-result {
+  width: var(--allocation-col-result);
+}
+.allocation-col-status {
+  width: var(--allocation-col-status);
+}
+.allocation-col-print {
+  width: var(--allocation-col-print);
+}
+
+/* 明細（展開行）の列。先頭はチェックボックス列・開閉アイコン列・ステータス列ぶんのインデントで、
+   以降は 商品コード / 商品名 / ロット番号 / 数量 / 棚ロケ / 引当数 / 残在庫数 / 結果。
+   「棚ロケ・引当数・残在庫数・結果」は意味的にひとまとまりなので右側へ寄せ、
+   最終列（結果）が伝票行の「引き当て結果」と重なるようにしている */
+.allocation-detail-header--stock,
+.allocation-detail-item--stock {
+  grid-template-columns:
+    calc(
+      var(--allocation-col-check) + var(--allocation-col-expand) +
+        var(--allocation-col-status)
+    )
+    var(--allocation-col-date)
+    minmax(0, 1fr)
+    8rem
+    4.5rem
+    6.5rem
+    4.5rem
+    5.5rem
+    var(--allocation-col-result);
+  /* 列幅を表の列と一致させるため、gap ではなくセル側の padding で間隔を作る */
+  gap: 0;
+}
+
+.allocation-detail-header--stock > span,
+.allocation-detail-item--stock > span {
+  padding: 0 var(--ds-space-150);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 明細行の左右 padding は、右端を「引き当て結果」列の右端に合わせるため 0 にする */
+.allocation-detail-inner--stock {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* NG の目印。border-left + padding-left だと固定幅の列が右へずれて
+   「結果」の位置が揃わなくなるため、レイアウトに影響しない inset shadow で描く */
+.allocation-detail-item--stock.allocation-detail-item--ng-boundary {
+  border-left: none;
+  padding-left: 0;
+  box-shadow: inset 3px 0 0 0 var(--ds-background-danger-bold);
+}
+
+/* 1つの明細が複数の棚ロケに分割して引き当てられるため、
+   棚ロケ・引当数・残在庫数のセルは中で複数行に積む */
+.allocation-stock-lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+}
+
+/* 結果セル。NG のときはバッジの下に不足数を添える */
+.allocation-detail-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* === SCR-015: 棚ロケ移動登録 === */
+
+.transfer-control-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+.transfer-table-wrapper {
+  overflow-x: auto;
+}
+
+.schedule-table tbody tr.is-selected {
+  background: var(--ds-background-selected);
+}
+
+.schedule-table tbody tr:hover:not(.is-selected) {
+  background: var(--ds-background-neutral-hovered);
+}
+
+.transfer-form {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transfer-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-space-200);
+}
+
+.transfer-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-075);
+}
+
+.transfer-form-field--full {
+  grid-column: 1 / -1;
+}
+
+.transfer-form-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+}
+
+.transfer-form-input--readonly {
+  background: var(--ds-background-disabled);
+  color: var(--ds-text-disabled);
+  cursor: default;
+}
+
+.transfer-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--ds-space-300);
+}
+
+/* 確認ダイアログ */
+
+.transfer-confirm-dl {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: var(--ds-space-075) var(--ds-space-150);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.transfer-confirm-dl dt {
+  color: var(--ds-text-subtle);
+  font-weight: 600;
+}
+
+.transfer-confirm-dl dd {
+  margin: 0;
+  color: var(--ds-text);
+}
+
+/* フラッシュメッセージ */
+
+.transfer-flash {
+  position: fixed;
+  top: var(--ds-space-300);
+  right: var(--ds-space-300);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-150) var(--ds-space-200);
+  border-radius: 3px;
+  background: var(--ds-background-success);
+  border: 1px solid var(--ds-border-success);
+  color: var(--ds-text-success);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: var(--ds-shadow-raised);
+}
+
+/* === 共通モーダル (.ds-modal-*) === */
+.ds-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(9, 30, 66, 0.54);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.ds-modal {
+  background: var(--ds-surface-overlay);
+  border-radius: 3px;
+  box-shadow: var(--ds-shadow-overlay);
+  padding: var(--ds-space-400);
+  min-width: 24rem;
+  max-width: 36rem;
+  width: 100%;
+}
+
+.ds-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-200);
+}
+
+.ds-modal-body {
+  margin-bottom: var(--ds-space-300);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+}
+
+.ds-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ds-space-100);
+}
+
+/* === SCR-005 入荷予定登録 確認モーダル 商品明細一覧 === */
+.modal-item-list-heading {
+  margin-top: var(--ds-space-300);
+  margin-bottom: var(--ds-space-100);
+}
+
+.modal-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 12rem;
+  overflow-y: auto;
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+}
+
+.modal-item-list-row {
+  padding: var(--ds-space-100) var(--ds-space-150);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+}
+
+.modal-item-list-row + .modal-item-list-row {
+  border-top: 1px solid var(--ds-border);
+}
+
+/* === SCR-015 在庫調整 確認テーブル === */
+.modal-confirm-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--ds-space-200) 0;
+}
+
+.modal-confirm-table tr {
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.modal-confirm-table th {
+  text-align: left;
+  width: 8rem;
+  padding: var(--ds-space-075) var(--ds-space-100);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+}
+
+.modal-confirm-table td {
+  padding: var(--ds-space-075) var(--ds-space-100);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+}
+
+/* === 棚卸管理 (SCR-018) === */
+
+.inventory-flash {
+  position: fixed;
+  top: var(--ds-space-300);
+  right: var(--ds-space-300);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-150) var(--ds-space-200);
+  border-radius: 3px;
+  background: var(--ds-background-success);
+  border: 1px solid var(--ds-border-success);
+  color: var(--ds-text-success);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: var(--ds-shadow-raised);
+}
+
+.inventory-control-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-150);
+}
+
+.inventory-control-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+.inventory-control-row--space-between {
+  justify-content: space-between;
+}
+
+.inventory-last-updated {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.inventory-detail-row td {
+  padding: 0;
+  border-top: none;
+}
+
+.inventory-detail-inner {
+  padding: var(--ds-space-150) var(--ds-space-300);
+  background: var(--ds-background-neutral);
+}
+
+.inventory-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.inventory-detail-table th,
+.inventory-detail-table td {
+  padding: var(--ds-space-075) var(--ds-space-100);
+  border-bottom: 1px solid var(--ds-border);
+  white-space: nowrap;
+}
+
+.inventory-detail-table th {
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  background: var(--ds-background-neutral);
+}
+
+.inventory-diff--warning {
+  color: var(--ds-text-warning);
+  font-weight: 600;
+}
+
+/* === SCR-006 入荷予定確定 === */
+.schedule-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ds-space-200);
+}
+
+.schedule-section-actions {
+  display: flex;
+  gap: var(--ds-space-100);
+}
+
+.schedule-section-note {
+  margin-top: var(--ds-space-100);
+}
+
+.schedule-col-check {
+  width: 3rem;
+  text-align: center;
+}
+/* .schedule-table th の左寄せを打ち消す */
+.schedule-table th.schedule-col-check {
+  text-align: center;
+}
+
+.schedule-cell-center {
+  text-align: center;
+}
+
+.schedule-cell-actions {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.schedule-cell-actions .btn + .btn {
+  margin-left: var(--ds-space-050);
+}
+
+.schedule-lot-input {
+  width: 8rem;
+}
+
+.schedule-expiry-input {
+  width: 9rem;
+}
+
+.schedule-remarks-input {
+  width: 10rem;
+}
+
+.schedule-split-badge {
+  display: inline-block;
+  padding: 0 var(--ds-space-050);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  color: var(--ds-text-subtle);
+}
+
+.ds-modal--wide {
+  /* メイン画面と同じ項目を並べるため、明細テーブルが横スクロールなしで収まる幅にする */
+  max-width: min(84rem, calc(100vw - 3rem));
+  padding: var(--ds-space-300);
+}
+
+.inbound-edit-table-wrapper {
+  max-height: 20rem;
+  overflow: auto;
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+}
+
+.inbound-edit-table {
+  width: 100%;
+  table-layout: fixed;
+  /* min-width を持たせるとモーダル幅を超えて横スクロールになるため指定しない */
+}
+
+/* パディングを詰めて、限られた幅に全列を収める */
+.inbound-edit-table th,
+.inbound-edit-table td {
+  padding-left: var(--ds-space-075);
+  padding-right: var(--ds-space-075);
+}
+
+/* 列幅: 入力が収まる最小限を固定幅で確保し、商品・特記事項が残り幅を分け合う
+   （棚ロケ / 数量 / ロット / 賞味期限 / 操作 を固定、1・6列目は自動） */
+.inbound-edit-table th:nth-child(2),
+.inbound-edit-table td:nth-child(2) { width: 9rem; }
+/* 数量: 入力4桁(3.5rem) + 単位区分(最長2文字想定) + 左右パディング */
+.inbound-edit-table th:nth-child(3),
+.inbound-edit-table td:nth-child(3) { width: 6.5rem; }
+.inbound-edit-table th:nth-child(4),
+.inbound-edit-table td:nth-child(4) { width: 11rem; }
+/* 賞味期限は date 入力（カレンダーアイコン含む）が全体表示できる幅 */
+.inbound-edit-table th:nth-child(5),
+.inbound-edit-table td:nth-child(5) { width: 10.5rem; }
+.inbound-edit-table th:nth-child(7),
+.inbound-edit-table td:nth-child(7) { width: 11rem; }
+
+/* 商品セル: 棚分割アイコンを商品 select の左端に重ねて表示する
+   （td 自体を flex/absolute にすると表のセルでなくなるため、内側の div で組む） */
+.inbound-edit-item-cell {
+  position: relative;
+  min-width: 0;
+}
+.inbound-edit-item-cell .inbound-edit-item {
+  width: 100%;
+}
+
+/* 棚分割・伝票外の印。丸を塗り、記号を白抜きで抜く SVG。
+   文字ではなく図形なので、和文グリフのベースラインに左右されず円の中心に記号が載る。 */
+.flag-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* 丸は currentColor、記号は白抜き（線） */
+.flag-icon circle {
+  fill: currentColor;
+}
+.flag-icon path {
+  fill: none;
+  stroke: var(--ds-text-inverse);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 棚分割 = ┗（直前の行から枝分かれ） */
+.flag-icon--split {
+  color: var(--ds-background-brand-bold);
+}
+
+/* 伝票外 = ＋（伝票に無いのに足された商品） */
+.flag-icon--extra {
+  color: var(--ds-text-warning);
+}
+
+
+/* 棚分割と伝票外が同時に立つ行があるため、印は縦に並べる箱にまとめて重なりを防ぐ */
+.inbound-edit-flag-icons {
+  position: absolute;
+  left: calc(var(--ds-space-075) * -1);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.inbound-edit-flag-icons .flag-icon {
+  display: block;
+  /* select の枠線と干渉しないよう、円の外側を背景色で縁取る */
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--ds-surface-overlay);
+}
+
+/* 編集モーダルの凡例。印は本来 select に重ねる絶対配置なので、ここでは通常配置に戻す */
+.inbound-edit-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-100) var(--ds-space-200);
+  margin-bottom: var(--ds-space-100);
+}
+.inbound-edit-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+}
+
+
+
+/* メイン表で伝票外の追加商品を示すバッジ（棚分割バッジと同形・色で区別） */
+.schedule-extra-badge {
+  display: inline-block;
+  padding: 0 var(--ds-space-050);
+  border: 1px solid var(--ds-text-warning);
+  border-radius: 3px;
+  background-color: var(--ds-background-warning);
+  font-size: 0.6875rem;
+  color: var(--ds-text-warning);
+}
+
+/* 数量セルは「入力＋単位区分」を1セルに収めるため、
+   ヘッダーは右詰めではなく中央揃えにして値の上に来るようにする */
+.inbound-edit-table th.schedule-cell-right {
+  text-align: center;
+}
+/* 操作ヘッダーはボタンと同じ中央揃え */
+.inbound-edit-table th:nth-child(7) {
+  text-align: center;
+}
+
+.inbound-edit-table .form-input {
+  width: 100%;
+  min-width: 0;
+}
+
+/* 操作列のボタンは横一列に並べる
+   （td を display:flex にすると表のセルでなくなり隣列と重なるため、
+     table-cell のまま nowrap + inline-flex のボタンで並べる） */
+.inbound-edit-table .schedule-cell-actions {
+  white-space: nowrap;
+  text-align: center;
+}
+.inbound-edit-table .schedule-cell-actions .btn {
+  white-space: nowrap;
+  padding-left: var(--ds-space-100);
+  padding-right: var(--ds-space-100);
+}
+
+/* 数量は右詰め、単位区分はその右にベタ書き */
+.inbound-edit-table .schedule-qty-input {
+  text-align: right;
+}
+
+.inbound-edit-qty-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-050);
+  min-width: 0;
+}
+/* 数量入力は4桁分の固定幅、単位区分は残り幅（右端の見切れ防止） */
+.inbound-edit-qty-cell .schedule-qty-input {
+  flex: 0 0 auto;
+  width: 3.5rem;
+  min-width: 0;
+  padding-left: var(--ds-space-050);
+  padding-right: var(--ds-space-050);
+}
+.inbound-edit-unit-text {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.inbound-edit-unit-text {
+  color: var(--ds-text-subtle);
+}
+
+.inbound-edit-actions {
+  margin-top: var(--ds-space-100);
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+  flex-wrap: wrap;
+}
+
+/* モーダルタイトル(1rem)と明細(0.75rem)の中間に置く */
+.inbound-confirm-list-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  color: var(--ds-text);
+}
+
+/* 確定確認モーダルの明細リスト: 列を揃えた 1 明細 1 行。
+   列は行ごとではなくリスト全体で揃える必要があるため、ul をグリッドにして li は行そのものにしない。 */
+.inbound-confirm-list {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  overflow-x: hidden;
+}
+/* 取消側は棚ロケーションが無いので2列 */
+.inbound-confirm-list:not(.inbound-confirm-list--received) {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+.inbound-confirm-list .modal-item-list-row {
+  display: contents;
+}
+.inbound-confirm-list .modal-item-list-row > span {
+  padding: var(--ds-space-050) var(--ds-space-150);
+  font-size: 0.75rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.inbound-confirm-list .modal-item-list-row + .modal-item-list-row > span {
+  border-top: 1px solid var(--ds-border);
+}
+.inbound-confirm-list-head > span {
+  position: sticky;
+  top: 0;
+  background: var(--ds-background-neutral);
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+}
+
+/* 確定確認モーダルの明細テーブル（入荷済み / 取消） */
+.inbound-confirm-lists--side {
+  display: flex;
+  gap: var(--ds-space-300);
+  align-items: flex-start;
+}
+/* 横並びは等分せず、明細の文字列の長さに合わせる */
+.inbound-confirm-lists--side .inbound-confirm-list-section {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.inbound-confirm-lists--side .modal-item-list-row {
+  white-space: nowrap;
+}
+/* 中身に合わせて縮むモーダル（横並び表示用） */
+.ds-modal--fit {
+  width: auto;
+  max-width: calc(100vw - 3rem);
+}
+.inbound-confirm-lists--side .modal-item-list-heading {
+  margin-top: 0;
+}
+/* エラー文言は常に領域を確保し、表示切替でモーダルの高さを動かさない */
+.inbound-edit-apply-hint {
+  visibility: hidden;
+}
+
+.inbound-confirm-error {
+  margin-top: var(--ds-space-100);
+  font-size: 0.8125rem;
+  color: var(--ds-text-danger);
+}
+
+/* === SCR-004 入荷予定一覧（React 版に合わせた表示） === */
+.schedule-status-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+.schedule-status-option {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-050);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+}
+
+.list-cell-right {
+  text-align: right;
+}
+
+.list-empty-message {
+  padding: var(--ds-space-300);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+}
+
+.schedule-cell-right {
+  text-align: right;
+}
+
+/* === 入荷予定確定テーブル: 15.6型(1920x1080)フルスクリーンで横スクロールを出さない幅最適化 === */
+/* 左右パディング圧縮（12px→8px, 14列で約112px削減） */
+#inboundScheduleTable th,
+#inboundScheduleTable td {
+  padding-left: var(--ds-space-100);
+  padding-right: var(--ds-space-100);
+}
+/* 商品名は折り返し可（長い商品名による横幅増を抑制） */
+#inboundScheduleTable th:nth-child(6),
+#inboundScheduleTable td:nth-child(6) {
+  white-space: normal;
+  min-width: 8rem;
+}
+/* 入荷予定日列を持たないレイアウトでは商品名が1列左にずれる */
+.schedule-table--no-date-col th:nth-child(6),
+.schedule-table--no-date-col td:nth-child(6) {
+  white-space: nowrap;
+  min-width: 0;
+}
+.schedule-table--no-date-col th:nth-child(5),
+.schedule-table--no-date-col td:nth-child(5) {
+  white-space: normal;
+  min-width: 8rem;
+}
+
+/* 入荷予定確定カード見出し: 対象日バッジ */
+.confirm-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+  justify-content: flex-start; /* section-card-header の space-between を打ち消す */
+}
+/* 確定ボタンを右端へ寄せる */
+.confirm-card-header .btn {
+  margin-left: auto;
+}
+.confirm-heading-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+/* 見出し横の「?」ヘルプ。長い注釈を常時表示せず、ホバー／フォーカスで出す。
+   キーボードでも読めるよう button にし、:focus-within でも開くようにしている。 */
+.help-hint {
+  position: relative;
+  display: inline-flex;
+}
+
+.help-hint-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 1px solid var(--ds-border);
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--ds-text-subtle);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+}
+
+.help-hint-btn:hover {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text);
+}
+
+.help-hint-body {
+  position: absolute;
+  top: calc(100% + var(--ds-space-075));
+  left: 0;
+  z-index: 30;
+  display: none;
+  width: 30rem;
+  max-width: 70vw;
+  padding: var(--ds-space-150);
+  border: 1px solid var(--ds-border);
+  border-radius: 4px;
+  background-color: var(--ds-surface-overlay);
+  box-shadow: var(--ds-shadow-overlay);
+  color: var(--ds-text-subtle);
+  text-align: left;
+  white-space: normal;
+}
+
+/* ツールチップ本文は1文ずつ分けて読ませる */
+.help-hint-list {
+  margin: 0;
+  padding-left: 0;
+  /* マーカーを行ボックスの内側に置き、ぶら下げインデントで見た目を outside と同じにする。
+     outside のままだと padding の外にマーカーが出て、吹き出しの枠からはみ出す */
+  list-style: disc inside;
+}
+.help-hint-list li {
+  padding-left: 1.1em;
+  text-indent: -1.1em;
+}
+
+/* li のぶら下げインデント（text-indent: -1.1em）は継承されるため、
+   inline-block の子要素はその内部の文字が左へ飛び出して手前の文字に重なる。
+   行内に置く要素では打ち消しておく */
+.help-hint-list li > * {
+  text-indent: 0;
+}
+
+/* 文中に置いた印。前後の文字と詰まらないよう左右に余白を取る */
+.help-hint-list .schedule-split-badge,
+.help-hint-list .schedule-extra-badge,
+.help-hint-list .flag-icon {
+  margin: 0 0.25em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.help-hint-list li + li {
+  margin-top: var(--ds-space-100);
+}
+
+.help-hint:hover .help-hint-body,
+.help-hint:focus-within .help-hint-body {
+  display: block;
+}
+
+.confirm-target-date {
+  padding: var(--ds-space-050) var(--ds-space-100);
+  background-color: var(--ds-background-neutral);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+/* 入力系コントロールを内容に合わせて縮小 */
+#inboundScheduleTable .schedule-location-select {
+  width: 6.5rem;
+}
+#inboundScheduleTable .schedule-qty-input {
+  width: 3.75rem;
+}
+/* 操作列は右端固定（万一あふれても取消ボタンに到達できるようにする） */
+#inboundScheduleTable th:last-child,
+#inboundScheduleTable td:last-child {
+  position: sticky;
+  right: 0;
+  box-shadow: -1px 0 0 var(--ds-border);
+}
+/* 行(tr)に設定された背景（選択・通常）をそのまま引き継ぎ、白浮きを防ぐ */
+#inboundScheduleTable td:last-child {
+  background-color: inherit;
+}
+/* ホバー時は他セルと同じ背景（tr ではなく td に色が付くため個別に合わせる） */
+#inboundScheduleTable tbody tr:hover td:last-child {
+  background-color: var(--ds-background-neutral);
+}
+#inboundScheduleTable th:last-child {
+  background-color: var(--ds-background-neutral);
+  /* 左側線に加えてヘッダーの下線（.schedule-table th と同じ）も描画する */
+  box-shadow: -1px 0 0 var(--ds-border), inset 0 -2px 0 var(--ds-border);
+  z-index: 2;
+}
+
+/* スクリーンリーダー専用テキスト（視覚的には非表示） */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* === 入荷確定・出荷確定テーブル（伝票／受注セル結合版）: 数量／単位区分の2列表示 === */
+/* 数量は右詰め、単位は左詰めで、両列の間隔を詰めて1つの値に見せる */
+/* 数量と単位区分は編集モーダルと同じく1セルにまとめる。
+   数量部分を固定幅の右寄せにすることで、列幅に関係なく桁が揃い、
+   ヘッダーもセル中央に置くだけで値の真上に来る（2列結合だと右にずれる）。 */
+.schedule-table--slip-merged .schedule-cell-qty-unit {
+  white-space: nowrap;
+  width: 1px; /* 内容幅まで縮める */
+}
+.schedule-table--slip-merged .schedule-col-qty {
+  text-align: center;
+}
+/* 単位区分のヘッダーは持たない（数量ヘッダーが1セル分を受け持つ） */
+.schedule-table--slip-merged .schedule-col-unit {
+  width: 1px;
+}
+.schedule-qty-value {
+  display: inline-block;
+  width: 3.5rem; /* 4桁＋αを想定した固定幅 */
+  text-align: right;
+}
+.schedule-qty-unit-text {
+  display: inline-block;
+  width: 3.5rem; /* 「ケース」が収まる固定幅。セル幅が値で揺れないようにする */
+  padding-left: var(--ds-space-050);
+  text-align: left;
+}
+
+/* === 入荷予定編集モーダル: 伝票情報を1行で表示 === */
+.inbound-edit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--ds-space-100) var(--ds-space-300);
+  margin: 0 0 var(--ds-space-200);
+}
+
+/* ラベルと値の組に下線を敷く（React 版 DetailModal のメインアイテムと同じ見え方に揃える）。
+   組の幅は内容なりで、左詰めのまま。 */
+.inbound-edit-meta-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ds-space-100);
+  min-width: 0;
+  padding-bottom: var(--ds-space-050);
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.inbound-edit-meta dt {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+  white-space: nowrap;
+}
+
+.inbound-edit-meta dd {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  white-space: nowrap;
+}
+
+
+/* === 伝票／受注セル結合レイアウト（006_inbound_schedule_confirm.html / 012_outbound_schedule_confirm.html） ===
+   伝票No・入荷元（受注No・出荷先）・編集ボタンを rowspan の1セルにまとめ、明細行から重複表示をなくす。 */
+.slip-merged-page .slip-cell {
+  background-color: var(--ds-surface-raised); /* 明細行と同じ白 */
+  /* 明細の先頭行と伝票情報の位置を揃えるため上詰め（行数が多くても伝票Noが先頭で見える） */
+  vertical-align: top;
+}
+/* 確定チェックボックスは伝票セルの中に置き、伝票と一体で扱う */
+.slip-merged-page .slip-cell .row-checkbox {
+  margin: 0;
+  flex: 0 0 auto;
+  /* 伝票No の行の中央に合わせる（入荷元を含めた2行の中央に落とさない）。
+     伝票No の行高 1.25rem に対してチェックボックス 1rem を center する分だけ下げる */
+  align-self: flex-start;
+  width: 1rem;
+  height: 1rem;
+  margin-top: calc((1.25rem - 1rem) / 2);
+}
+.slip-head {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+}
+
+.slip-merged-page .slip-cell-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+  white-space: nowrap;
+}
+
+.slip-merged-page .slip-cell-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.slip-merged-page .slip-doc-no {
+  font-weight: 600;
+}
+
+.slip-merged-page .slip-supplier {
+  font-size: 0.8125rem;
+  color: var(--ds-text-subtle);
+}
+
+/* 明細行のホバーでは結合セルに色を付けない（縦に複数行またぐため） */
+.slip-merged-page .schedule-table--slip-merged tbody tr:hover .slip-cell {
+  background-color: var(--ds-surface-raised);
+}
+
+/* 伝票セル自身のホバーは、クリックで確定チェックが切り替わることを示す */
+.slip-merged-page .schedule-table--slip-merged tbody tr td.slip-cell:hover {
+  background-color: var(--ds-background-neutral-hovered);
+  cursor: pointer;
+}
+
+/* チェックできない伝票はハイライトのみ。クリックしても切り替わらないためカーソルは変えない */
+.slip-merged-page .schedule-table--slip-merged tbody tr td.slip-cell--locked:hover {
+  cursor: default;
+}
+
+/* 取消行の淡色化・打ち消し線は明細セルだけに掛ける。
+   伝票セルは取消行と同じ <tr> にあるため、そのままでは編集ボタンまで無効に見えてしまう。 */
+.slip-merged-page .schedule-row--cancelled {
+  opacity: 1;
+}
+.slip-merged-page .schedule-row--cancelled td:not(.slip-cell) {
+  opacity: 0.4;
+}
+.slip-merged-page .schedule-row--cancelled .slip-cell {
+  text-decoration: none;
+}
+/* 数量・単位は inline-block のため親の打ち消し線が伝わらない。個別に付ける */
+.slip-merged-page .schedule-row--cancelled .schedule-qty-value,
+.slip-merged-page .schedule-row--cancelled .schedule-qty-unit-text {
+  text-decoration: line-through;
+}
+
+/* 編集モーダルは入力中の行なので、取消行でも打ち消し線は出さない（色と操作で区別する） */
+.inbound-edit-table .schedule-row--cancelled td,
+.inbound-edit-table .schedule-row--cancelled .schedule-qty-value,
+.inbound-edit-table .schedule-row--cancelled .schedule-qty-unit-text {
+  text-decoration: none;
+}
+
+/* 全商品が取消された伝票 */
+.slip-merged-page .slip-cell--cancelled .slip-cell-text {
+  text-decoration: line-through;
+  color: var(--ds-text-subtle);
+}
+
+/* 伝票セル結合レイアウトの列幅調整
+   （先頭行だけ結合セルが2つ増えるため nth-child による列指定は使えない） */
+.schedule-table--slip-merged .schedule-item-name-cell {
+  white-space: normal;  /* 商品コード / 商品名 は折り返し可 */
+  min-width: 12rem;
+}
+.slip-merged-page .slip-cell-text {
+  white-space: normal;
+}
+.slip-merged-page .slip-doc-no,
+.slip-merged-page .slip-supplier {
+  white-space: nowrap;
+}
+
+/* 出荷確定の編集モーダルは商品を差し替えられないため、商品セルは文字で表示する
+   （棚分割・伝票外の印が select と同じ位置に載るよう、select と同じ高さを確保する） */
+.outbound-edit-item-text {
+  display: flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding-left: var(--ds-space-100);
+}
+
+/* === トースト通知 ===
+   Reactの ToastRoot（notify.success/error/info）に対応する表示部。
+   ヘッダー（3rem）下・サイドバー（240px）右の本文領域に、周囲 8px の余白で広げる */
+
+.toast-container {
+  position: fixed;
+  top: calc(3rem + 0.5rem);
+  left: calc(240px + 0.5rem);
+  right: 0.5rem;
+  z-index: 150; /* モーダルオーバーレイより前面 */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none; /* 本文操作を妨げない。トースト自体は個別に復帰させる */
+}
+
+.toast {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ds-space-150);
+  padding: 0.5rem;
+  border-radius: 3px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: var(--ds-surface);
+  color: var(--ds-text);
+  box-shadow:
+    0 1px 3px 0 rgb(156 163 175 / 0.7),
+    0 1px 2px -1px rgb(156 163 175 / 0.7);
+  animation: toast-in 0.15s ease-out;
+  pointer-events: auto; /* container の pointer-events:none を打ち消す */
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast--success {
+  background-color: var(--ds-background-success);
+  color: var(--ds-text-success);
+}
+
+.toast--error {
+  background-color: var(--ds-background-danger);
+  color: var(--ds-text-danger);
+}
+
+.toast--info {
+  background-color: var(--ds-background-information);
+  color: var(--ds-text-information);
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.toast-close {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}

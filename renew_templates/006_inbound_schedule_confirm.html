@@ -1,0 +1,979 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入荷確定 | WMS</title>
+  <link rel="stylesheet" href="../static/css/tokens.css">
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/sticky-notes.css">
+</head>
+<body class="schedule-page slip-merged-page">
+  <div class="app-layout">
+
+    <!-- グローバルナビゲーション -->
+    <header class="app-header" role="banner">
+      <a href="003_inbound_schedule_list.html" class="app-header-logo" aria-label="WMS ホーム">WMS</a>
+      <span class="app-header-spacer"></span>
+      <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="テーマ切替">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      </button>
+      <div class="app-header-user-menu">
+        <button class="app-header-user-btn" onclick="toggleUserMenu()" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+          倉庫オペレーター
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <!-- サイドナビゲーション -->
+      <nav class="app-sidebar" aria-label="メインナビゲーション">
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">マスター定義</p>
+          <a href="001_shelf_location.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+            棚ロケ定義
+          </a>
+          <a href="002_item_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 16l-4-4 4-4 1.41 1.41L6.83 12l1.58 1.59L7 16zm10 0l-1.41-1.41L17.17 13l-1.58-1.59L17 8l4 4-4 4z"/></svg>
+            商品マスタ
+          </a>
+          <a href="003_supplier_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            取引先マスタ
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">入荷管理</p>
+          <a href="004_inbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            入荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="005_inbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷予定登録
+            </a>
+            <a aria-current="page" href="006_inbound_schedule_confirm.html" class="side-nav-sub-item active">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷確定
+            </a>
+            <a href="007_inbound_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷登録
+            </a>
+          </div>
+          <a href="008_inbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            入荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">出荷管理</p>
+          <a href="009_outbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            出荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="010_outbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷予定登録
+            </a>
+            <a href="011_allocation_check.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              引き当てチェック
+            </a>
+            <a href="012_outbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷確定
+            </a>
+          </div>
+          <a href="013_outbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            出荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">在庫管理</p>
+          <a href="014_inventory_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            在庫管理
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="015_inventory_detail.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              在庫管理（棚ロケ別）
+            </a>
+          </div>
+          <a href="016_inventory_adjustment.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/></svg>
+            在庫調整
+          </a>
+          <a href="020_inventory_adjustment_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            在庫調整履歴
+          </a>
+          <a href="017_location_transfer.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/></svg>
+            棚ロケ移動登録
+          </a>
+          <a href="018_transfer_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚ロケ移動履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">棚卸</p>
+          <a href="019_inventory_count.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            棚卸管理
+          </a>
+          <a href="#" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚卸数更新履歴
+          </a>
+        </div>
+
+      </nav>
+
+      <!-- メインコンテンツ -->
+      <main class="app-main schedule-main" id="mainContent">
+
+        <h1 class="page-header heading-xl">入荷確定</h1>
+
+        <!-- コントロール行 -->
+        <div class="schedule-control-row">
+          <div class="schedule-date-group">
+            <label for="scheduleDate" class="schedule-date-label">入荷日</label>
+            <input
+              type="date"
+              id="scheduleDate"
+              class="form-input date-input"
+              aria-label="入荷日を選択"
+            >
+          </div>
+          <div class="schedule-search-group">
+            <label for="scheduleSearch" class="schedule-date-label">検索</label>
+            <input
+              type="text"
+              id="scheduleSearch"
+              class="form-input schedule-search-input"
+              placeholder="キーワードを入力"
+              autocomplete="off"
+              aria-label="テーブル検索"
+              onkeydown="if (event.key === 'Enter') filterInboundConfirmTable()"
+            >
+          </div>
+          <!-- 入荷日・キーワードとも、このボタンを押すまで一覧に反映しない -->
+          <button type="button" class="btn btn-primary" onclick="filterInboundConfirmTable()">検索</button>
+          <span id="scheduleUpdatedAt" class="schedule-updated-at body-s text-subtle"></span>
+        </div>
+
+        <div class="schedule-sections">
+
+          <!-- 入荷確定テーブル -->
+          <section class="section-card schedule-section-half" aria-labelledby="sectionConfirmSchedule">
+            <div class="schedule-section-header">
+              <div class="confirm-heading-group">
+                <h2 class="heading-m" id="sectionConfirmSchedule">入荷予定情報</h2>
+                <span class="help-hint">
+                  <button type="button" class="help-hint-btn" aria-label="この表の使い方"
+                          aria-describedby="scheduleTableHelp">?</button>
+                  <span class="help-hint-body body-s" role="tooltip" id="scheduleTableHelp">
+                    <ul class="help-hint-list">
+                      <li>この表で変更できるのは棚ロケーションのみです。数量・ロット番号・賞味期限の変更、商品の増減、棚分割、明細の取消は伝票セルの「編集」から行います。</li>
+                      <li>確定チェックボックスは伝票単位です。伝票セルのクリックでも切り替えられます。取消されていない商品すべてに棚ロケーションが入るまで選択できません。</li>
+                      <li>データベースへの反映は「確定」ボタンを押したときにまとめて行います。</li>
+                      <li><span class="schedule-split-badge">棚分割</span> 1つの商品を複数の棚に分けた行</li>
+                      <li><span class="schedule-extra-badge">伝票外</span> 伝票に無いが一緒に入荷した行</li>
+                    </ul>
+                  </span>
+                </span>
+                <span id="confirmTargetDate" class="confirm-target-date body-s text-subtle"></span>
+              </div>
+              <div class="schedule-section-actions">
+                <button type="button" class="btn btn-primary" id="inboundConfirmBtn" onclick="openInboundConfirmModal()" disabled>確定</button>
+              </div>
+            </div>
+            <hr class="section-divider">
+            <div class="schedule-table-wrapper">
+              <table class="schedule-table schedule-table--slip-merged" id="inboundScheduleTable" aria-label="入荷確定">
+                <thead>
+                  <tr>
+                    <th scope="col"><span class="slip-head"><input type="checkbox" id="selectAllRows" onchange="onInboundSelectAllChange()" aria-label="全伝票を選択">伝票</span></th>
+                    <th scope="col">商品</th>
+                    <th scope="col">棚ロケーション</th>
+                    <th scope="col" class="schedule-col-qty">数量</th>
+                    <th scope="col">ロット番号</th>
+                    <th scope="col">賞味期限</th>
+                    <th scope="col">特記事項</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260509-001" data-item-code="P-A0001" data-item-name="国産サバ缶"
+                      data-unit="ケース" data-supplier="佐々木商事" data-schedule-date="2026-05-09"
+                      data-qty="8" data-lot-no="LOT-2025-001" data-expiry-date="2028-12-25" data-remarks="">
+                    <td class="slip-cell" rowspan="4">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260509-001</span><span class="slip-supplier">佐々木商事</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-A0001 / 国産サバ缶</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01" selected>A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">8</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td>LOT-2025-001</td>
+                    <td>2028/12/25</td>
+                    <td></td>
+                  </tr>
+                  <!-- 同じ商品を2つの棚に分けた行（編集モーダルの「棚分割」で増やした想定） -->
+                  <tr class="schedule-item-row schedule-row--split"
+                      data-doc-no="SLIP-20260509-001" data-item-code="P-A0001" data-item-name="国産サバ缶"
+                      data-unit="ケース" data-supplier="佐々木商事" data-schedule-date="2026-05-09"
+                      data-qty="4" data-lot-no="LOT-2025-001" data-expiry-date="2028-12-25" data-remarks="">
+                    <td class="schedule-item-name-cell">P-A0001 / 国産サバ缶 <span class="schedule-split-badge">棚分割</span></td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01" selected>B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">4</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td>LOT-2025-001</td>
+                    <td>2028/12/25</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260509-001" data-item-code="P-A0002" data-item-name="冷凍エビフライ"
+                      data-unit="ケース" data-supplier="佐々木商事" data-schedule-date="2026-05-09"
+                      data-qty="48" data-lot-no="LOT-2025-002" data-expiry-date="2028-01-12" data-remarks="要冷凍">
+                    <td class="schedule-item-name-cell">P-A0002 / 冷凍エビフライ</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02" selected>A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">48</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td>LOT-2025-002</td>
+                    <td>2028/01/12</td>
+                    <td>要冷凍</td>
+                  </tr>
+                  <!-- 伝票には無いが一緒に入荷した商品（編集モーダルの「商品を追加」で足した想定） -->
+                  <tr class="schedule-item-row schedule-row--extra"
+                      data-doc-no="SLIP-20260509-001" data-item-code="P-90010" data-item-name="段ボール箱 Mサイズ"
+                      data-unit="枚" data-supplier="佐々木商事" data-schedule-date="2026-05-09"
+                      data-qty="20" data-lot-no="" data-expiry-date="" data-remarks="伝票外" data-extra="1">
+                    <td class="schedule-item-name-cell">P-90010 / 段ボール箱 Mサイズ <span class="schedule-extra-badge">伝票外</span></td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03" selected>A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">20</span><span class="schedule-qty-unit-text">枚</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>伝票外</td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260509-002" data-item-code="P-20031" data-item-name="スチールラック 180cm"
+                      data-unit="台" data-supplier="田中物産" data-schedule-date="2026-05-09"
+                      data-qty="20" data-lot-no="LOT-2025-003" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="3">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260509-002</span><span class="slip-supplier">田中物産</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-20031 / スチールラック 180cm</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02" selected>B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">20</span><span class="schedule-qty-unit-text">台</span></td>
+                    <td>LOT-2025-003</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260509-002" data-item-code="P-30055" data-item-name="作業用手袋 Lサイズ"
+                      data-unit="双" data-supplier="田中物産" data-schedule-date="2026-05-09"
+                      data-qty="120" data-lot-no="LOT-2025-004" data-expiry-date="" data-remarks="">
+                    <td class="schedule-item-name-cell">P-30055 / 作業用手袋 Lサイズ</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03" selected>B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">120</span><span class="schedule-qty-unit-text">双</span></td>
+                    <td>LOT-2025-004</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260509-002" data-item-code="P-70034" data-item-name="台車 折りたたみ式"
+                      data-unit="台" data-supplier="田中物産" data-schedule-date="2026-05-09"
+                      data-qty="6" data-lot-no="" data-expiry-date="" data-remarks="">
+                    <td class="schedule-item-name-cell">P-70034 / 台車 折りたたみ式</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01" selected>C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">6</span><span class="schedule-qty-unit-text">台</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260509-003" data-item-code="P-40012" data-item-name="安全ヘルメット 白"
+                      data-unit="個" data-supplier="鈴木運輸" data-schedule-date="2026-05-09"
+                      data-qty="80" data-lot-no="" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="1">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260509-003</span><span class="slip-supplier">鈴木運輸</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-40012 / 安全ヘルメット 白</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01" selected>C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">80</span><span class="schedule-qty-unit-text">個</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260510-004" data-item-code="P-50023" data-item-name="防塵マスク 10枚入"
+                      data-unit="箱" data-supplier="鈴木運輸" data-schedule-date="2026-05-10"
+                      data-qty="150" data-lot-no="LOT-2025-006" data-expiry-date="2027-03-31" data-remarks="">
+                    <td class="slip-cell" rowspan="1">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260510-004</span><span class="slip-supplier">鈴木運輸</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-50023 / 防塵マスク 10枚入</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02" selected>C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">150</span><span class="schedule-qty-unit-text">箱</span></td>
+                    <td>LOT-2025-006</td>
+                    <td>2027/03/31</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260510-005" data-item-code="P-60011" data-item-name="パレット 1100×1100"
+                      data-unit="枚" data-supplier="伊藤商店" data-schedule-date="2026-05-10"
+                      data-qty="60" data-lot-no="LOT-2025-007" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260510-005</span><span class="slip-supplier">伊藤商店</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-60011 / パレット 1100×1100</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01" selected>D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">枚</span></td>
+                    <td>LOT-2025-007</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row schedule-row--cancelled"
+                      data-doc-no="SLIP-20260510-005" data-item-code="P-60012" data-item-name="パレット 800×1200"
+                      data-unit="枚" data-supplier="伊藤商店" data-schedule-date="2026-05-10"
+                      data-qty="40" data-lot-no="LOT-2025-008" data-expiry-date="" data-remarks="">
+                    <td class="schedule-item-name-cell">P-60012 / パレット 800×1200</td>
+                    <td>
+                      <select class="form-input schedule-location-select" disabled onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01" selected>D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">枚</span></td>
+                    <td>LOT-2025-008</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row schedule-row--cancelled"
+                      data-doc-no="SLIP-20260510-006" data-item-code="P-80021" data-item-name="結束バンド 100本入"
+                      data-unit="袋" data-supplier="佐々木商事" data-schedule-date="2026-05-10"
+                      data-qty="30" data-lot-no="LOT-2025-009" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="1">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260510-006</span><span class="slip-supplier">佐々木商事</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-80021 / 結束バンド 100本入</td>
+                    <td>
+                      <select class="form-input schedule-location-select" disabled onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02" selected>D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">30</span><span class="schedule-qty-unit-text">袋</span></td>
+                    <td>LOT-2025-009</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260511-007" data-item-code="P-90005" data-item-name="緩衝材 ロール"
+                      data-unit="本" data-supplier="田中物産" data-schedule-date="2026-05-11"
+                      data-qty="25" data-lot-no="" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260511-007</span><span class="slip-supplier">田中物産</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-90005 / 緩衝材 ロール</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03" selected>B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">25</span><span class="schedule-qty-unit-text">本</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260511-007" data-item-code="P-90010" data-item-name="段ボール箱 Mサイズ"
+                      data-unit="枚" data-supplier="田中物産" data-schedule-date="2026-05-11"
+                      data-qty="300" data-lot-no="LOT-2025-011" data-expiry-date="" data-remarks="">
+                    <td class="schedule-item-name-cell">P-90010 / 段ボール箱 Mサイズ</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="">—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01" selected>B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">300</span><span class="schedule-qty-unit-text">枚</span></td>
+                    <td>LOT-2025-011</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="SLIP-20260511-008" data-item-code="P-A0001" data-item-name="国産サバ缶"
+                      data-unit="ケース" data-supplier="伊藤商店" data-schedule-date="2026-05-11"
+                      data-qty="8" data-lot-no="LOT-2025-012" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="1">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">SLIP-20260511-008</span><span class="slip-supplier">伊藤商店</span></div>
+                        <button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-A0001 / 国産サバ缶</td>
+                    <td>
+                      <select class="form-input schedule-location-select" onchange="onInboundLocationChange(this)" aria-label="棚ロケーション">
+                        <option value="" selected>—</option>
+                        <option value="A-01-01">A-01-01</option>
+                        <option value="A-01-02">A-01-02</option>
+                        <option value="A-01-03">A-01-03</option>
+                        <option value="B-02-01">B-02-01</option>
+                        <option value="B-02-02">B-02-02</option>
+                        <option value="B-02-03">B-02-03</option>
+                        <option value="C-03-01">C-03-01</option>
+                        <option value="C-03-02">C-03-02</option>
+                        <option value="D-04-01">D-04-01</option>
+                        <option value="D-04-02">D-04-02</option>
+                      </select>
+                    </td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">8</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td>LOT-2025-012</td>
+                    <td>-</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 伝票単位の編集モーダル（商品の増減・棚の決定・数量/ロット/賞味期限の変更） -->
+  <div id="inboundEditModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="inboundEditModalTitle">
+    <div class="ds-modal ds-modal--wide">
+      <div class="ds-modal-header">
+        <h2 class="heading-s" id="inboundEditModalTitle">入荷予定の編集</h2>
+        <!-- 伝票が1件も入荷しなかった場合。登録済みの明細は取消、追加した明細は削除される -->
+        <button type="button" class="btn btn-danger" onclick="deleteInboundEditSlip()">伝票削除</button>
+      </div>
+      <div class="ds-modal-body">
+        <dl class="inbound-edit-meta">
+          <div class="inbound-edit-meta-item">
+            <dt>伝票No</dt>
+            <dd id="inboundEditDocNo">‐</dd>
+          </div>
+          <div class="inbound-edit-meta-item">
+            <dt>入荷元</dt>
+            <dd id="inboundEditSupplier">‐</dd>
+          </div>
+          <div class="inbound-edit-meta-item">
+            <dt>入荷予定日</dt>
+            <dd id="inboundEditSchedule">‐</dd>
+          </div>
+        </dl>
+
+        <p class="modal-item-list-heading heading-s">商品明細</p>
+        <div class="inbound-edit-legend body-s text-subtle">
+          <span class="inbound-edit-legend-item">
+            <svg class="flag-icon flag-icon--split" viewBox="0 0 24 24" role="img" aria-label="棚分割で追加した行"><circle cx="12" cy="12" r="11"/><path d="M6.5 6.5V12H17.5" /><path d="M14.5 9L17.5 12L14.5 15" /></svg>
+            棚分割で追加した行（同じ商品を複数の棚に分ける）
+          </span>
+          <span class="inbound-edit-legend-item">
+            <svg class="flag-icon flag-icon--extra" viewBox="0 0 24 24" role="img" aria-label="伝票に無い追加の商品"><circle cx="12" cy="12" r="11"/><path d="M12 6.5v11M6.5 12h11"/></svg>
+            伝票に無いが一緒に入荷した商品
+          </span>
+        </div>
+        <div class="inbound-edit-table-wrapper">
+          <table class="schedule-table inbound-edit-table">
+            <thead>
+              <tr>
+                <th scope="col">商品</th>
+                <th scope="col">棚ロケーション</th>
+                <th scope="col" class="schedule-cell-right">数量</th>
+                <th scope="col">ロット番号</th>
+                <th scope="col">賞味期限</th>
+                <th scope="col">特記事項</th>
+                <th scope="col">操作</th>
+              </tr>
+            </thead>
+            <tbody id="inboundEditItemList"></tbody>
+          </table>
+        </div>
+        <div class="inbound-edit-actions">
+          <button type="button" class="btn btn-default" onclick="addInboundEditItem()">商品を追加</button>
+          <span class="body-s text-subtle">1つの商品を複数の棚に分ける場合は、その行の「棚分割」で同じ商品の行を追加します。</span>
+        </div>
+        <p id="inboundEditApplyHint" class="inbound-confirm-error inbound-edit-apply-hint">
+          商品と数量が未入力の明細があります。入力するか、その明細を削除してください。
+        </p>
+      </div>
+      <div class="ds-modal-footer">
+        <!-- 編集前の状態ではなく、データベースに登録されている伝票の内容に戻す（棚ロケーションを含む） -->
+        <button type="button" class="btn btn-default" onclick="restoreInboundEditSlip()">伝票の内容に戻す</button>
+        <button type="button" class="btn btn-default" onclick="closeModal('inboundEditModal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" id="inboundEditApplyBtn" onclick="applyInboundEditModal()">この内容で反映する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確定確認モーダル -->
+  <div id="inboundConfirmModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="inboundConfirmModalTitle">
+    <div class="ds-modal ds-modal--fit">
+      <div class="ds-modal-header">
+        <h2 class="heading-s" id="inboundConfirmModalTitle">入荷確定の確認</h2>
+      </div>
+      <div class="ds-modal-body">
+        <table class="modal-confirm-table">
+          <tbody>
+            <tr>
+              <th scope="row">入荷日</th>
+              <td id="inboundConfirmDate">‐</td>
+            </tr>
+            <tr>
+              <th scope="row">入荷済みにする伝票</th>
+              <td id="inboundConfirmTargetCount">0 伝票</td>
+            </tr>
+            <tr>
+              <th scope="row">削除する伝票</th>
+              <td id="inboundConfirmDeleteCount">0 伝票</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="inboundConfirmLists" class="inbound-confirm-lists inbound-confirm-lists--side">
+          <section class="inbound-confirm-list-section">
+            <p class="modal-item-list-heading inbound-confirm-list-title">入荷済みにする明細</p>
+            <ul id="inboundConfirmItemList" class="modal-item-list inbound-confirm-list inbound-confirm-list--received">
+              <li class="modal-item-list-row inbound-confirm-list-head"><span>入荷元</span><span>商品</span><span>棚ロケ</span></li>
+            </ul>
+          </section>
+          <section class="inbound-confirm-list-section" id="inboundConfirmCancelSection">
+            <p class="modal-item-list-heading inbound-confirm-list-title">取消する明細</p>
+            <ul id="inboundConfirmCancelList" class="modal-item-list inbound-confirm-list">
+              <li class="modal-item-list-row inbound-confirm-list-head"><span>入荷元</span><span>商品</span></li>
+            </ul>
+          </section>
+        </div>
+        <p id="inboundConfirmError" class="inbound-confirm-error" style="display: none;"></p>
+      </div>
+      <div class="ds-modal-footer">
+        <button type="button" class="btn btn-default" onclick="closeModal('inboundConfirmModal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="submitInboundConfirm()">確定する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- フラッシュメッセージ -->
+  <div id="inboundConfirmFlash" class="transfer-flash" style="display: none;" role="alert" aria-live="polite"></div>
+
+  <script src="../static/js/sticky-notes.js"></script>
+  <script src="../static/js/main.js"></script>
+  <script>
+    initScheduleDate();
+    initScheduleUpdatedAt();
+    syncConfirmTargetDate();
+
+    // === 伝票セル結合レイアウト用の上書き ===
+    // 伝票グループ行を廃し、各伝票の先頭明細行に rowspan のセルを持たせる構成のため、
+    // グループ行を前提にした共通処理をこのページだけ差し替える。
+    (function () {
+      function itemRows() {
+        return Array.from(document.querySelectorAll('#inboundScheduleTable tbody tr.schedule-item-row'));
+      }
+
+      function buildSlipCells(docNo, supplier, span) {
+        return '<td class="slip-cell" rowspan="' + span + '">' +
+            '<div class="slip-cell-inner">' +
+              '<input type="checkbox" class="row-checkbox" onchange="onInboundGroupCheckboxChange(this)" aria-label="この伝票を確定対象にする">' +
+              '<div class="slip-cell-text"><span class="slip-doc-no">' + docNo + '</span>' +
+              '<span class="slip-supplier">' + supplier + '</span></div>' +
+              '<button type="button" class="btn btn-default" onclick="openInboundEditModal(this)">編集</button>' +
+            '</div>' +
+          '</td>';
+      }
+
+      // 明細行の増減後に、伝票セルの位置と rowspan を作り直す
+      function syncSlipCells() {
+        var rows = itemRows();
+        // 伝票セルは作り直すため、手動で切り替えたチェック状態を退避する
+        var checked = {};
+        getInboundGroupRows().forEach(function (r) {
+          var cb = r.querySelector('.row-checkbox');
+          checked[r.dataset.docNo] = !!(cb && cb.checked);
+        });
+        rows.forEach(function (r) {
+          Array.from(r.querySelectorAll('.slip-cell')).forEach(function (c) { c.remove(); });
+        });
+        var groups = {};
+        var order = [];
+        rows.forEach(function (r) {
+          var doc = r.dataset.docNo;
+          if (!groups[doc]) { groups[doc] = []; order.push(doc); }
+          groups[doc].push(r);
+        });
+        order.forEach(function (doc) {
+          var g = groups[doc];
+          g[0].insertAdjacentHTML('afterbegin', buildSlipCells(doc, g[0].dataset.supplier || '', g.length));
+          var cb = g[0].querySelector('.row-checkbox');
+          if (cb) cb.checked = !!checked[doc];
+        });
+        refreshAllInboundGroupCheckboxes();
+      }
+
+      // 伝票の代表行 = 伝票セルを持つ先頭明細行
+      getInboundGroupRows = function () {
+        return itemRows().filter(function (r) { return !!r.querySelector('.slip-cell'); });
+      };
+
+      // 明細行の HTML は伝票セルを含めない（伝票セルは syncSlipCells が付け直す）
+      buildInboundRowHTML = function (o) {
+        return '<td class="schedule-item-name-cell">' + o.itemCode + ' / ' + o.itemName +
+            (o.split ? ' <span class="schedule-split-badge">棚分割</span>' : '') +
+            (o.extra ? ' <span class="schedule-extra-badge">伝票外</span>' : '') + '</td>' +
+          '<td>' + buildInboundLocationSelect(o.location) + '</td>' +
+          '<td class="schedule-cell-qty-unit">' +
+            '<span class="schedule-qty-value">' + o.qty + '</span>' +
+            '<span class="schedule-qty-unit-text">' + (o.unit || '') + '</span></td>' +
+          '<td>' + (o.lotNo || '-') + '</td>' +
+          '<td>' + inboundJpDate(o.expiryDate) + '</td>' +
+          '<td>' + (o.remarks || '') + '</td>';
+      };
+
+      var originalApply = applyInboundEditModal;
+      applyInboundEditModal = function () {
+        originalApply();
+        syncSlipCells();
+      };
+
+      // 検索は伝票単位で行う。明細行だけを隠すと伝票セルの rowspan が合わなくなるため、
+      // 伝票内のいずれかの明細が一致したら、その伝票の全行を表示する。
+      filterInboundConfirmTable = function () {
+        syncConfirmTargetDate();
+        var input = document.getElementById('scheduleSearch');
+        var q = ((input && input.value) || '').toLowerCase().trim();
+        var hit = {};
+        itemRows().forEach(function (r) {
+          var d = r.dataset;
+          var text = [d.docNo, d.supplier, d.itemCode, d.itemName, d.lotNo].join(' ').toLowerCase();
+          if (!q || text.indexOf(q) !== -1) hit[d.docNo] = true;
+        });
+        itemRows().forEach(function (r) {
+          r.style.display = hit[r.dataset.docNo] ? '' : 'none';
+        });
+      };
+
+      // 伝票セルのクリックで確定チェックボックスをトグルする（編集ボタン・チェックボックス上は除く）
+      var table = document.getElementById('inboundScheduleTable');
+      if (table) {
+        table.addEventListener('click', function (e) {
+          var cell = e.target.closest('.slip-cell');
+          if (!cell || e.target.closest('button, input, label')) return;
+          var cb = cell.closest('tr').querySelector('.row-checkbox');
+          if (!cb || cb.disabled) return;
+          cb.checked = !cb.checked;
+          onInboundGroupCheckboxChange(cb);
+        });
+      }
+    })();
+
+
+    // === 「伝票外の追加商品」フラグ（extra）の上書き ===
+    // 伝票と実物が食い違う場合に、編集モーダルの「商品を追加」で足した行を
+    // 伝票由来の明細と区別できるようにする。
+    // 棚分割（split）が「直前行と同じ商品か」で自動整理される派生フラグなのに対し、
+    // extra は利用者の操作を起点に立つ固定フラグなので、自動では消さない。
+    (function () {
+      var origReadRow = readInboundRow;
+      readInboundRow = function (row) {
+        var o = origReadRow(row);
+        o.extra = row.dataset.extra === '1';
+        return o;
+      };
+
+      var origCreateRow = createInboundRow;
+      createInboundRow = function (o) {
+        var tr = origCreateRow(o);
+        tr.dataset.extra = o.extra ? '1' : '';
+        if (o.extra) tr.classList.add('schedule-row--extra');
+        return tr;
+      };
+
+      // 編集モーダルの行。棚分割と伝票外は同時に立ちうるため、印は1つの箱にまとめて縦に並べる
+      buildInboundEditRowHTML = function (o) {
+        var flags = '';
+        if (o.split) {
+          flags += '<svg class="flag-icon flag-icon--split" viewBox="0 0 24 24" role="img" aria-label="棚分割で追加した行"><circle cx="12" cy="12" r="11"/><path d="M6.5 6.5V12H17.5" /><path d="M14.5 9L17.5 12L14.5 15" /></svg>';
+        }
+        if (o.extra) {
+          flags += '<svg class="flag-icon flag-icon--extra" viewBox="0 0 24 24" role="img" aria-label="伝票に無い追加の商品"><circle cx="12" cy="12" r="11"/><path d="M12 6.5v11M6.5 12h11"/></svg>';
+        }
+        return '<td>' +
+            '<div class="inbound-edit-item-cell">' +
+              (flags ? '<span class="inbound-edit-flag-icons">' + flags + '</span>' : '') +
+              buildInboundItemSelect(o.itemCode) +
+            '</div>' +
+          '</td>' +
+          '<td>' + buildInboundLocationSelect(o.location) + '</td>' +
+          '<td>' +
+            '<div class="inbound-edit-qty-cell">' +
+              '<input type="number" class="form-input schedule-qty-input" value="' + o.qty + '" min="1" oninput="refreshInboundEditRowStates()" aria-label="数量">' +
+              '<span class="inbound-edit-unit-text">' + (o.unit || '') + '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td><input type="text" class="form-input schedule-lot-input" value="' + o.lotNo + '" placeholder="ロット番号" aria-label="ロット番号"></td>' +
+          '<td><input type="date" class="form-input schedule-expiry-input" value="' + o.expiryDate + '" aria-label="賞味期限"></td>' +
+          '<td><input type="text" class="form-input inbound-edit-remarks" value="' + (o.remarks || '') + '" placeholder="特記事項" aria-label="特記事項"></td>' +
+          '<td class="schedule-cell-actions">' + buildInboundEditRowActions(o) + '</td>';
+      };
+
+      var origCreateEditRow = createInboundEditRow;
+      createInboundEditRow = function (o) {
+        var tr = origCreateEditRow(o);
+        tr.dataset.extra = o.extra ? '1' : '';
+        return tr;
+      };
+
+      var origReadEditRow = readInboundEditRow;
+      readInboundEditRow = function (tr) {
+        var o = origReadEditRow(tr);
+        o.extra = tr.dataset.extra === '1';
+        return o;
+      };
+
+      // 「商品を追加」で足した行 = 伝票に無い商品
+      addInboundEditItem = function () {
+        var tbody = document.getElementById('inboundEditItemList');
+        if (!tbody) return;
+        tbody.appendChild(createInboundEditRow({
+          itemCode: '', itemName: '', unit: '', location: '',
+          qty: '', lotNo: '', expiryDate: '', remarks: '', extra: true
+        }));
+        refreshInboundEditSplitFlags();
+        refreshInboundEditRowStates();
+      };
+      // 伝票外の行を棚分割した場合、分割行にも extra が引き継がれる
+      // （splitInboundEditItem は readInboundEditRow の戻り値をそのまま複製するため上書き不要）
+    })();
+
+    initInboundConfirm();
+  </script>
+</body>
+</html>

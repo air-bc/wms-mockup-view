@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>出荷確定 | WMS</title>
+  <link rel="stylesheet" href="../static/css/tokens.css">
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/sticky-notes.css">
+</head>
+<body class="schedule-page slip-merged-page">
+  <div class="app-layout">
+
+    <!-- グローバルナビゲーション -->
+    <header class="app-header" role="banner">
+      <a href="009_outbound_schedule_list.html" class="app-header-logo" aria-label="WMS ホーム">WMS</a>
+      <span class="app-header-spacer"></span>
+      <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="テーマ切替">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      </button>
+      <div class="app-header-user-menu">
+        <button class="app-header-user-btn" onclick="toggleUserMenu()" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+          倉庫オペレーター
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <!-- サイドナビゲーション -->
+      <nav class="app-sidebar" aria-label="メインナビゲーション">
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">マスター定義</p>
+          <a href="001_shelf_location.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+            棚ロケ定義
+          </a>
+          <a href="002_item_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 16l-4-4 4-4 1.41 1.41L6.83 12l1.58 1.59L7 16zm10 0l-1.41-1.41L17.17 13l-1.58-1.59L17 8l4 4-4 4z"/></svg>
+            商品マスタ
+          </a>
+          <a href="003_supplier_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            取引先マスタ
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">入荷管理</p>
+          <a href="004_inbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            入荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="005_inbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷予定登録
+            </a>
+            <a href="006_inbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷確定
+            </a>
+            <a href="007_inbound_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷登録
+            </a>
+          </div>
+          <a href="008_inbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            入荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">出荷管理</p>
+          <a href="009_outbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            出荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="010_outbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷予定登録
+            </a>
+            <a href="011_allocation_check.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              引き当てチェック
+            </a>
+            <a aria-current="page" href="012_outbound_schedule_confirm.html" class="side-nav-sub-item active">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷確定
+            </a>
+          </div>
+          <a href="013_outbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            出荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">在庫管理</p>
+          <a href="014_inventory_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            在庫管理
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="015_inventory_detail.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              在庫管理（棚ロケ別）
+            </a>
+          </div>
+          <a href="016_inventory_adjustment.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/></svg>
+            在庫調整
+          </a>
+          <a href="020_inventory_adjustment_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            在庫調整履歴
+          </a>
+          <a href="017_location_transfer.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/></svg>
+            棚ロケ移動登録
+          </a>
+          <a href="018_transfer_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚ロケ移動履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">棚卸</p>
+          <a href="019_inventory_count.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            棚卸管理
+          </a>
+          <a href="#" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚卸数更新履歴
+          </a>
+        </div>
+
+      </nav>
+
+      <!-- メインコンテンツ -->
+      <main class="app-main schedule-main" id="mainContent">
+
+        <h1 class="page-header heading-xl">出荷確定</h1>
+
+        <!-- コントロール行 -->
+        <div class="schedule-control-row">
+          <div class="schedule-date-group">
+            <label for="scheduleDate" class="schedule-date-label">出荷日</label>
+            <input
+              type="date"
+              id="scheduleDate"
+              class="form-input date-input"
+              aria-label="出荷日を選択"
+            >
+          </div>
+          <div class="schedule-search-group">
+            <label for="scheduleSearch" class="schedule-date-label">検索</label>
+            <input
+              type="text"
+              id="scheduleSearch"
+              class="form-input schedule-search-input"
+              placeholder="キーワードを入力"
+              autocomplete="off"
+              aria-label="テーブル検索"
+              onkeydown="if (event.key === 'Enter') filterOutboundConfirmTable()"
+            >
+          </div>
+          <!-- 出荷日・キーワードとも、このボタンを押すまで一覧に反映しない -->
+          <button type="button" class="btn btn-primary" onclick="filterOutboundConfirmTable()">検索</button>
+          <span id="scheduleUpdatedAt" class="schedule-updated-at body-s text-subtle"></span>
+        </div>
+
+        <div class="schedule-sections">
+
+          <!-- 出荷確定テーブル -->
+          <section class="section-card schedule-section-half" aria-labelledby="sectionConfirmSchedule">
+            <div class="schedule-section-header">
+              <div class="confirm-heading-group">
+                <h2 class="heading-m" id="sectionConfirmSchedule">出荷予定情報</h2>
+                <span class="help-hint">
+                  <button type="button" class="help-hint-btn" aria-label="この表の使い方"
+                          aria-describedby="scheduleTableHelp">?</button>
+                  <span class="help-hint-body body-s" role="tooltip" id="scheduleTableHelp">
+                    <ul class="help-hint-list">
+                      <li>出荷を確定する伝票は、チェックボックスにチェックを入れて、「確定」ボタンを押してください。</li>
+                      <li>明細を編集した上で出荷を確定する場合は、「編集」ボタンで明細を編集し、チェックボックスにチェックを入れて、「確定」ボタンを押してください。</li>
+                      <li>データベースへの反映は「確定」ボタンを押したときにまとめて行います。</li>
+                    </ul>
+                  </span>
+                </span>
+                <span id="confirmTargetDate" class="confirm-target-date body-s text-subtle"></span>
+              </div>
+              <div class="schedule-section-actions">
+                <button type="button" class="btn btn-primary" id="outboundConfirmBtn" onclick="openOutboundConfirmModal()" disabled>確定</button>
+              </div>
+            </div>
+            <hr class="section-divider">
+            <div class="schedule-table-wrapper">
+              <table class="schedule-table schedule-table--slip-merged" id="outboundScheduleTable" aria-label="出荷確定">
+                <thead>
+                  <tr>
+                    <th scope="col"><span class="slip-head"><input type="checkbox" id="selectAllRows" onchange="onOutboundSelectAllChange()" aria-label="全伝票を選択">伝票</span></th>
+                    <th scope="col">商品</th>
+                    <th scope="col">棚ロケーション</th>
+                    <th scope="col" class="schedule-col-qty">数量</th>
+                    <th scope="col">ロット番号</th>
+                    <th scope="col">賞味期限</th>
+                    <th scope="col">特記事項</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-001" data-item-code="P-001" data-item-name="商品A"
+                      data-unit="パレット" data-customer="佐々木商事" data-schedule-date="2026-05-09"
+                      data-qty="100" data-lot-no="LOT-2025-001" data-expiry-date="2026-12-31" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-001</span><span class="slip-supplier">佐々木商事</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-001 / 商品A</td>
+                    <td class="schedule-location-cell">A-01-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">100</span><span class="schedule-qty-unit-text">パレット</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-001</td>
+                    <td class="schedule-expiry-cell">2026/12/31</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-001" data-item-code="P-002" data-item-name="商品B"
+                      data-unit="ケース" data-customer="佐々木商事" data-schedule-date="2026-05-09"
+                      data-qty="50" data-lot-no="LOT-2025-002" data-expiry-date="2026-06-30" data-remarks="">
+                    <td class="schedule-item-name-cell">P-002 / 商品B</td>
+                    <td class="schedule-location-cell">A-01-02</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">50</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-002</td>
+                    <td class="schedule-expiry-cell">2026/06/30</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-002" data-item-code="P-003" data-item-name="商品C"
+                      data-unit="ピース" data-customer="田中物産" data-schedule-date="2026-05-09"
+                      data-qty="200" data-lot-no="LOT-2025-003" data-expiry-date="" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-002</span><span class="slip-supplier">田中物産</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-003 / 商品C</td>
+                    <td class="schedule-location-cell">B-02-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">200</span><span class="schedule-qty-unit-text">ピース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-003</td>
+                    <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-002" data-item-code="P-004" data-item-name="商品D"
+                      data-unit="ボール" data-customer="田中物産" data-schedule-date="2026-05-09"
+                      data-qty="30" data-lot-no="LOT-2025-004" data-expiry-date="2027-03-15" data-remarks="">
+                    <td class="schedule-item-name-cell">P-004 / 商品D</td>
+                    <td class="schedule-location-cell">B-02-02</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">30</span><span class="schedule-qty-unit-text">ボール</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-004</td>
+                    <td class="schedule-expiry-cell">2027/03/15</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-003" data-item-code="P-005" data-item-name="商品E"
+                      data-unit="ケース" data-customer="鈴木運輸" data-schedule-date="2026-05-09"
+                      data-qty="80" data-lot-no="" data-expiry-date="2026-09-01" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-003</span><span class="slip-supplier">鈴木運輸</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-005 / 商品E</td>
+                    <td class="schedule-location-cell">C-03-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">80</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">-</td>
+                    <td class="schedule-expiry-cell">2026/09/01</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-003" data-item-code="P-006" data-item-name="商品F"
+                      data-unit="パレット" data-customer="鈴木運輸" data-schedule-date="2026-05-09"
+                      data-qty="150" data-lot-no="LOT-2025-006" data-expiry-date="" data-remarks="要冷蔵">
+                    <td class="schedule-item-name-cell">P-006 / 商品F</td>
+                    <td class="schedule-location-cell">C-03-02</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">150</span><span class="schedule-qty-unit-text">パレット</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-006</td>
+                    <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-remarks-cell">要冷蔵</td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-004" data-item-code="P-007" data-item-name="商品G"
+                      data-unit="ピース" data-customer="伊藤商店" data-schedule-date="2026-05-09"
+                      data-qty="60" data-lot-no="LOT-2025-007" data-expiry-date="2026-11-30" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-004</span><span class="slip-supplier">伊藤商店</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-007 / 商品G</td>
+                    <td class="schedule-location-cell">D-04-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">ピース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-007</td>
+                    <td class="schedule-expiry-cell">2026/11/30</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <!-- 一部の明細だけを取消した伝票（編集モーダルの「取消」で取消した想定）。
+                       data-original-* は「伝票の内容に戻す」で戻す先＝編集前（データベース）の値 -->
+                  <tr class="schedule-item-row schedule-row--cancelled"
+                      data-doc-no="ORD-20260509-004" data-item-code="P-008" data-item-name="商品H"
+                      data-unit="ケース" data-customer="伊藤商店" data-schedule-date="2026-05-09"
+                      data-qty="40" data-lot-no="LOT-2025-008" data-expiry-date="2027-01-20" data-remarks="欠品のため取消"
+                      data-original-remarks="">
+                    <td class="schedule-item-name-cell">P-008 / 商品H</td>
+                    <td class="schedule-location-cell">D-04-02</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-008</td>
+                    <td class="schedule-expiry-cell">2027/01/20</td>
+                    <td class="schedule-remarks-cell">欠品のため取消</td>
+                  </tr>
+                  <!-- すべての明細が取消された伝票（＝伝票そのものの取消） -->
+                  <tr class="schedule-item-row schedule-row--cancelled"
+                      data-doc-no="ORD-20260509-005" data-item-code="P-009" data-item-name="商品I"
+                      data-unit="ケース" data-customer="山田商会" data-schedule-date="2026-05-09"
+                      data-qty="25" data-lot-no="LOT-2025-009" data-expiry-date="" data-remarks="出荷取りやめ"
+                      data-original-remarks="">
+                    <td class="slip-cell" rowspan="1">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-005</span><span class="slip-supplier">山田商会</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-009 / 商品I</td>
+                    <td class="schedule-location-cell">A-01-03</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">25</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-009</td>
+                    <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-remarks-cell">出荷取りやめ</td>
+                  </tr>
+                  <!-- 商品が1つだけの伝票 -->
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-006" data-item-code="P-010" data-item-name="商品J"
+                      data-unit="ケース" data-customer="大和フーズ" data-schedule-date="2026-05-09"
+                      data-qty="12" data-lot-no="LOT-2025-010" data-expiry-date="2027-05-31" data-remarks="">
+                    <td class="slip-cell" rowspan="1">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-006</span><span class="slip-supplier">大和フーズ</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-010 / 商品J</td>
+                    <td class="schedule-location-cell">B-02-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">12</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-010</td>
+                    <td class="schedule-expiry-cell">2027/05/31</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <!-- 引き当てでは C-03-01 から 100 ケースを取る予定だったが、
+                       実際は 60 ケースしか無く、残り 40 ケースを D-04-01 から取った（棚分割）想定 -->
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-007" data-item-code="P-011" data-item-name="商品K"
+                      data-unit="ケース" data-customer="桜井商会" data-schedule-date="2026-05-09"
+                      data-qty="60" data-lot-no="LOT-2025-011" data-expiry-date="2027-02-28" data-remarks=""
+                      data-original-qty="100">
+                    <td class="slip-cell" rowspan="3">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-007</span><span class="slip-supplier">桜井商会</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-011 / 商品K</td>
+                    <td class="schedule-location-cell">C-03-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-011</td>
+                    <td class="schedule-expiry-cell">2027/02/28</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row schedule-row--split"
+                      data-doc-no="ORD-20260509-007" data-item-code="P-011" data-item-name="商品K"
+                      data-unit="ケース" data-customer="桜井商会" data-schedule-date="2026-05-09"
+                      data-qty="40" data-lot-no="LOT-2025-012" data-expiry-date="2027-08-31" data-remarks="">
+                    <td class="schedule-item-name-cell">P-011 / 商品K <span class="schedule-split-badge">棚分割</span></td>
+                    <td class="schedule-location-cell">D-04-01</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-012</td>
+                    <td class="schedule-expiry-cell">2027/08/31</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-007" data-item-code="P-012" data-item-name="商品L"
+                      data-unit="パレット" data-customer="桜井商会" data-schedule-date="2026-05-09"
+                      data-qty="15" data-lot-no="LOT-2025-013" data-expiry-date="" data-remarks="">
+                    <td class="schedule-item-name-cell">P-012 / 商品L</td>
+                    <td class="schedule-location-cell">A-01-02</td>
+                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">15</span><span class="schedule-qty-unit-text">パレット</span></td>
+                    <td class="schedule-lot-cell">LOT-2025-013</td>
+                    <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 伝票単位の編集モーダル（棚ロケーション・数量・ロット番号・賞味期限・特記事項の変更、
+       明細の取消、棚分割）
+       ※ レイアウトは入荷確定（006）と共通のため inbound-edit-* のクラスをそのまま流用する -->
+  <div id="outboundEditModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="outboundEditModalTitle">
+    <div class="ds-modal ds-modal--wide">
+      <div class="ds-modal-header">
+        <h2 class="heading-s" id="outboundEditModalTitle">出荷予定の編集</h2>
+        <!-- 伝票が1件も出荷しなかった場合。伝票内の明細をすべて取消状態にする -->
+        <button type="button" class="btn btn-danger" onclick="deleteOutboundEditSlip()">伝票削除</button>
+      </div>
+      <div class="ds-modal-body">
+        <dl class="inbound-edit-meta">
+          <div class="inbound-edit-meta-item">
+            <dt>伝票No</dt>
+            <dd id="outboundEditDocNo">‐</dd>
+          </div>
+          <div class="inbound-edit-meta-item">
+            <dt>出荷先</dt>
+            <dd id="outboundEditCustomer">‐</dd>
+          </div>
+          <div class="inbound-edit-meta-item">
+            <dt>出荷予定日</dt>
+            <dd id="outboundEditSchedule">‐</dd>
+          </div>
+        </dl>
+
+        <p class="modal-item-list-heading heading-s">商品明細</p>
+        <div class="inbound-edit-legend body-s text-subtle">
+          <span class="inbound-edit-legend-item">
+            <svg class="flag-icon flag-icon--split" viewBox="0 0 24 24" role="img" aria-label="棚分割で追加した行"><circle cx="12" cy="12" r="11"/><path d="M6.5 6.5V12H17.5" /><path d="M14.5 9L17.5 12L14.5 15" /></svg>
+            棚分割で追加した行（同じ商品を複数の棚から取る）
+          </span>
+        </div>
+        <div class="inbound-edit-table-wrapper">
+          <table class="schedule-table inbound-edit-table">
+            <thead>
+              <tr>
+                <th scope="col">商品</th>
+                <th scope="col">棚ロケーション</th>
+                <th scope="col" class="schedule-cell-right">数量</th>
+                <th scope="col">ロット番号</th>
+                <th scope="col">賞味期限</th>
+                <th scope="col">特記事項</th>
+                <th scope="col">操作</th>
+              </tr>
+            </thead>
+            <tbody id="outboundEditItemList"></tbody>
+          </table>
+        </div>
+        <div class="inbound-edit-actions">
+          <span class="body-s text-subtle">引き当てと違う棚からも取った場合は、その行の「棚分割」で同じ商品の行を追加します。伝票に無い商品を追加する場合は出荷予定登録からやり直してください。</span>
+        </div>
+        <p id="outboundEditApplyHint" class="inbound-confirm-error inbound-edit-apply-hint">
+          棚ロケーション・数量が未入力の明細があります。入力するか、その明細を取消／削除してください。
+        </p>
+      </div>
+      <div class="ds-modal-footer">
+        <!-- 編集前の状態ではなく、データベースに登録されている伝票の内容に戻す（棚ロケーションを含む） -->
+        <button type="button" class="btn btn-default" onclick="restoreOutboundEditSlip()">伝票の内容に戻す</button>
+        <button type="button" class="btn btn-default" onclick="closeModal('outboundEditModal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" id="outboundEditApplyBtn" onclick="applyOutboundEditModal()">この内容で反映する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確定確認モーダル -->
+  <div id="outboundConfirmModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="outboundConfirmModalTitle">
+    <div class="ds-modal ds-modal--fit">
+      <div class="ds-modal-header">
+        <h2 class="heading-s" id="outboundConfirmModalTitle">出荷確定の確認</h2>
+      </div>
+      <div class="ds-modal-body">
+        <table class="modal-confirm-table">
+          <tbody>
+            <tr>
+              <th scope="row">出荷日</th>
+              <td id="outboundConfirmDate">‐</td>
+            </tr>
+            <tr>
+              <th scope="row">出荷済みにする伝票</th>
+              <td id="outboundConfirmTargetCount">0 伝票</td>
+            </tr>
+            <tr>
+              <th scope="row">削除する伝票</th>
+              <td id="outboundConfirmDeleteCount">0 伝票</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="outboundConfirmLists" class="inbound-confirm-lists inbound-confirm-lists--side">
+          <section class="inbound-confirm-list-section">
+            <p class="modal-item-list-heading inbound-confirm-list-title">出荷済みにする明細</p>
+            <ul id="outboundConfirmItemList" class="modal-item-list inbound-confirm-list inbound-confirm-list--received">
+              <li class="modal-item-list-row inbound-confirm-list-head"><span>出荷先</span><span>商品</span><span>棚ロケ</span></li>
+            </ul>
+          </section>
+          <section class="inbound-confirm-list-section" id="outboundConfirmCancelSection">
+            <p class="modal-item-list-heading inbound-confirm-list-title">取消する明細</p>
+            <ul id="outboundConfirmCancelList" class="modal-item-list inbound-confirm-list">
+              <li class="modal-item-list-row inbound-confirm-list-head"><span>出荷先</span><span>商品</span></li>
+            </ul>
+          </section>
+        </div>
+        <p id="outboundConfirmError" class="inbound-confirm-error" style="display: none;"></p>
+      </div>
+      <div class="ds-modal-footer">
+        <button type="button" class="btn btn-default" onclick="closeModal('outboundConfirmModal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="submitOutboundConfirm()">確定する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- フラッシュメッセージ -->
+  <div id="outboundConfirmFlash" class="transfer-flash" style="display: none;" role="alert" aria-live="polite"></div>
+
+  <script src="../static/js/sticky-notes.js"></script>
+  <script src="../static/js/main.js"></script>
+  <script>
+    initScheduleDate();
+    initScheduleUpdatedAt();
+    syncConfirmTargetDate();
+
+    // === SCR-012 出荷確定 ===
+    // 仕様: 引き当て済みの出荷予定を伝票単位で確認し、出荷済みにする。
+    // 一覧は確認用で、棚ロケーション・数量・ロット番号・賞味期限・特記事項の変更、明細の取消、
+    // 棚分割（引き当てと違う棚からも取った場合）はすべて伝票セルの「編集」モーダルで行う。
+    // データベースへの反映は「確定」ボタンを押したときにまとめて行う。
+
+    var OUTBOUND_CONFIRM_LOCATIONS = [
+      'A-01-01', 'A-01-02', 'A-01-03',
+      'B-02-01', 'B-02-02', 'B-02-03',
+      'C-03-01', 'C-03-02',
+      'D-04-01', 'D-04-02'
+    ];
+
+    function outboundJpDate(iso) {
+      return iso ? iso.replace(/-/g, '/') : '-';
+    }
+
+    // --- 一覧 ---
+
+    function getOutboundTable() {
+      return document.getElementById('outboundScheduleTable');
+    }
+
+    function getOutboundRows() {
+      var table = getOutboundTable();
+      if (!table) return [];
+      return Array.from(table.querySelectorAll('tbody tr.schedule-item-row'));
+    }
+
+    // 伝票の代表行 = 伝票セル（結合セル）を持つ先頭明細行
+    function getOutboundSlipRows() {
+      return getOutboundRows().filter(function (r) { return !!r.querySelector('.slip-cell'); });
+    }
+
+    function getOutboundSlipRow(docNo) {
+      return getOutboundSlipRows().filter(function (r) { return r.dataset.docNo === docNo; })[0] || null;
+    }
+
+    function getOutboundItemRows(docNo) {
+      return getOutboundRows().filter(function (r) { return r.dataset.docNo === docNo; });
+    }
+
+    // 行の値をオブジェクトに読み出す（一覧は編集できないため data 属性が正）
+    function readOutboundRow(row) {
+      return {
+        docNo: row.dataset.docNo || '',
+        itemCode: row.dataset.itemCode || '',
+        itemName: row.dataset.itemName || '',
+        unit: row.dataset.unit || '',
+        customer: row.dataset.customer || '',
+        scheduleDate: row.dataset.scheduleDate || '',
+        location: (row.querySelector('.schedule-location-cell') || {}).textContent || '',
+        qty: row.dataset.qty || '',
+        lotNo: row.dataset.lotNo || '',
+        expiryDate: row.dataset.expiryDate || '',
+        remarks: row.dataset.remarks || '',
+        cancelled: row.classList.contains('schedule-row--cancelled'),
+        split: row.classList.contains('schedule-row--split')
+      };
+    }
+
+    // 明細行の HTML（伝票セルは syncOutboundSlipCells が付け直すため含めない）
+    function buildOutboundRowHTML(o) {
+      return '<td class="schedule-item-name-cell">' + o.itemCode + ' / ' + o.itemName +
+          (o.split ? ' <span class="schedule-split-badge">棚分割</span>' : '') + '</td>' +
+        '<td class="schedule-location-cell">' + (o.location || '‐') + '</td>' +
+        '<td class="schedule-cell-qty-unit">' +
+          '<span class="schedule-qty-value">' + o.qty + '</span>' +
+          '<span class="schedule-qty-unit-text">' + (o.unit || '') + '</span></td>' +
+        '<td class="schedule-lot-cell">' + (o.lotNo || '-') + '</td>' +
+        '<td class="schedule-expiry-cell">' + outboundJpDate(o.expiryDate) + '</td>' +
+        '<td class="schedule-remarks-cell">' + (o.remarks || '') + '</td>';
+    }
+
+    function createOutboundRow(o) {
+      var tr = document.createElement('tr');
+      tr.className = 'schedule-item-row' +
+        (o.split ? ' schedule-row--split' : '') +
+        (o.cancelled ? ' schedule-row--cancelled' : '');
+      tr.dataset.docNo = o.docNo;
+      tr.dataset.itemCode = o.itemCode;
+      tr.dataset.itemName = o.itemName;
+      tr.dataset.unit = o.unit;
+      tr.dataset.customer = o.customer;
+      tr.dataset.scheduleDate = o.scheduleDate;
+      tr.dataset.qty = o.qty;
+      tr.dataset.lotNo = o.lotNo;
+      tr.dataset.expiryDate = o.expiryDate;
+      tr.dataset.remarks = o.remarks || '';
+      tr.innerHTML = buildOutboundRowHTML(o);
+      return tr;
+    }
+
+    function buildOutboundSlipCell(docNo, customer, span) {
+      return '<td class="slip-cell" rowspan="' + span + '">' +
+          '<div class="slip-cell-inner">' +
+            '<input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">' +
+            '<div class="slip-cell-text"><span class="slip-doc-no">' + docNo + '</span>' +
+            '<span class="slip-supplier">' + customer + '</span></div>' +
+            '<button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>' +
+          '</div>' +
+        '</td>';
+    }
+
+    // 明細行の増減後に、伝票セルの位置と rowspan を作り直す
+    function syncOutboundSlipCells() {
+      var rows = getOutboundRows();
+      // 伝票セルは作り直すため、手動で切り替えたチェック状態を退避する
+      var checked = {};
+      getOutboundSlipRows().forEach(function (r) {
+        var cb = r.querySelector('.row-checkbox');
+        checked[r.dataset.docNo] = !!(cb && cb.checked);
+      });
+      rows.forEach(function (r) {
+        Array.from(r.querySelectorAll('.slip-cell')).forEach(function (c) { c.remove(); });
+      });
+      var groups = {};
+      var order = [];
+      rows.forEach(function (r) {
+        var doc = r.dataset.docNo;
+        if (!groups[doc]) { groups[doc] = []; order.push(doc); }
+        groups[doc].push(r);
+      });
+      order.forEach(function (doc) {
+        var g = groups[doc];
+        g[0].insertAdjacentHTML('afterbegin', buildOutboundSlipCell(doc, g[0].dataset.customer || '', g.length));
+        var cb = g[0].querySelector('.row-checkbox');
+        if (cb) cb.checked = !!checked[doc];
+      });
+      refreshAllOutboundSlipRows();
+    }
+
+    // 伝票内のすべての明細が取消されている（＝伝票そのものの取消）
+    function isOutboundSlipCancelled(docNo) {
+      var rows = getOutboundItemRows(docNo);
+      if (rows.length === 0) return false;
+      return rows.every(function (r) { return r.classList.contains('schedule-row--cancelled'); });
+    }
+
+    // 伝票行と配下の明細行に選択状態のハイライトを反映する
+    function applyOutboundSlipSelection(slipRow, selected) {
+      getOutboundItemRows(slipRow.dataset.docNo).forEach(function (r) {
+        r.classList.toggle('schedule-row--selected', selected);
+      });
+    }
+
+    function onOutboundSlipCheckboxChange(cb) {
+      applyOutboundSlipSelection(cb.closest('tr'), cb.checked);
+      updateOutboundSelectAllState();
+      refreshOutboundConfirmButton();
+    }
+
+    // 伝票の表示状態を更新する。棚ロケーションは引き当て済みのため、選択できない伝票は無い。
+    function refreshOutboundSlipRow(docNo) {
+      var slipRow = getOutboundSlipRow(docNo);
+      if (!slipRow) return;
+      var cb = slipRow.querySelector('.row-checkbox');
+      applyOutboundSlipSelection(slipRow, !!(cb && cb.checked));
+      // 全明細が取消された伝票は伝票セルにも取消線を出す（編集ボタンは有効のまま）
+      var cancelled = isOutboundSlipCancelled(docNo);
+      slipRow.querySelectorAll('.slip-cell').forEach(function (cell) {
+        cell.classList.toggle('slip-cell--cancelled', cancelled);
+      });
+    }
+
+    function refreshAllOutboundSlipRows() {
+      getOutboundSlipRows().forEach(function (r) { refreshOutboundSlipRow(r.dataset.docNo); });
+      updateOutboundSelectAllState();
+      refreshOutboundConfirmButton();
+    }
+
+    function updateOutboundSelectAllState() {
+      var selectAll = document.getElementById('selectAllRows');
+      if (!selectAll) return;
+      var checkboxes = getOutboundSlipRows()
+        .map(function (r) { return r.querySelector('.row-checkbox'); })
+        .filter(function (cb) { return !!cb; });
+      var checkedCount = checkboxes.filter(function (cb) { return cb.checked; }).length;
+      selectAll.disabled = checkboxes.length === 0;
+      selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+      selectAll.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
+    }
+
+    function onOutboundSelectAllChange() {
+      var selectAll = document.getElementById('selectAllRows');
+      if (!selectAll) return;
+      getOutboundSlipRows().forEach(function (slipRow) {
+        var cb = slipRow.querySelector('.row-checkbox');
+        if (!cb) return;
+        cb.checked = selectAll.checked;
+        applyOutboundSlipSelection(slipRow, cb.checked);
+      });
+      updateOutboundSelectAllState();
+      refreshOutboundConfirmButton();
+    }
+
+    // 確定ボタンは伝票が1件も選択されていないと押せない。
+    // 編集モーダルでの編集は、その伝票にチェックを入れて確定しないとデータベースに反映されない。
+    function refreshOutboundConfirmButton() {
+      var btn = document.getElementById('outboundConfirmBtn');
+      if (!btn) return;
+      btn.disabled = getCheckedOutboundDocNos().length === 0;
+    }
+
+    function getCheckedOutboundDocNos() {
+      return getOutboundSlipRows()
+        .filter(function (r) {
+          var cb = r.querySelector('.row-checkbox');
+          return cb && cb.checked;
+        })
+        .map(function (r) { return r.dataset.docNo; });
+    }
+
+    // 検索は伝票単位で行う。明細行だけを隠すと伝票セルの rowspan が合わなくなるため、
+    // 伝票内のいずれかの明細が一致したら、その伝票の全行を表示する。
+    function filterOutboundConfirmTable() {
+      syncConfirmTargetDate();
+      var input = document.getElementById('scheduleSearch');
+      var q = ((input && input.value) || '').toLowerCase().trim();
+      var hit = {};
+      getOutboundRows().forEach(function (r) {
+        var d = r.dataset;
+        var text = [d.docNo, d.customer, d.itemCode, d.itemName, d.lotNo].join(' ').toLowerCase();
+        if (!q || text.indexOf(q) !== -1) hit[d.docNo] = true;
+      });
+      getOutboundRows().forEach(function (r) {
+        r.style.display = hit[r.dataset.docNo] ? '' : 'none';
+      });
+    }
+
+    // --- 伝票単位の編集モーダル ---
+    // 棚ロケーション・数量・ロット番号・賞味期限・特記事項の変更、明細の取消、
+    // 棚分割（同じ商品を複数の棚から取る）を行う。
+    // 商品は差し替えられず、伝票に無い商品も足せない（伝票の商品を変えるのは出荷予定登録の役目）。
+
+    // 編集モーダルの対象伝票No
+    var outboundEditDocNo = null;
+    // 伝票ごとの「データベース登録内容」。編集モーダルの「伝票の内容に戻す」で使う
+    var outboundOriginalItems = {};
+
+    // 画面表示時の明細を伝票の登録内容として退避する。
+    // 棚分割で足した行は伝票に無い行なので登録内容には含めない。
+    function captureOutboundOriginalItems() {
+      outboundOriginalItems = {};
+      getOutboundRows().forEach(function (r) {
+        var o = readOutboundRow(r);
+        // 棚分割で足した行は伝票に無い行なので、登録内容には含めない
+        if (o.split) return;
+        // 明細の取消は画面上の操作なので、登録内容としては取消されていない状態で持つ
+        o.cancelled = false;
+        // このモックアップは一部を編集済みの状態で開くため、編集前（データベース）の値を
+        // data-original-* で持たせている。実装後の画面ではこの属性は不要になる。
+        var original = function (key, current) {
+          return (key in r.dataset) ? r.dataset[key] : current;
+        };
+        o.location = original('originalLocation', o.location);
+        o.qty = original('originalQty', o.qty);
+        o.lotNo = original('originalLotNo', o.lotNo);
+        o.expiryDate = original('originalExpiryDate', o.expiryDate);
+        o.remarks = original('originalRemarks', o.remarks);
+        if (!outboundOriginalItems[o.docNo]) outboundOriginalItems[o.docNo] = [];
+        outboundOriginalItems[o.docNo].push(o);
+      });
+    }
+
+    function buildOutboundLocationSelect(selected) {
+      return '<select class="form-input schedule-location-select"' +
+        ' onchange="refreshOutboundEditRowStates()" aria-label="棚ロケーション">' +
+        '<option value="">—</option>' +
+        OUTBOUND_CONFIRM_LOCATIONS.map(function (loc) {
+          return '<option value="' + loc + '"' + (loc === selected ? ' selected' : '') + '>' + loc + '</option>';
+        }).join('') +
+        '</select>';
+    }
+
+    /**
+     * 明細行の操作ボタン。
+     * 伝票に登録されている行は「取消」（記録を残す）、
+     * 棚分割で足した行は「削除」（記録を残さない）。
+     */
+    function buildOutboundEditRowActions(o) {
+      var splitBtn = '<button type="button" class="btn btn-default outbound-edit-split-btn"' +
+        ' onclick="splitOutboundEditItem(this)" aria-label="棚を分割して行を追加">棚分割</button>';
+      if (o.split) {
+        return splitBtn +
+          '<button type="button" class="btn btn-danger" onclick="deleteOutboundEditItem(this)">削除</button>';
+      }
+      return splitBtn +
+        '<button type="button" class="btn ' + (o.cancelled ? 'btn-default' : 'btn-danger') + ' outbound-edit-cancel-btn"' +
+        ' onclick="toggleOutboundEditCancel(this)">' + (o.cancelled ? '取消解除' : '取消') + '</button>';
+    }
+
+    function buildOutboundEditRowHTML(o) {
+      // 印は1つの箱にまとめる（現在は棚分割のみ）
+      var flags = '';
+      if (o.split) {
+        flags += '<svg class="flag-icon flag-icon--split" viewBox="0 0 24 24" role="img" aria-label="棚分割で追加した行"><circle cx="12" cy="12" r="11"/><path d="M6.5 6.5V12H17.5" /><path d="M14.5 9L17.5 12L14.5 15" /></svg>';
+      }
+      // 商品は差し替えられないため、常にテキスト表示にする
+      var itemBody = '<span class="outbound-edit-item-text">' + o.itemCode + ' / ' + o.itemName + '</span>';
+      return '<td>' +
+          '<div class="inbound-edit-item-cell">' +
+            (flags ? '<span class="inbound-edit-flag-icons">' + flags + '</span>' : '') +
+            itemBody +
+          '</div>' +
+        '</td>' +
+        '<td>' + buildOutboundLocationSelect(o.location) + '</td>' +
+        '<td>' +
+          '<div class="inbound-edit-qty-cell">' +
+            '<input type="number" class="form-input schedule-qty-input" value="' + o.qty + '" min="1"' +
+            ' oninput="refreshOutboundEditRowStates()" aria-label="数量">' +
+            '<span class="inbound-edit-unit-text">' + (o.unit || '') + '</span>' +
+          '</div>' +
+        '</td>' +
+        '<td><input type="text" class="form-input schedule-lot-input" value="' + o.lotNo + '" placeholder="ロット番号" aria-label="ロット番号"></td>' +
+        '<td><input type="date" class="form-input schedule-expiry-input" value="' + o.expiryDate + '" aria-label="賞味期限"></td>' +
+        '<td><input type="text" class="form-input inbound-edit-remarks" value="' + (o.remarks || '') + '" placeholder="特記事項" aria-label="特記事項"></td>' +
+        '<td class="schedule-cell-actions">' + buildOutboundEditRowActions(o) + '</td>';
+    }
+
+    function createOutboundEditRow(o) {
+      var tr = document.createElement('tr');
+      // 商品・単位区分・元の編集済みフィールドは編集対象ではないため data 属性で持ち回す
+      tr.dataset.itemCode = o.itemCode || '';
+      tr.dataset.itemName = o.itemName || '';
+      tr.dataset.unit = o.unit || '';
+      tr.dataset.split = o.split ? '1' : '';
+      tr.dataset.cancelled = o.cancelled ? '1' : '';
+      tr.innerHTML = buildOutboundEditRowHTML(o);
+      if (o.cancelled) tr.classList.add('schedule-row--cancelled');
+      applyOutboundEditRowDisabled(tr);
+      return tr;
+    }
+
+    // 取消行は入力させない（操作ボタンだけ残す）
+    function applyOutboundEditRowDisabled(tr) {
+      var cancelled = tr.dataset.cancelled === '1';
+      tr.querySelectorAll('select, input').forEach(function (el) { el.disabled = cancelled; });
+      var splitBtn = tr.querySelector('.outbound-edit-split-btn');
+      if (splitBtn) splitBtn.disabled = cancelled;
+    }
+
+    // モーダル1行分の入力値を読み出す
+    function readOutboundEditRow(tr) {
+      return {
+        itemCode: tr.dataset.itemCode || '',
+        itemName: tr.dataset.itemName || '',
+        unit: tr.dataset.unit || '',
+        location: tr.querySelector('.schedule-location-select').value,
+        qty: tr.querySelector('.schedule-qty-input').value,
+        lotNo: tr.querySelector('.schedule-lot-input').value,
+        expiryDate: tr.querySelector('.schedule-expiry-input').value,
+        remarks: tr.querySelector('.inbound-edit-remarks').value,
+        split: tr.dataset.split === '1',
+        cancelled: tr.dataset.cancelled === '1'
+      };
+    }
+
+    function getOutboundEditRows() {
+      return Array.from(document.querySelectorAll('#outboundEditItemList tr'));
+    }
+
+    function renderOutboundEditItems(items) {
+      var tbody = document.getElementById('outboundEditItemList');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      items.forEach(function (o) { tbody.appendChild(createOutboundEditRow(o)); });
+      refreshOutboundEditSplitFlags();
+      refreshOutboundEditRowStates();
+    }
+
+    // 伝票セルの「編集」ボタンから、その伝票の明細を編集する
+    function openOutboundEditModal(btn) {
+      var row = btn.closest('tr');
+      if (!row) return;
+      var o = readOutboundRow(row);
+      outboundEditDocNo = o.docNo;
+      document.getElementById('outboundEditDocNo').textContent = o.docNo;
+      document.getElementById('outboundEditCustomer').textContent = o.customer;
+      document.getElementById('outboundEditSchedule').textContent = outboundJpDate(o.scheduleDate);
+      renderOutboundEditItems(getOutboundItemRows(outboundEditDocNo).map(readOutboundRow));
+      openModal('outboundEditModal');
+    }
+
+    /**
+     * 明細の取消／取消解除。
+     * データベースへの反映は確定ボタン押下時にまとめて行うため、ここでは確認を挟まない。
+     */
+    function toggleOutboundEditCancel(btn) {
+      var tr = btn.closest('tr');
+      tr.dataset.cancelled = tr.dataset.cancelled === '1' ? '' : '1';
+      var cancelled = tr.dataset.cancelled === '1';
+      tr.classList.toggle('schedule-row--cancelled', cancelled);
+      btn.textContent = cancelled ? '取消解除' : '取消';
+      btn.classList.toggle('btn-danger', !cancelled);
+      btn.classList.toggle('btn-default', cancelled);
+      applyOutboundEditRowDisabled(tr);
+      refreshOutboundEditRowStates();
+    }
+
+    /**
+     * 1つの商品を2つ以上の棚から取る: 同じ商品の行をモーダル内に追加する。
+     * 引き当てでは1つの棚から取る予定だったが、実際は別の棚からも取った場合に使う。
+     */
+    function splitOutboundEditItem(btn) {
+      var row = btn.closest('tr');
+      var base = readOutboundEditRow(row);
+      // 追加行は棚ロケーション・数量とも未入力にし、分け方は利用者に入力させる
+      base.location = '';
+      base.qty = '';
+      base.split = true;
+      base.cancelled = false;
+      row.after(createOutboundEditRow(base));
+      refreshOutboundEditSplitFlags();
+      refreshOutboundEditRowStates();
+    }
+
+    function deleteOutboundEditItem(btn) {
+      btn.closest('tr').remove();
+      refreshOutboundEditSplitFlags();
+      refreshOutboundEditRowStates();
+    }
+
+    /**
+     * 棚分割アイコンの整理。
+     * アイコンは「棚分割」ボタンで追加した行にのみ付ける（付与は splitOutboundEditItem が行う）。
+     * ここでは「直前の行が同じ商品でなくなった」＝分割元を失った行の印だけを消す。
+     */
+    function refreshOutboundEditSplitFlags() {
+      var rows = getOutboundEditRows();
+      var codeOf = function (tr) { return tr ? (tr.dataset.itemCode || '') : ''; };
+      rows.forEach(function (tr, i) {
+        var icon = tr.querySelector('.flag-icon--split');
+        if (!icon && tr.dataset.split !== '1') return;
+        var code = codeOf(tr);
+        var prevCode = i > 0 ? codeOf(rows[i - 1]) : '';
+        if (code && code === prevCode) return;
+        tr.dataset.split = '';
+        if (icon) icon.remove();
+      });
+    }
+
+    // 伝票削除。伝票に登録されている行は取消状態にし、
+    // 棚分割で足した行は削除する（登録されていないため記録が要らない）
+    function deleteOutboundEditSlip() {
+      getOutboundEditRows().forEach(function (tr) {
+        if (tr.dataset.split === '1') {
+          tr.remove();
+          return;
+        }
+        if (tr.dataset.cancelled !== '1') {
+          var btn = tr.querySelector('.outbound-edit-cancel-btn');
+          if (btn) toggleOutboundEditCancel(btn);
+        }
+      });
+      refreshOutboundEditSplitFlags();
+      refreshOutboundEditRowStates();
+    }
+
+    // 編集内容を捨てて、伝票のデータベース登録内容（棚ロケーションを含む）に戻す
+    function restoreOutboundEditSlip() {
+      var items = outboundOriginalItems[outboundEditDocNo] || [];
+      renderOutboundEditItems(items.map(function (o) {
+        var copy = {};
+        Object.keys(o).forEach(function (k) { copy[k] = o[k]; });
+        return copy;
+      }));
+    }
+
+    /**
+     * 行の状態をまとめて再評価する。
+     * - 棚分割の元行は、分割行が残っている間は取消できない（元だけ取消すと分割行の扱いが決まらないため）
+     * - 棚ロケーション・数量が未入力の行があると「この内容で反映する」を押せない
+     */
+    function refreshOutboundEditRowStates() {
+      var rows = getOutboundEditRows();
+      var codeOf = function (tr) { return tr ? (tr.dataset.itemCode || '') : ''; };
+
+      rows.forEach(function (tr, i) {
+        var cancelBtn = tr.querySelector('.outbound-edit-cancel-btn');
+        if (!cancelBtn) return;
+        var next = rows[i + 1];
+        var hasSplitChild = !!next && next.dataset.split === '1' && codeOf(next) === codeOf(tr) && codeOf(tr) !== '';
+        cancelBtn.disabled = hasSplitChild && tr.dataset.cancelled !== '1';
+        cancelBtn.title = cancelBtn.disabled ? '棚分割した行を削除すると取消できます' : '';
+      });
+
+      var invalid = rows.some(function (tr) {
+        if (tr.dataset.cancelled === '1') return false;
+        var qty = (tr.querySelector('.schedule-qty-input') || {}).value || '';
+        var loc = (tr.querySelector('.schedule-location-select') || {}).value || '';
+        return !loc || !(Number(qty) > 0);
+      });
+      var applyBtn = document.getElementById('outboundEditApplyBtn');
+      if (applyBtn) applyBtn.disabled = invalid;
+      // 表示・非表示でモーダルの高さが変わらないよう、領域は確保したまま可視性だけ切り替える
+      var hint = document.getElementById('outboundEditApplyHint');
+      if (hint) hint.style.visibility = invalid ? 'visible' : 'hidden';
+    }
+
+    function applyOutboundEditModal() {
+      var table = getOutboundTable();
+      if (!table || !outboundEditDocNo) return;
+      var targetRows = getOutboundItemRows(outboundEditDocNo);
+      if (targetRows.length === 0) return;
+
+      var head = targetRows[0];
+      // 直前の明細行（1つ前の伝票の末尾）の後ろに、作り直した明細行を挿入する
+      var anchor = head.previousElementSibling;
+      var tbody = head.parentNode;
+      var meta = readOutboundRow(head);
+
+      var edited = getOutboundEditRows().map(function (tr) {
+        var o = readOutboundEditRow(tr);
+        o.docNo = outboundEditDocNo;
+        o.customer = meta.customer;
+        o.scheduleDate = meta.scheduleDate;
+        return o;
+      });
+
+      targetRows.forEach(function (r) { r.remove(); });
+      var frag = document.createDocumentFragment();
+      edited.forEach(function (o) { frag.appendChild(createOutboundRow(o)); });
+      if (anchor && anchor.parentNode === tbody) {
+        anchor.after(frag);
+      } else {
+        tbody.insertBefore(frag, tbody.firstChild);
+      }
+
+      outboundEditDocNo = null;
+      closeModal('outboundEditModal');
+      syncOutboundSlipCells();
+      showOutboundConfirmFlash('編集内容を反映しました。内容を確認して「確定」してください。');
+    }
+
+    // --- 確定（確認モーダル） ---
+
+    function openOutboundConfirmModal() {
+      var docNos = getCheckedOutboundDocNos();
+      // 全明細が取消された伝票は「伝票の削除」として、出荷済みにする件数から除いて数える
+      var deletedDocNos = docNos.filter(isOutboundSlipCancelled);
+      var rows = getOutboundRows()
+        .map(readOutboundRow)
+        .filter(function (o) { return docNos.indexOf(o.docNo) !== -1; });
+      var targets = rows.filter(function (o) { return !o.cancelled; });
+      var cancelled = rows.filter(function (o) { return o.cancelled; });
+
+      var dateInput = document.getElementById('scheduleDate');
+      document.getElementById('outboundConfirmDate').textContent =
+        dateInput && dateInput.value ? outboundJpDate(dateInput.value) : '‐';
+      document.getElementById('outboundConfirmTargetCount').textContent =
+        (docNos.length - deletedDocNos.length) + ' 伝票';
+      document.getElementById('outboundConfirmDeleteCount').textContent = deletedDocNos.length + ' 伝票';
+
+      // 幅を節約するため 1 明細 1 行で並べる（例: 佐々木商事　商品A x 100パレット　A-01-01）
+      var itemCells = function (o) {
+        return '<span>' + o.customer + '</span>' +
+          '<span>' + o.itemName + ' x ' + o.qty + (o.unit || '') + '</span>';
+      };
+      // 先頭の見出し行は残したまま明細を差し替える
+      var setList = function (id, html) {
+        var ul = document.getElementById(id);
+        if (!ul) return;
+        var head = ul.querySelector('.inbound-confirm-list-head');
+        ul.innerHTML = (head ? head.outerHTML : '') + html;
+      };
+      setList('outboundConfirmItemList', targets.map(function (o) {
+        return '<li class="modal-item-list-row">' + itemCells(o) +
+          '<span>' + (o.location || '未選択') + '</span></li>';
+      }).join(''));
+      setList('outboundConfirmCancelList', cancelled.map(function (o) {
+        return '<li class="modal-item-list-row">' + itemCells(o) + '</li>';
+      }).join(''));
+      // 取消が無いときは見出しごと隠す（通常はこちらの状態）
+      var cancelSection = document.getElementById('outboundConfirmCancelSection');
+      if (cancelSection) cancelSection.style.display = cancelled.length ? '' : 'none';
+
+      var err = document.getElementById('outboundConfirmError');
+      var submitBtn = document.querySelector('#outboundConfirmModal .ds-modal-footer .btn-primary');
+      // 確定ボタンは未選択時に押せないため、ここに来るのは選択済みのときだけ（保険）
+      var message = docNos.length === 0
+        ? '確定する伝票が選択されていません。伝票のチェックボックスで選択してください。'
+        : '';
+      err.textContent = message;
+      err.style.display = message ? 'block' : 'none';
+      if (submitBtn) submitBtn.disabled = !!message;
+      openModal('outboundConfirmModal');
+    }
+
+    function submitOutboundConfirm() {
+      var docNos = getCheckedOutboundDocNos();
+      var deletedDocNos = docNos.filter(isOutboundSlipCancelled);
+      var rows = getOutboundRows().filter(function (r) { return docNos.indexOf(r.dataset.docNo) !== -1; });
+      var targetCount = rows.filter(function (r) {
+        return !r.classList.contains('schedule-row--cancelled');
+      }).length;
+      // 伝票ごと削除される明細は「取消 N 件」に数えない（伝票の削除として別に数える）
+      var cancelCount = rows.filter(function (r) {
+        return r.classList.contains('schedule-row--cancelled') &&
+          deletedDocNos.indexOf(r.dataset.docNo) === -1;
+      }).length;
+      closeModal('outboundConfirmModal');
+      showOutboundConfirmFlash(
+        (docNos.length - deletedDocNos.length) + ' 伝票 / 出荷済み ' + targetCount + ' 件 / 取消 ' + cancelCount + ' 件' +
+        (deletedDocNos.length ? ' / 伝票削除 ' + deletedDocNos.length + ' 伝票' : '') + 'を登録しました。'
+      );
+    }
+
+    function showOutboundConfirmFlash(message) {
+      var el = document.getElementById('outboundConfirmFlash');
+      if (!el) return;
+      el.textContent = message;
+      el.style.display = 'flex';
+      setTimeout(function () { el.style.display = 'none'; }, 3000);
+    }
+
+    // 伝票セルのクリックで確定チェックボックスをトグルする（編集ボタン・チェックボックス上は除く）
+    (function () {
+      var table = getOutboundTable();
+      if (!table) return;
+      table.addEventListener('click', function (e) {
+        var cell = e.target.closest('.slip-cell');
+        if (!cell || e.target.closest('button, input, label')) return;
+        var cb = cell.closest('tr').querySelector('.row-checkbox');
+        if (!cb) return;
+        cb.checked = !cb.checked;
+        onOutboundSlipCheckboxChange(cb);
+      });
+    })();
+
+    captureOutboundOriginalItems();
+    refreshAllOutboundSlipRows();
+  </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UIコンポーネント チートシート | WMS</title>
+  <link rel="stylesheet" href="../static/css/tokens.css">
+  <link rel="stylesheet" href="../static/css/style.css">
+  <style>
+    /* チートシート専用スタイル */
+    .cs-section-title {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ds-text-subtle);
+      margin: 0 0 var(--ds-space-150);
+    }
+    .cs-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--ds-space-100);
+    }
+    .cs-divider {
+      border: none;
+      border-top: 1px dashed var(--ds-border);
+      margin: var(--ds-space-200) 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+
+    <!-- グローバルナビゲーション -->
+    <header class="app-header" role="banner">
+      <a href="001_shelf_location.html" class="app-header-logo" aria-label="WMS ホーム">WMS</a>
+      <span class="app-header-spacer"></span>
+      <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="テーマ切替">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      </button>
+      <div class="app-header-user-menu">
+        <button class="app-header-user-btn" onclick="toggleUserMenu()" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+          倉庫オペレーター
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <!-- サイドナビゲーション -->
+      <nav class="app-sidebar" aria-label="メインナビゲーション">
+        <p class="side-nav-label">モックアップメニュー</p>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">マスター定義</p>
+          <a href="001_shelf_location.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+            棚ロケ定義
+          </a>
+          <a href="002_item_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 16l-4-4 4-4 1.41 1.41L6.83 12l1.58 1.59L7 16zm10 0l-1.41-1.41L17.17 13l-1.58-1.59L17 8l4 4-4 4z"/></svg>
+            アイテム定義
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">入荷管理</p>
+          <a href="003_inbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            入荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="004_inbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷予定登録
+            </a>
+            <a href="005_inbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷確定
+            </a>
+            <a href="006_inbound_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷登録
+            </a>
+          </div>
+          <a href="007_inbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            入荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">出荷管理</p>
+          <a href="008_outbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            出荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="009_outbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷予定登録
+            </a>
+            <a href="010_allocation_check.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              引き当てチェック
+            </a>
+            <a href="011_outbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷確定
+            </a>
+          </div>
+          <a href="012_outbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            出荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">在庫管理</p>
+          <a href="013_inventory_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            在庫一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="014_inventory_detail.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              在庫明細
+            </a>
+          </div>
+          <a href="015_location_transfer.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/></svg>
+            棚ロケ移動登録
+          </a>
+          <a href="016_transfer_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚ロケ移動履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">棚卸</p>
+          <a href="#" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            棚卸管理
+          </a>
+          <a href="#" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚卸数更新履歴
+          </a>
+        </div>
+
+      </nav>
+
+      <!-- メインコンテンツ -->
+      <main class="app-main" id="mainContent">
+
+        <h1 class="page-header heading-xl">UIコンポーネント チートシート</h1>
+
+        <!-- ==============================
+             1. タイポグラフィ
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">1. タイポグラフィ</h2>
+          </div>
+
+          <p class="cs-section-title">Headings</p>
+          <p class="heading-xl">.heading-xl — 1.75rem / 700</p>
+          <p class="heading-l">.heading-l — 1.5rem / 700</p>
+          <p class="heading-m">.heading-m — 1.25rem / 700</p>
+          <p class="heading-s">.heading-s — 1rem / 700</p>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">Body</p>
+          <p class="body-m">.body-m — 0.875rem / 400（本文デフォルト）</p>
+          <p class="body-s">.body-s — 0.75rem / 400（補足・注釈）</p>
+          <p class="body-m text-subtle">.body-m.text-subtle — 補足テキスト（ds-text-subtle）</p>
+        </div>
+
+        <!-- ==============================
+             2. ボタン
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">2. ボタン</h2>
+          </div>
+
+          <p class="cs-section-title">標準ボタン</p>
+          <div class="cs-row">
+            <button type="button" class="btn btn-primary">btn-primary</button>
+            <button type="button" class="btn btn-default">btn-default</button>
+            <button type="button" class="btn btn-danger">btn-danger</button>
+            <button type="button" class="btn btn-icon-subtle" title="アイコンボタン">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </button>
+            <button type="button" class="btn btn-add-entry">+ 行を追加</button>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">テーブル行アクション</p>
+          <div class="cs-row">
+            <a href="#" class="btn-detail">詳細</a>
+            <button type="button" class="btn-edit">編集</button>
+            <button type="button" class="btn-delete">削除</button>
+          </div>
+        </div>
+
+        <!-- ==============================
+             3. バッジ・ステータス
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">3. バッジ・ステータス</h2>
+          </div>
+
+          <p class="cs-section-title">status-badge</p>
+          <div class="cs-row">
+            <span class="status-badge status-badge--information">処理中</span>
+            <span class="status-badge status-badge--success">完了</span>
+            <span class="status-badge status-badge--subtle">未処理</span>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">user-status-badge</p>
+          <div class="cs-row">
+            <span class="user-status-badge user-status-badge--active">有効</span>
+            <span class="user-status-badge user-status-badge--inactive">無効</span>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">allocation-badge</p>
+          <div class="cs-row">
+            <span class="allocation-badge allocation-badge--ok">OK</span>
+            <span class="allocation-badge allocation-badge--ng">NG</span>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">数量バッジ</p>
+          <div class="cs-row">
+            <span class="quantity-positive body-m">+10</span>
+            <span class="quantity-negative body-m">-5</span>
+          </div>
+        </div>
+
+        <!-- ==============================
+             4. フォーム
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">4. フォーム</h2>
+          </div>
+
+          <p class="cs-section-title">基本入力</p>
+          <div class="cs-row">
+            <input type="text" class="form-input" placeholder="form-input（通常）" style="width: 14rem;">
+            <input type="text" class="form-input is-readonly" value="form-input is-readonly" readonly style="width: 14rem;">
+            <input type="date" class="form-input date-input" style="width: 10rem;">
+            <input type="text" class="schedule-search-input" placeholder="schedule-search-input">
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">2カラムグリッドフォーム（manual-form-grid）</p>
+          <form class="manual-form-grid" style="max-width: 640px;">
+            <div class="manual-form-field">
+              <label class="manual-form-label">品番 <span class="manual-form-required">*</span></label>
+              <input type="text" class="form-input" placeholder="例: ITM-001">
+            </div>
+            <div class="manual-form-field">
+              <label class="manual-form-label">品名</label>
+              <input type="text" class="form-input" placeholder="例: サンプル商品A">
+            </div>
+            <div class="manual-form-field manual-form-field--full">
+              <label class="manual-form-label">備考（full幅）</label>
+              <input type="text" class="form-input" placeholder="manual-form-field--full">
+            </div>
+            <div class="manual-form-actions manual-form-field--full">
+              <button type="button" class="btn btn-default">キャンセル</button>
+              <button type="button" class="btn btn-primary">保存</button>
+            </div>
+          </form>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">ファイルアップロード</p>
+          <div class="file-upload-row">
+            <label class="file-input-label">
+              ファイルを選択
+              <input type="file" class="file-input-hidden">
+            </label>
+            <span class="file-label-text">ファイルが選択されていません</span>
+          </div>
+        </div>
+
+        <!-- ==============================
+             5. テーブル
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">5. テーブル</h2>
+          </div>
+
+          <div class="table-scroll-x">
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>品番</th>
+                  <th>品名</th>
+                  <th>数量</th>
+                  <th>ステータス</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ITM-001</td>
+                  <td>サンプル商品A（通常行）</td>
+                  <td>100</td>
+                  <td><span class="status-badge status-badge--success">完了</span></td>
+                  <td>
+                    <a href="#" class="btn-detail">詳細</a>
+                    <button type="button" class="btn-edit">編集</button>
+                    <button type="button" class="btn-delete">削除</button>
+                  </td>
+                </tr>
+                <tr class="schedule-row--selected">
+                  <td>ITM-002</td>
+                  <td>サンプル商品B（.schedule-row--selected）</td>
+                  <td>50</td>
+                  <td><span class="status-badge status-badge--information">処理中</span></td>
+                  <td><a href="#" class="btn-detail">詳細</a></td>
+                </tr>
+                <tr class="schedule-row--cancelled">
+                  <td>ITM-003</td>
+                  <td>サンプル商品C（.schedule-row--cancelled）</td>
+                  <td>0</td>
+                  <td><span class="status-badge status-badge--subtle">取消</span></td>
+                  <td><a href="#" class="btn-detail">詳細</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">ページネーション</p>
+          <div class="history-pagination">
+            <button type="button" class="history-pagination-btn" disabled>&laquo;</button>
+            <button type="button" class="history-pagination-btn is-active">1</button>
+            <button type="button" class="history-pagination-btn">2</button>
+            <button type="button" class="history-pagination-btn">3</button>
+            <button type="button" class="history-pagination-btn">&raquo;</button>
+          </div>
+        </div>
+
+        <!-- ==============================
+             6. セクション・カード
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">6. セクション・カード</h2>
+          </div>
+
+          <p class="cs-section-title">section-card-header / section-action-row / section-divider</p>
+          <div class="section-card" style="box-shadow: none; border: 1px dashed var(--ds-border);">
+            <div class="section-card-header">
+              <h3 class="heading-s">セクションタイトル</h3>
+              <div class="section-action-row">
+                <button type="button" class="btn btn-primary">アクション</button>
+              </div>
+            </div>
+            <p class="body-m">セクションコンテンツ。section-card-header でタイトルとアクションを横並びにする。</p>
+            <hr class="section-divider">
+            <div class="section-footer-row">
+              <button type="button" class="btn btn-default">キャンセル</button>
+              <button type="button" class="btn btn-primary">保存</button>
+            </div>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">バナー</p>
+          <div class="info-banner">
+            <p>.info-banner — 情報バナー（青背景）</p>
+          </div>
+          <div class="warning-banner" style="margin-top: var(--ds-space-100);">
+            <p>.warning-banner — 警告バナー（黄背景）</p>
+          </div>
+        </div>
+
+        <!-- ==============================
+             7. モーダル
+        ============================== -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="heading-s">7. モーダル</h2>
+          </div>
+
+          <p class="cs-section-title">ds-modal（共通モーダル）</p>
+          <div class="cs-row">
+            <button type="button" class="btn btn-default" onclick="openModal('demoModal')">モーダルを開く</button>
+          </div>
+
+          <hr class="cs-divider">
+
+          <p class="cs-section-title">オフキャンバスパネル</p>
+          <div class="cs-row">
+            <button type="button" class="btn btn-default" onclick="openOffcanvas()">オフキャンバスを開く</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ds-modal デモ -->
+  <div id="demoModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+    <div class="ds-modal">
+      <div class="ds-modal-header">
+        <h2 class="heading-s" id="demoModalTitle">確認モーダル</h2>
+      </div>
+      <div class="ds-modal-body">
+        <p>これは <code>.ds-modal-*</code> を使った共通モーダルのデモです。</p>
+        <p style="margin-top: var(--ds-space-100); color: var(--ds-text-subtle); font-size: 0.875rem;">
+          ds-modal-overlay / ds-modal / ds-modal-header / ds-modal-body / ds-modal-footer
+        </p>
+      </div>
+      <div class="ds-modal-footer">
+        <button type="button" class="btn btn-default" onclick="closeModal('demoModal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="closeModal('demoModal')">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- オフキャンバス デモ -->
+  <div class="offcanvas-overlay" id="demoOffcanvasOverlay" onclick="closeOffcanvas()"></div>
+  <div class="offcanvas-panel" id="demoOffcanvasPanel" role="dialog" aria-modal="true" aria-label="オフキャンバスデモ">
+    <div class="offcanvas-header">
+      <span class="heading-s">オフキャンバスパネル</span>
+      <button type="button" class="offcanvas-close-btn" onclick="closeOffcanvas()" aria-label="閉じる">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="offcanvas-body">
+      <p class="body-m">これは <code>.offcanvas-*</code> のデモです。</p>
+      <p class="body-s text-subtle" style="margin-top: var(--ds-space-100);">
+        開閉は is-open クラスの付け外しで制御します（display ではなく transform）。
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function openModal(id)  { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function openOffcanvas() {
+      document.getElementById('demoOffcanvasOverlay').classList.add('is-open');
+      document.getElementById('demoOffcanvasPanel').classList.add('is-open');
+    }
+    function closeOffcanvas() {
+      document.getElementById('demoOffcanvasOverlay').classList.remove('is-open');
+      document.getElementById('demoOffcanvasPanel').classList.remove('is-open');
+    }
+
+    function toggleUserMenu() {
+      const btn = document.getElementById('userMenuBtn');
+      const dropdown = document.getElementById('userMenuDropdown');
+      const isOpen = dropdown.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', isOpen);
+    }
+
+    document.addEventListener('click', function(e) {
+      const menu = document.querySelector('.app-header-user-menu');
+      if (menu && !menu.contains(e.target)) {
+        document.getElementById('userMenuDropdown').classList.remove('is-open');
+        document.getElementById('userMenuBtn').setAttribute('aria-expanded', 'false');
+      }
+    });
+  </script>
+</body>
+</html>
