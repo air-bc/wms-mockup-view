@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>モックアップについて | WMS</title>
+  <link rel="stylesheet" href="static/css/tokens.css">
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/sticky-notes.css">
+  <style>
+    /* トップページ専用: 注意事項リストと画面一覧カード */
+    .intro-list {
+      margin: 0;
+      padding-left: 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: var(--ds-text);
+    }
+    .intro-list li + li { margin-top: var(--ds-space-100); }
+    .intro-lead {
+      margin: 0 0 var(--ds-space-200);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: var(--ds-text);
+    }
+    .intro-note {
+      margin: var(--ds-space-200) 0 0;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: var(--ds-text-subtle);
+    }
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--ds-space-150);
+    }
+    .screen-group-label {
+      margin: var(--ds-space-300) 0 var(--ds-space-150);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--ds-text-subtle);
+    }
+    .screen-group-label:first-of-type { margin-top: 0; }
+    .screen-link {
+      display: block;
+      padding: var(--ds-space-150) var(--ds-space-200);
+      border: 1px solid var(--ds-border);
+      border-radius: 3px;
+      background-color: var(--ds-surface);
+      color: var(--ds-text);
+      font-size: 0.875rem;
+      text-decoration: none;
+    }
+    .screen-link:hover {
+      background-color: var(--ds-background-neutral-hovered);
+      border-color: var(--ds-border-focused);
+    }
+    .screen-link small {
+      display: block;
+      margin-top: 2px;
+      color: var(--ds-text-subtle);
+      font-size: 0.6875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+
+    <!-- グローバルナビゲーション -->
+    <header class="app-header" role="banner">
+      <a href="index.html" class="app-header-logo" aria-label="WMS ホーム">WMS</a>
+      <span class="app-header-spacer"></span>
+      <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="テーマ切替">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      </button>
+      <div class="app-header-user-menu">
+        <button class="app-header-user-btn" onclick="toggleUserMenu()" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+          倉庫オペレーター
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="renew_templates/adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <!-- サイドナビゲーション -->
+      <nav class="app-sidebar" aria-label="メインナビゲーション">
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">マスター定義</p>
+          <a href="renew_templates/001_shelf_location.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+            棚ロケ定義
+          </a>
+          <a href="renew_templates/002_item_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 16l-4-4 4-4 1.41 1.41L6.83 12l1.58 1.59L7 16zm10 0l-1.41-1.41L17.17 13l-1.58-1.59L17 8l4 4-4 4z"/></svg>
+            商品マスタ
+          </a>
+          <a href="renew_templates/003_supplier_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            取引先マスタ
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">入荷管理</p>
+          <a href="renew_templates/004_inbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            入荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="renew_templates/005_inbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷予定登録
+            </a>
+            <a href="renew_templates/006_inbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷確定
+            </a>
+            <a href="renew_templates/007_inbound_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷登録
+            </a>
+          </div>
+          <a href="renew_templates/008_inbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            入荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">出荷管理</p>
+          <a href="renew_templates/009_outbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            出荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="renew_templates/010_outbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷予定登録
+            </a>
+            <a href="renew_templates/011_allocation_check.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              引き当てチェック
+            </a>
+            <a href="renew_templates/012_outbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷確定
+            </a>
+          </div>
+          <a href="renew_templates/013_outbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            出荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">在庫管理</p>
+          <a href="renew_templates/014_inventory_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            在庫管理
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="renew_templates/015_inventory_detail.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              在庫管理（棚ロケ別）
+            </a>
+          </div>
+          <a href="renew_templates/016_inventory_adjustment.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/></svg>
+            在庫調整
+          </a>
+          <a href="renew_templates/020_inventory_adjustment_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            在庫調整履歴
+          </a>
+          <a href="renew_templates/017_location_transfer.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/></svg>
+            棚ロケ移動登録
+          </a>
+          <a href="renew_templates/018_transfer_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚ロケ移動履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">棚卸</p>
+          <a href="renew_templates/019_inventory_count.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            棚卸管理
+          </a>
+          <a href="#" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚卸数更新履歴
+          </a>
+        </div>
+
+      </nav>
+
+      <!-- メインコンテンツ -->
+      <main class="app-main" id="mainContent">
+
+        <h1 class="page-header heading-xl">モックアップ画面について</h1>
+
+        <div class="info-banner" role="note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <p>このサイトは WMS（倉庫管理システム）の<strong>モックアップ（画面イメージ）</strong>です。実際に動作するシステムではありません。左のサイドメニューから各画面をご確認いただけます。</p>
+        </div>
+
+        <!-- モックアップとは -->
+        <section class="section-card" aria-labelledby="sectionWhat">
+          <h2 class="heading-m" id="sectionWhat" style="margin-bottom:var(--ds-space-200)">モックアップとは</h2>
+          <p class="intro-lead">
+            モックアップは、完成したシステムの<strong>見た目や画面構成を確認するための「画面イメージ」</strong>です。
+            「どの画面に、どんな項目やボタンが並ぶのか」「どういう操作の流れになるのか」を、実装前に関係者で目線合わせするために作成しています。
+          </p>
+          <p class="intro-lead" style="margin-bottom:0">
+            そのため、内部のデータ処理やチェック処理は組み込まれていません。
+            表示されている数値・商品名・取引先名などはすべて<strong>説明用のサンプルデータ</strong>であり、実際の業務データではありません。
+          </p>
+        </section>
+
+        <!-- ご確認時の注意事項 -->
+        <section class="section-card" aria-labelledby="sectionNotes">
+          <h2 class="heading-m" id="sectionNotes" style="margin-bottom:var(--ds-space-200)">ご確認いただく際の注意事項</h2>
+          <ul class="intro-list">
+            <li><strong>あくまで画面イメージです。</strong>このまま実装されることを保証するものではありません。</li>
+            <li><strong>実装との差異が発生する可能性があります。</strong>技術的な制約や仕様の詳細検討により、レイアウト・項目名・操作方法が変更になる場合があります。</li>
+            <li><strong>開発中に随時更新されます。</strong>ご確認いただいた内容と、後日ご覧いただいた内容が異なる場合があります。</li>
+            <li><strong>ボタンを押しても反応しない箇所があります。</strong>画面遷移や登録・検索などの動作は、一部のみ簡易的に再現しています。</li>
+            <li><strong>エラーチェックや権限制御は再現していません。</strong>未入力のまま進めたり、あり得ない値を入力できてしまう場合があります。</li>
+            <li><strong>入力した内容は保存されません。</strong>画面を再読み込みすると初期状態に戻ります。</li>
+            <li><strong>表示されるデータはサンプルです。</strong>件数・金額・日付などに業務上の意味はありません。</li>
+            <li><strong>未作成の画面があります。</strong>リンク先が用意されていない機能は、リンクを押しても何も起こりません。</li>
+          </ul>
+          <p class="intro-note">
+            画面の内容について「ここは実際にはこうしたい」「この項目が足りない」といったご意見がありましたら、画面名とあわせてご連絡ください。
+          </p>
+        </section>
+
+        <!-- 画面一覧 -->
+        <section class="section-card" aria-labelledby="sectionScreens">
+          <h2 class="heading-m" id="sectionScreens" style="margin-bottom:var(--ds-space-200)">画面一覧</h2>
+
+          <p class="screen-group-label">マスター定義</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/001_shelf_location.html">棚ロケ定義<small>棚ロケーション・ピッキング経路</small></a>
+            <a class="screen-link" href="renew_templates/002_item_definition.html">商品マスタ<small>商品情報の登録・編集</small></a>
+            <a class="screen-link" href="renew_templates/003_supplier_definition.html">取引先マスタ<small>取引先情報の登録・編集</small></a>
+          </div>
+
+          <p class="screen-group-label">入荷管理</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/004_inbound_schedule_list.html">入荷予定一覧<small>入荷予定の検索・確認</small></a>
+            <a class="screen-link" href="renew_templates/005_inbound_schedule_register.html">入荷予定登録<small>CSV取込・手入力登録</small></a>
+            <a class="screen-link" href="renew_templates/006_inbound_schedule_confirm.html">入荷確定<small>入荷予定の確定処理</small></a>
+            <a class="screen-link" href="renew_templates/007_inbound_register.html">入荷登録<small>実績入荷の登録</small></a>
+            <a class="screen-link" href="renew_templates/008_inbound_history.html">入荷履歴<small>入荷実績の照会</small></a>
+          </div>
+
+          <p class="screen-group-label">出荷管理</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/009_outbound_schedule_list.html">出荷予定一覧<small>出荷予定の検索・確認</small></a>
+            <a class="screen-link" href="renew_templates/010_outbound_schedule_register.html">出荷予定登録<small>CSV取込・手入力登録</small></a>
+            <a class="screen-link" href="renew_templates/011_allocation_check.html">引き当てチェック<small>在庫引き当て状況の確認</small></a>
+            <a class="screen-link" href="renew_templates/012_outbound_schedule_confirm.html">出荷確定<small>出荷予定の確定処理</small></a>
+            <a class="screen-link" href="renew_templates/013_outbound_history.html">出荷履歴<small>出荷実績の照会</small></a>
+          </div>
+
+          <p class="screen-group-label">在庫管理</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/014_inventory_list.html">在庫管理<small>商品別の在庫照会</small></a>
+            <a class="screen-link" href="renew_templates/015_inventory_detail.html">在庫管理（棚ロケ別）<small>棚ロケ単位の在庫照会</small></a>
+            <a class="screen-link" href="renew_templates/016_inventory_adjustment.html">在庫調整<small>在庫数の調整登録</small></a>
+            <a class="screen-link" href="renew_templates/020_inventory_adjustment_history.html">在庫調整履歴<small>調整実績の照会</small></a>
+            <a class="screen-link" href="renew_templates/017_location_transfer.html">棚ロケ移動登録<small>棚ロケ間の在庫移動</small></a>
+            <a class="screen-link" href="renew_templates/018_transfer_history.html">棚ロケ移動履歴<small>移動実績の照会</small></a>
+          </div>
+
+          <p class="screen-group-label">棚卸</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/019_inventory_count.html">棚卸管理<small>棚卸の実施・実績確認</small></a>
+          </div>
+
+          <p class="screen-group-label">管理者機能</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/adm_001_user_list.html">ユーザー管理<small>利用者アカウントの一覧</small></a>
+            <a class="screen-link" href="renew_templates/adm_002_user_form.html">ユーザー登録・編集<small>アカウント情報の入力</small></a>
+          </div>
+
+          <p class="screen-group-label">参考資料</p>
+          <div class="screen-grid">
+            <a class="screen-link" href="renew_templates/_cheatsheet.html">UIコンポーネント チートシート<small>画面で使用している部品の一覧</small></a>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="static/js/sticky-notes.js"></script>
+  <script src="static/js/main.js"></script>
+</body>
+</html>

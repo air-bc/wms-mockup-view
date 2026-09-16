@@ -1631,7 +1631,7 @@ function submitInboundAndContinue() {
 }
 
 function submitInboundAndNavigate() {
-  window.location.href = '003_inbound_schedule_list.html';
+  window.location.href = '004_inbound_schedule_list.html';
 }
 
 if (document.getElementById('inboundRegisterForm')) {
