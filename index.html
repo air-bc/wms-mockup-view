@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>モックアップについて | WMS</title>
+  <title>開発状況とモックアップ | WMS</title>
   <link rel="stylesheet" href="static/css/tokens.css">
   <link rel="stylesheet" href="static/css/style.css">
   <link rel="stylesheet" href="static/css/sticky-notes.css">
@@ -60,6 +60,140 @@
       margin-top: 2px;
       color: var(--ds-text-subtle);
       font-size: 0.6875rem;
+    }
+
+    /* トップページ専用: 開発進捗表 */
+    .progress-table {
+      /* 完了の塗り: ブランド色を白で薄めた色（テーマ切替にも追従） */
+      --fill-progress: color-mix(in srgb, var(--ds-background-brand-bold) 60%, #FFFFFF);
+      --fill-done: color-mix(in srgb, var(--ds-background-brand-bold) 85%, #FFFFFF);
+      --fn-fill: var(--fill-progress);
+      --rp-fill: var(--fill-progress);
+    }
+    /* 機能・帳票それぞれ、全工程が完了した行は濃い色（tr に fn-done / rp-done） */
+    .progress-table tr.fn-done { --fn-fill: var(--fill-done); }
+    .progress-table tr.rp-done { --rp-fill: var(--fill-done); }
+    .progress-table td { --progress-fill: var(--fn-fill); }
+    .progress-table .progress-spacer ~ td { --progress-fill: var(--rp-fill); }
+    .progress-table th,
+    .progress-table td {
+      border: 1px solid var(--ds-border);
+    }
+    .progress-table thead th.progress-phase {
+      width: 72px;
+      text-align: center;
+    }
+    .progress-table thead th[rowspan] { vertical-align: bottom; }
+    .progress-table thead th.progress-group {
+      text-align: center;
+      border-bottom-width: 1px;
+    }
+    /* 機能の工程間の縦線（border-collapse では列の罫線がセルの border:none より優先される） */
+    .progress-table col.progress-col-sep {
+      border-left: 1px solid var(--ds-border);
+    }
+    /* 余白列の両側（機能の右端・帳票の左端）の縦線 */
+    .progress-table col.progress-col-end {
+      border-right: 1px solid var(--ds-border);
+    }
+    .progress-table col.progress-col-start {
+      border-left: 1px solid var(--ds-border);
+    }
+    /* 機能と帳票の間の余白列 */
+    .progress-table col.progress-spacer { width: var(--ds-space-300); }
+    .progress-table .progress-spacer {
+      padding: 0;
+      border: none;
+      background-color: transparent;
+    }
+    .progress-table tbody tr:hover { background-color: transparent; }
+    /* 表の縦幅を抑えるため上下の余白を詰める */
+    .progress-table thead th {
+      padding: var(--ds-space-075) var(--ds-space-150);
+    }
+    .progress-table tbody th,
+    .progress-table tbody td {
+      padding: var(--ds-space-050) var(--ds-space-150);
+      line-height: 1.4;
+    }
+    .progress-table tbody th {
+      font-size: 0.8125rem;
+      font-weight: 400;
+      text-align: left;
+      color: var(--ds-text);
+      white-space: nowrap;
+    }
+    .progress-table tbody th[scope="rowgroup"] {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--ds-text-subtle);
+      vertical-align: top;
+    }
+    /* 横スクロール時も画面名が見えるよう固定 */
+    .progress-table th[scope="row"] {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background-color: var(--ds-surface-raised);
+    }
+    /* グラフ部（工程セル）は縦罫線なし */
+    .progress-table tbody td {
+      text-align: center;
+      font-size: 0.75rem;
+      border-left: none;
+      border-right: none;
+    }
+    /* 表の右端の外枠は残す */
+    .progress-table tbody:not(.progress-gap) td:last-child {
+      border-right: 1px solid var(--ds-border);
+    }
+    .progress-table td.is-done {
+      background-color: var(--progress-fill);
+    }
+    /* 実装列: 段階に応じて左から塗る（機能 3 段階 / 帳票 2 段階） */
+    .progress-table .progress-impl { width: 120px; }
+    .progress-table .progress-report { width: 96px; }
+    .progress-table td.progress-impl,
+    .progress-table td.progress-report {
+      background-image: linear-gradient(to right,
+        var(--progress-fill) var(--impl-fill, 0%), transparent 0);
+    }
+    .is-impl-1 { --impl-fill: calc(100% / 3); }
+    .is-impl-2 { --impl-fill: calc(200% / 3); }
+    .is-impl-3 { --impl-fill: 100%; }
+    .is-report-1 { --impl-fill: 50%; }
+    .is-report-2 { --impl-fill: 100%; }
+    /* 対象外: 左上から右下への斜線 */
+    .progress-table td.is-na {
+      background-image: linear-gradient(to top right,
+        transparent calc(50% - 0.5px), var(--ds-border) 0 calc(50% + 0.5px), transparent 0);
+    }
+    .progress-table .progress-gap td {
+      height: var(--ds-space-100);
+      padding: 0;
+      border: none;
+    }
+    /* 完了数の行（見出し直下）。余白列は除く */
+    .progress-table .progress-summary th[scope="row"],
+    .progress-table .progress-summary td:not(.progress-spacer) {
+      padding: var(--ds-space-050) var(--ds-space-150);
+      font-weight: 700;
+      background-color: var(--ds-background-neutral);
+      border-bottom: 2px solid var(--ds-border);
+    }
+    .progress-table .progress-summary th[scope="row"] { font-size: 0.75rem; text-align: left; }
+    /* 見出しと「◯月◯日時点」を左右に並べる */
+    .progress-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--ds-space-200);
+      margin-bottom: var(--ds-space-200);
+    }
+    .progress-asof {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--ds-text-subtle);
     }
   </style>
 </head>
@@ -204,12 +338,105 @@
       <!-- メインコンテンツ -->
       <main class="app-main" id="mainContent">
 
-        <h1 class="page-header heading-xl">モックアップ画面について</h1>
+        <h1 class="page-header heading-xl">開発状況とモックアップ</h1>
 
         <div class="info-banner" role="note">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
           <p>このサイトは WMS（倉庫管理システム）の<strong>モックアップ（画面イメージ）</strong>です。実際に動作するシステムではありません。左のサイドメニューから各画面をご確認いただけます。</p>
         </div>
+
+        <!-- 開発進捗: 完了は td.is-done、未着手は空 td、対象外は td.is-na（斜線）
+             実装列は td.progress-impl に is-impl-1 / is-impl-2 / is-impl-3（完了）を付けて段階を塗り分ける
+             帳票実装列は td.progress-report に is-report-1 / is-report-2（完了）を付けて段階を塗り分ける
+             機能の全工程が完了した行の tr には fn-done、帳票の全工程が完了した行には rp-done を付けて濃い色にする -->
+        <section class="section-card" aria-labelledby="sectionProgress">
+          <div class="progress-head">
+            <h2 class="heading-m" id="sectionProgress">開発進捗</h2>
+            <p class="progress-asof"><span id="progressRate">全体 81%（機能 85% / 帳票 60%）</span>　2026年10月26日時点</p>
+          </div>
+          <div class="table-scroll-x">
+            <table class="data-table progress-table">
+              <caption class="sr-only">画面ごとの工程別進捗</caption>
+              <colgroup>
+                <col span="2">
+                <col>
+                <col class="progress-col-sep">
+                <col class="progress-col-sep progress-col-end">
+                <col class="progress-spacer">
+                <col class="progress-col-start">
+                <col class="progress-col-sep">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col" rowspan="2">区分</th>
+                  <th scope="col" rowspan="2">画面</th>
+                  <th scope="colgroup" colspan="3" class="progress-group">機能</th>
+                  <th rowspan="2" class="progress-spacer" aria-hidden="true"></th>
+                  <th scope="colgroup" colspan="2" class="progress-group">帳票</th>
+                </tr>
+                <tr>
+                  <th scope="col" class="progress-phase">要件</th>
+                  <th scope="col" class="progress-phase">設計</th>
+                  <th scope="col" class="progress-phase progress-impl">実装</th>
+                  <th scope="col" class="progress-phase">要件・設計</th>
+                  <th scope="col" class="progress-phase progress-report">実装</th>
+                </tr>
+              </thead>
+              <!-- 完了数 / 対象画面数（対象外を除く） -->
+              <tbody class="progress-summary">
+                <tr>
+                  <th scope="row" colspan="2">完了数</th>
+                  <td>28/28</td><td>28/28</td><td>20/28</td><td class="progress-spacer" aria-hidden="true"></td><td>10/10</td><td>4/10</td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr class="fn-done"><th scope="rowgroup" rowspan="4">マスター定義</th><th scope="row">棚ロケ定義</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">ピッキング経路管理</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">商品マスタ</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">取引先マスタ</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+              </tbody>
+              <tbody>
+                <tr class="fn-done"><th scope="rowgroup" rowspan="5">入荷管理</th><th scope="row">入荷予定一覧</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report"></td></tr>
+                <tr class="fn-done"><th scope="row">入荷予定登録</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">入荷確定</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr><th scope="row">入荷登録</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-1"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done rp-done"><th scope="row">入荷履歴</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report is-report-2"></td></tr>
+              </tbody>
+              <tbody>
+                <tr class="fn-done"><th scope="rowgroup" rowspan="5">出荷管理</th><th scope="row">出荷予定一覧</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report"></td></tr>
+                <tr class="fn-done"><th scope="row">出荷予定登録</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">引き当てチェック</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report"></td></tr>
+                <tr><th scope="row">出荷確定</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-1"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done rp-done"><th scope="row">出荷履歴</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report is-report-2"></td></tr>
+              </tbody>
+              <tbody>
+                <tr class="fn-done"><th scope="rowgroup" rowspan="6">在庫管理</th><th scope="row">在庫管理</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report"></td></tr>
+                <tr class="fn-done"><th scope="row">在庫管理（棚ロケ別）</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report"></td></tr>
+                <tr><th scope="row">在庫調整</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-1"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done rp-done"><th scope="row">在庫調整履歴</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report is-report-2"></td></tr>
+                <tr><th scope="row">棚ロケ移動登録</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done rp-done"><th scope="row">棚ロケ移動履歴</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report is-report-2"></td></tr>
+              </tbody>
+              <tbody>
+                <tr><th scope="rowgroup" rowspan="3">棚卸</th><th scope="row">棚卸管理</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr><th scope="row">棚卸管理（スマホ）</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr><th scope="row">棚卸数更新履歴</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-done"></td><td class="progress-report"></td></tr>
+              </tbody>
+              <tbody class="progress-gap" aria-hidden="true">
+                <tr><td colspan="8"></td></tr>
+              </tbody>
+              <tbody>
+                <tr class="fn-done"><th scope="rowgroup" rowspan="2">共通機能</th><th scope="row">ログイン</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">テナント管理</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+              </tbody>
+              <tbody>
+                <tr class="fn-done"><th scope="rowgroup" rowspan="3">管理者機能</th><th scope="row">ユーザー管理</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr class="fn-done"><th scope="row">ユーザー登録・編集</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl is-impl-3"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+                <tr><th scope="row">会社情報管理</th><td class="is-done"></td><td class="is-done"></td><td class="progress-impl"></td><td class="progress-spacer" aria-hidden="true"></td><td class="is-na"></td><td class="is-na"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <!-- モックアップとは -->
         <section class="section-card" aria-labelledby="sectionWhat">
@@ -304,5 +531,38 @@
 
   <script src="static/js/sticky-notes.js"></script>
   <script src="static/js/main.js"></script>
+  <script>
+    // 開発進捗の進捗率を表の塗りから計算する（工程の段階数基準）
+    // 要件・設計は各 1 段階、機能の実装は 3 段階、帳票の実装は 2 段階。対象外は数えない
+    (function () {
+      const table = document.querySelector('.progress-table');
+      const out = document.getElementById('progressRate');
+      if (!table || !out) return;
+
+      const sum = { fn: [0, 0], rp: [0, 0] }; // [完了段階数, 全段階数]
+      table.querySelectorAll('tbody:not(.progress-summary):not(.progress-gap) tr').forEach(function (tr) {
+        let group = 'fn';
+        tr.querySelectorAll('td').forEach(function (td) {
+          if (td.classList.contains('progress-spacer')) { group = 'rp'; return; }
+          if (td.classList.contains('is-na')) return;
+          let steps = 1;
+          let done = td.classList.contains('is-done') ? 1 : 0;
+          if (td.classList.contains('progress-impl')) {
+            steps = 3;
+            done = [1, 2, 3].filter(function (n) { return td.classList.contains('is-impl-' + n); })[0] || 0;
+          } else if (td.classList.contains('progress-report')) {
+            steps = 2;
+            done = [1, 2].filter(function (n) { return td.classList.contains('is-report-' + n); })[0] || 0;
+          }
+          sum[group][0] += done;
+          sum[group][1] += steps;
+        });
+      });
+
+      const pct = function (d, t) { return t ? Math.round(d / t * 100) : 0; };
+      const all = pct(sum.fn[0] + sum.rp[0], sum.fn[1] + sum.rp[1]);
+      out.textContent = '全体 ' + all + '%（機能 ' + pct(sum.fn[0], sum.fn[1]) + '% / 帳票 ' + pct(sum.rp[0], sum.rp[1]) + '%）';
+    })();
+  </script>
 </body>
 </html>
