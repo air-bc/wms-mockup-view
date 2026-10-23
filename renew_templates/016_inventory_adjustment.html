@@ -138,7 +138,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
             棚卸管理
           </a>
-          <a href="#" class="side-nav-item">
+          <a href="021_inventory_count_history.html" class="side-nav-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
             棚卸数更新履歴
           </a>
@@ -156,115 +156,104 @@
           <p>この画面で入力したデータは<strong>確定情報</strong>として在庫へ直接反映されます。内容をよく確認してから登録してください。</p>
         </div>
 
-        <!-- 機能1: 棚ロケ選択 + キーワード絞り込み -->
-        <div class="transfer-control-row">
-          <label for="adjLocationSelect" class="transfer-form-label">棚ロケ</label>
-          <select id="adjLocationSelect" class="form-input" aria-label="棚ロケ選択">
-            <option value="">棚ロケを選択</option>
-          </select>
-          <label for="adjKeyword" class="transfer-form-label">キーワード</label>
-          <input
-            type="text"
-            id="adjKeyword"
-            class="form-input"
-            placeholder="商品コード / 商品名 / ロット番号"
-            autocomplete="off"
-            aria-label="在庫一覧のキーワード絞り込み"
-          >
-        </div>
-
-        <!-- 機能2: 棚ロケ別在庫一覧 -->
-        <section class="section-card" aria-labelledby="sectionAdjStock" style="margin-top: var(--ds-space-300);">
+        <!-- 調整フォーム -->
+        <section class="section-card" aria-labelledby="sectionAdjForm">
           <div class="section-card-header">
-            <div class="history-section-title">
-              <h2 class="heading-m" id="sectionAdjStock">棚ロケ別在庫一覧</h2>
-              <span id="adjTotalCount" class="history-total-count"></span>
+            <h2 class="heading-m" id="sectionAdjForm">調整内容</h2>
+
+            <!-- 調整の種類（見出しの右端）。切り替えると入力内容はクリアされる -->
+            <div class="adj-mode-group" role="radiogroup" aria-label="調整の種類">
+              <label class="adj-mode-option">
+                <input type="radio" name="adjMode" value="existing" class="adj-mode-radio" checked>
+                既存在庫の数量変更
+              </label>
+              <label class="adj-mode-option">
+                <input type="radio" name="adjMode" value="new" class="adj-mode-radio">
+                新規在庫の追加
+              </label>
             </div>
           </div>
           <hr class="section-divider">
-          <div class="transfer-table-wrapper">
-            <table class="schedule-table" id="adjStockTable" aria-label="棚ロケ別在庫一覧">
-              <thead>
-                <tr>
-                  <th scope="col">商品コード</th>
-                  <th scope="col">商品名</th>
-                  <th scope="col">ロット番号</th>
-                  <th scope="col">賞味期限</th>
-                  <th scope="col">入庫日</th>
-                  <th scope="col" class="col-right">在庫数</th>
-                  <th scope="col">単位区分</th>
-                  <th scope="col">特記事項</th>
-                </tr>
-              </thead>
-              <tbody id="adjTableBody">
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- 機能3: 調整フォーム -->
-        <section class="section-card" aria-labelledby="sectionAdjForm" style="margin-top: var(--ds-space-300);">
-          <div class="section-card-header">
-            <h2 class="heading-m" id="sectionAdjForm">調整内容</h2>
-          </div>
-          <hr class="section-divider">
-          <fieldset id="adjustmentForm" class="transfer-form" disabled>
+          <fieldset id="adjustmentForm" class="transfer-form">
             <legend class="visually-hidden">在庫調整入力フォーム</legend>
-            <div class="transfer-form-grid">
+            <div class="adj-form-grid">
 
               <div class="transfer-form-field">
-                <label for="adjLocation" class="transfer-form-label">棚ロケ</label>
-                <input type="text" id="adjLocation" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
-              <div class="transfer-form-field">
-                <label for="adjItemCode" class="transfer-form-label">商品コード</label>
-                <input type="text" id="adjItemCode" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
+                <label for="adjLocation" class="transfer-form-label">棚ロケ <span class="manual-form-required" aria-label="必須">*</span></label>
+                <div class="adj-location-row">
+                  <select id="adjLocation" class="form-input">
+                    <option value="">棚ロケを選択</option>
+                  </select>
+                  <button type="button" id="adjStockPickBtn" class="btn btn-default">既存在庫選択</button>
+                  <button type="button" id="adjStockClearBtn" class="btn btn-default" hidden>クリア</button>
+                </div>
               </div>
 
-              <div class="transfer-form-field">
-                <label for="adjItemName" class="transfer-form-label">商品名</label>
-                <input type="text" id="adjItemName" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
-              <div class="transfer-form-field">
-                <label for="adjUnitType" class="transfer-form-label">単位区分</label>
-                <input type="text" id="adjUnitType" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
+              <div class="transfer-form-field adj-form-field--row-start">
+                <label for="adjItem" class="transfer-form-label">商品 <span class="manual-form-required" aria-label="必須">*</span></label>
+                <select id="adjItem" class="form-input">
+                  <option value="">商品を選択</option>
+                </select>
               </div>
 
               <div class="transfer-form-field">
                 <label for="adjLotNo" class="transfer-form-label">ロット番号</label>
-                <input type="text" id="adjLotNo" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
+                <input type="text" id="adjLotNo" class="form-input" placeholder="任意" autocomplete="off">
               </div>
               <div class="transfer-form-field">
                 <label for="adjExpiryDate" class="transfer-form-label">賞味期限</label>
-                <input type="text" id="adjExpiryDate" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
+                <input type="date" id="adjExpiryDate" class="form-input">
+              </div>
+              <div class="transfer-form-field">
+                <label for="adjReceivedAt" class="transfer-form-label">入庫日 <span class="manual-form-required" aria-label="必須">*</span></label>
+                <input type="date" id="adjReceivedAt" class="form-input">
               </div>
 
-              <div class="transfer-form-field">
-                <label for="adjReceivedAt" class="transfer-form-label">入庫日</label>
-                <input type="text" id="adjReceivedAt" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
-              <div class="transfer-form-field">
-                <label for="adjCurrentQty" class="transfer-form-label">現在庫数</label>
-                <input type="text" id="adjCurrentQty" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
+              <!-- 在庫数量の調整（左）と調整理由（右） -->
+              <div class="transfer-form-field--full adj-qty-reason-row">
 
-              <div class="transfer-form-field">
-                <label for="adjQuantity" class="transfer-form-label">調整数 <span class="manual-form-required" aria-label="必須">*</span></label>
-                <input type="number" id="adjQuantity" class="form-input manual-form-qty" step="1" placeholder="+10 または -5" autocomplete="off">
-              </div>
-              <div class="transfer-form-field">
-                <label for="adjAfterQty" class="transfer-form-label">調整後在庫数</label>
-                <input type="text" id="adjAfterQty" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
+                <!-- 在庫数量の調整: 現在在庫数 + 調整数 = 調整後在庫数 -->
+                <div class="transfer-form-field adj-qty-section">
+                  <h3 class="heading-s">在庫数量の調整</h3>
+                  <div class="adj-qty-row">
+                    <div class="adj-qty-box adj-qty-box--current">
+                      <span class="adj-qty-label">現在在庫数</span>
+                      <span class="adj-qty-value-row">
+                        <output id="adjCurrentQty" class="adj-qty-value">‐</output>
+                        <span class="adj-qty-unit" hidden></span>
+                      </span>
+                    </div>
+                    <span class="adj-qty-op" aria-hidden="true">+</span>
+                    <div class="adj-qty-box adj-qty-box--input">
+                      <label for="adjQuantity" class="adj-qty-label">調整数 <span class="manual-form-required" aria-label="必須">*</span></label>
+                      <span class="adj-qty-value-row">
+                        <input type="number" id="adjQuantity" class="form-input adj-qty-input" step="1" placeholder="例: -5、10" autocomplete="off" aria-describedby="adjQuantityHint">
+                        <span class="adj-qty-unit" hidden></span>
+                      </span>
+                    </div>
+                    <span class="adj-qty-op" aria-hidden="true">=</span>
+                    <div id="adjAfterBox" class="adj-qty-box adj-qty-box--after">
+                      <span class="adj-qty-label">調整後在庫数</span>
+                      <span class="adj-qty-value-row">
+                        <output id="adjAfterQty" class="adj-qty-value">‐</output>
+                        <span class="adj-qty-unit" hidden></span>
+                      </span>
+                    </div>
+                    <p id="adjQuantityHint" class="adj-field-hint adj-qty-hint">減らす場合はマイナス（-）を付けて入力</p>
+                  </div>
+                  <p id="adjQtyError" class="adj-qty-error" role="alert" hidden>調整後在庫数がマイナスになるため登録できません。</p>
+                </div>
 
-              <div class="transfer-form-field transfer-form-field--full">
-                <label for="adjReason" class="transfer-form-label">調整理由 <span class="manual-form-required" aria-label="必須">*</span></label>
-                <textarea id="adjReason" class="form-input form-textarea" placeholder="例: 破損のため廃棄" autocomplete="off"></textarea>
+                <div class="transfer-form-field adj-reason-field">
+                  <label for="adjReason" class="transfer-form-label">調整理由 <span class="manual-form-required" aria-label="必須">*</span></label>
+                  <textarea id="adjReason" class="form-input form-textarea" placeholder="例: 破損のため廃棄" autocomplete="off"></textarea>
+                </div>
+
               </div>
 
               <div class="transfer-form-field transfer-form-field--full">
                 <label for="adjSpecialNotes" class="transfer-form-label">特記事項</label>
-                <textarea id="adjSpecialNotes" class="form-input form-textarea" placeholder="任意" autocomplete="off"></textarea>
+                <textarea id="adjSpecialNotes" class="form-input form-textarea adj-notes-textarea" rows="1" placeholder="任意" autocomplete="off"></textarea>
               </div>
 
             </div>
@@ -278,20 +267,95 @@
     </div>
   </div>
 
-  <!-- 機能4: 確認モーダル -->
-  <div id="adjustmentModal" class="ds-modal-overlay" style="display: none;"
-       role="dialog" aria-modal="true" aria-labelledby="adjustmentModalTitle">
-    <div class="ds-modal">
+  <!-- 既存在庫選択モーダル: 選んだ棚ロケの在庫一覧から行をクリックして選ぶ -->
+  <div id="adjStockPickModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="adjStockPickModalTitle">
+    <div class="ds-modal ds-modal--wide">
       <div class="ds-modal-header">
-        <h2 class="heading-s" id="adjustmentModalTitle">在庫調整の確認</h2>
+        <div class="history-section-title">
+          <h2 class="heading-s" id="adjStockPickModalTitle">既存在庫の選択</h2>
+          <span id="adjStockPickSummary" class="history-total-count"></span>
+        </div>
       </div>
       <div class="ds-modal-body">
-        <p>以下の内容で在庫調整を登録しますか？</p>
-        <div id="adjustmentConfirmBody"></div>
+        <p>調整する在庫の行をクリックしてください。</p>
+        <div class="transfer-table-wrapper adj-stock-pick-wrapper">
+          <table class="schedule-table adj-stock-pick-table" aria-label="棚ロケの在庫一覧">
+            <thead>
+              <tr>
+                <th scope="col">商品コード</th>
+                <th scope="col">商品名</th>
+                <th scope="col">ロット番号</th>
+                <th scope="col">賞味期限</th>
+                <th scope="col">入庫日</th>
+                <th scope="col" class="col-right">在庫数</th>
+                <th scope="col">単位区分</th>
+                <th scope="col">特記事項</th>
+              </tr>
+            </thead>
+            <tbody id="adjStockPickBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ds-modal-footer">
+        <button type="button" id="adjStockPickCancel" class="btn btn-default">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確認モーダル（React 版の confirm() ＝ ConfirmRoot と同じ構成: アイコン付き見出し・確認項目の表） -->
+  <div id="adjustmentModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="adjustmentModalTitle">
+    <div class="ds-modal ds-modal--fit">
+      <div class="ds-modal-header">
+        <h2 class="heading-s ds-modal-title" id="adjustmentModalTitle">
+          <svg class="ds-modal-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M8.5 12.5l2.5 2.5 4.5-5"/>
+          </svg>
+          <span>在庫調整の確認</span>
+        </h2>
+      </div>
+      <div class="ds-modal-body">
+        <table class="modal-confirm-table">
+          <tbody id="adjustmentConfirmBody"></tbody>
+        </table>
       </div>
       <div class="ds-modal-footer">
         <button type="button" id="adjustmentConfirmCancel" class="btn btn-default">修正する</button>
         <button type="button" id="adjustmentConfirmOk" class="btn btn-primary">確定する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 重複警告モーダル: 新規在庫の追加で、棚ロケ・商品・ロット番号・賞味期限・入庫日がすべて一致する在庫が既にあるとき、
+       確認モーダルの代わりに出す（React 版の confirm() の variant: 'warning' と同じ構成）。
+       切り替えると、重複した在庫を選んだ状態で既存在庫の数量変更にし、調整数・調整理由・特記事項は引き継ぐ -->
+  <div id="adjDuplicateModal" class="ds-modal-overlay" style="display: none;"
+       role="dialog" aria-modal="true" aria-labelledby="adjDuplicateModalTitle">
+    <div class="ds-modal ds-modal--fit">
+      <div class="ds-modal-header">
+        <h2 class="heading-s ds-modal-title ds-modal-title--warning" id="adjDuplicateModalTitle">
+          <svg class="ds-modal-title-icon ds-modal-title-icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 4l8.5 14.5h-17z"/>
+            <path d="M12 10v4"/>
+            <circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+          <span>同じ在庫が既に登録されています</span>
+        </h2>
+      </div>
+      <div class="ds-modal-body">
+        <p class="body-m">新規在庫ではなく、既存在庫の数量変更として登録してください。切り替えると、入力した調整数・調整理由・特記事項は引き継がれます。</p>
+        <table class="modal-confirm-table">
+          <tbody id="adjDuplicateBody"></tbody>
+        </table>
+      </div>
+      <div class="ds-modal-footer">
+        <button type="button" id="adjDuplicateCancel" class="btn btn-default">修正する</button>
+        <button type="button" id="adjDuplicateSwitch" class="btn btn-warning">既存在庫の数量変更に切り替える</button>
       </div>
     </div>
   </div>
@@ -302,18 +366,9 @@
   <script src="../static/js/sticky-notes.js"></script>
   <script src="../static/js/main.js"></script>
   <script>
-    if (document.getElementById('adjTableBody')) {
+    if (document.getElementById('adjustmentForm')) {
       initAdjustmentScreen();
     }
-    document.getElementById('adjLocationSelect').addEventListener('change', onAdjLocationChange);
-    document.getElementById('adjKeyword').addEventListener('input', onAdjKeywordInput);
-    document.getElementById('adjQuantity').addEventListener('input', onAdjQuantityInput);
-    document.getElementById('adjReason').addEventListener('input', validateAdjustmentForm);
-    document.getElementById('adjRegisterBtn').addEventListener('click', openAdjustmentModal);
-    document.getElementById('adjustmentConfirmOk').addEventListener('click', confirmAdjustment);
-    document.getElementById('adjustmentConfirmCancel').addEventListener('click', function () {
-      document.getElementById('adjustmentModal').style.display = 'none';
-    });
   </script>
 </body>
 </html>

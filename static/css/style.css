@@ -1564,452 +1564,6 @@ body {
 }
 
 /* ============================================================
-   SCR-009: 棚卸メニュー
-   ============================================================ */
-
-.inventory-count-menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--ds-space-200);
-  padding: var(--ds-space-200);
-}
-
-.inventory-count-menu-card {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--ds-space-200);
-  padding: var(--ds-space-300);
-  background-color: var(--ds-surface-raised);
-  border: 1px solid var(--ds-border);
-  border-radius: 4px;
-  box-shadow: var(--ds-shadow-raised);
-  text-decoration: none;
-  color: var(--ds-text);
-  transition: box-shadow 0.15s;
-}
-.inventory-count-menu-card:hover {
-  box-shadow: var(--ds-shadow-overlay);
-  border-color: var(--ds-border-focused);
-}
-.inventory-count-menu-card.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.inventory-count-menu-card-icon {
-  flex-shrink: 0;
-  color: var(--ds-icon);
-}
-
-.inventory-count-menu-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-050);
-}
-
-.inventory-count-menu-card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ds-text);
-}
-
-.inventory-count-menu-card-desc {
-  font-size: 0.8125rem;
-  color: var(--ds-text-subtle);
-}
-
-.inventory-count-menu-card-badge {
-  display: inline-block;
-  margin-top: var(--ds-space-050);
-  padding: 2px 6px;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  border-radius: 3px;
-  background-color: var(--ds-background-neutral);
-  color: var(--ds-text-subtle);
-}
-
-/* ============================================================
-   SCR-009: 差異管理
-   ============================================================ */
-
-.diff-filter-bar {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-100);
-  flex-wrap: wrap;
-  margin-bottom: var(--ds-space-200);
-}
-
-.btn-filter-toggle {
-  border: 1px solid var(--ds-border);
-  background-color: var(--ds-surface);
-  color: var(--ds-text-subtle);
-}
-.btn-filter-toggle:hover {
-  background-color: var(--ds-background-neutral);
-}
-.btn-filter-toggle.active {
-  background-color: var(--ds-background-warning);
-  border-color: var(--ds-text-warning);
-  color: var(--ds-text-warning);
-  font-weight: 600;
-}
-
-.diff-search-input {
-  min-width: 220px;
-  padding: var(--ds-space-075) var(--ds-space-100);
-  font-size: 0.875rem;
-  border: 1px solid var(--ds-border-input);
-  border-radius: 3px;
-  background-color: var(--ds-background-input);
-  color: var(--ds-text);
-  outline: none;
-}
-.diff-search-input:focus {
-  border-color: var(--ds-border-focused);
-  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
-}
-
-.diff-toolbar-right {
-  margin-left: auto;
-  display: flex;
-  gap: var(--ds-space-100);
-}
-
-.diff-table-wrap {
-  /* table-scroll-x で共通スタイル適用 */
-}
-
-.diff-table {
-  /* data-table で共通スタイル適用 */
-}
-.diff-table tbody td {
-  padding: var(--ds-space-075) var(--ds-space-150); /* vertical padding を縮小 */
-}
-
-.diff-row-warning td {
-  background-color: var(--ds-background-warning);
-}
-.diff-table tbody .diff-row-warning:hover td {
-  filter: brightness(0.97);
-}
-
-.diff-status-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-.diff-status-badge.unchecked {
-  color: var(--ds-text-subtle);
-}
-.diff-status-badge.checked {
-  color: var(--ds-text-success);
-}
-
-/* ============================================================
-   SCR-009-1: 棚卸作業（棚一覧）
-   ============================================================ */
-
-.inventory-count-page .app-main {
-  background-color: var(--ds-background-phone-stage);
-}
-
-.shelf-filter-bar {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-100);
-  padding: var(--ds-space-150);
-  border-bottom: 1px solid var(--ds-border);
-  background-color: var(--ds-surface);
-}
-
-.shelf-filter-toggle {
-  width: fit-content;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: var(--ds-space-050) var(--ds-space-150);
-  border: 1px solid var(--ds-border);
-  border-radius: 3px;
-  cursor: pointer;
-  background-color: var(--ds-surface);
-  color: var(--ds-text-subtle);
-  transition: background-color 0.1s, color 0.1s;
-}
-.shelf-filter-toggle:hover {
-  background-color: var(--ds-background-neutral);
-}
-.shelf-filter-toggle.active {
-  background-color: var(--ds-background-selected);
-  border-color: var(--ds-border-selected);
-  color: var(--ds-text-selected);
-}
-
-.shelf-filter-search {
-  width: 100%;
-  box-sizing: border-box;
-  padding: var(--ds-space-075) var(--ds-space-100);
-  font-size: 0.8125rem;
-  border: 1px solid var(--ds-border-input);
-  border-radius: 3px;
-  background-color: var(--ds-background-input);
-  color: var(--ds-text);
-  outline: none;
-}
-.shelf-filter-search:focus {
-  border-color: var(--ds-border-focused);
-  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
-}
-
-.shelf-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--ds-space-150);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-100);
-}
-
-.shelf-card {
-  border: 1px solid var(--ds-border);
-  border-radius: 6px;
-  padding: var(--ds-space-100) var(--ds-space-150);
-  background-color: var(--ds-surface);
-  flex-shrink: 0;
-}
-.shelf-card.completed {
-  background-color: var(--ds-background-success);
-  border-color: var(--ds-border-success);
-}
-
-.shelf-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--ds-space-075);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--ds-text);
-}
-
-.shelf-card-badge {
-  font-size: 0.625rem;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 3px;
-  background-color: var(--ds-background-success-bold);
-  color: var(--ds-text-inverse);
-}
-
-.shelf-card-progress {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-100);
-}
-
-.shelf-progress-bar {
-  flex: 1;
-  height: 6px;
-  background-color: var(--ds-background-neutral);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.shelf-progress-bar-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.2s;
-}
-.shelf-progress-bar-fill.fill-incomplete {
-  background-color: var(--ds-background-information-bold);
-}
-.shelf-progress-bar-fill.fill-complete {
-  background-color: var(--ds-background-success-bold);
-}
-
-.shelf-progress-text {
-  font-size: 0.75rem;
-  color: var(--ds-text-subtle);
-  white-space: nowrap;
-  min-width: 2.5rem;
-  text-align: right;
-}
-
-.scan-bar-label {
-  display: block;
-  font-size: 0.6875rem;
-  color: var(--ds-text-subtle);
-  margin-bottom: var(--ds-space-075);
-}
-
-/* ============================================================
-   SCR-009-1-1: 棚卸作業（商品一覧）
-   ============================================================ */
-
-/* モーダルの基準点として position: relative を付与 */
-.phone-frame {
-  position: relative;
-}
-
-.phone-header-center {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1.3;
-}
-
-/* phone-header-center 内では absolute 配置を解除 */
-.phone-header-center .phone-header-title {
-  position: static;
-  transform: none;
-  left: auto;
-  font-size: 0.875rem;
-}
-
-.phone-header-sub {
-  font-size: 0.6875rem;
-  color: var(--ds-text-inverse);
-  opacity: 0.8;
-}
-
-.count-item-table-wrap {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.count-item-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.75rem;
-}
-
-.count-item-table thead th {
-  position: sticky;
-  top: 0;
-  padding: var(--ds-space-075) var(--ds-space-100);
-  text-align: left;
-  font-weight: 600;
-  color: var(--ds-text-subtle);
-  background-color: var(--ds-background-neutral);
-  border-bottom: 2px solid var(--ds-border);
-  white-space: nowrap;
-  z-index: 1;
-}
-.count-item-table thead th.col-num {
-  text-align: right;
-  width: 3rem;
-}
-.count-item-table thead th.col-status {
-  text-align: center;
-  width: 4rem;
-}
-
-.count-item-table tbody td {
-  padding: var(--ds-space-075) var(--ds-space-100);
-  color: var(--ds-text);
-  border-bottom: 1px solid var(--ds-border);
-  vertical-align: middle;
-}
-.count-item-table tbody td.col-num {
-  text-align: right;
-}
-.count-item-table tbody td.col-status {
-  text-align: center;
-}
-
-.count-item-table tbody tr.entered td {
-  background-color: var(--ds-background-success);
-}
-
-.count-item-status {
-  display: inline-block;
-  font-size: 0.625rem;
-  font-weight: 600;
-  padding: 1px 5px;
-  border-radius: 3px;
-  white-space: nowrap;
-}
-.count-item-status.empty {
-  background-color: var(--ds-background-neutral);
-  color: var(--ds-text-subtle);
-}
-.count-item-status.entered {
-  background-color: var(--ds-background-success-bold);
-  color: var(--ds-text-inverse);
-}
-
-.count-complete-bar {
-  flex-shrink: 0;
-  border-top: 1px solid var(--ds-border);
-  padding: var(--ds-space-100) var(--ds-space-150);
-  display: flex;
-  justify-content: flex-end;
-  background-color: var(--ds-surface);
-}
-
-.count-modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(9, 30, 66, 0.54);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.count-modal {
-  background-color: var(--ds-surface-raised);
-  border-radius: 8px;
-  padding: var(--ds-space-300);
-  width: 280px;
-  box-shadow: var(--ds-shadow-overlay);
-}
-
-.count-modal-product-code {
-  font-size: 0.75rem;
-  color: var(--ds-text-subtle);
-}
-
-.count-modal-product-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ds-text);
-  margin-top: var(--ds-space-050);
-}
-
-.count-modal-label {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--ds-text);
-  margin: var(--ds-space-200) 0 var(--ds-space-075);
-}
-
-.count-modal-input {
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 1rem;
-  padding: var(--ds-space-075) var(--ds-space-100);
-  border: 1px solid var(--ds-border-input);
-  border-radius: 3px;
-  background-color: var(--ds-background-input);
-  color: var(--ds-text);
-  outline: none;
-}
-.count-modal-input:focus {
-  border-color: var(--ds-border-focused);
-  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
-}
-
-.count-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--ds-space-100);
-  margin-top: var(--ds-space-200);
-}
-
-/* ============================================================
    SCR-004-3: 在庫修正
    ============================================================ */
 
@@ -2065,6 +1619,15 @@ body {
 }
 .btn-danger:hover:not(:disabled) {
   background-color: var(--ds-background-danger-bold-hovered);
+}
+
+/* React 版（frontend/src/assets/style.css）の .btn-warning を移植 */
+.btn-warning {
+  background-color: var(--ds-background-warning);
+  color: var(--ds-text-subtle); /* 黄系背景なので暗いテキストで視認性確保 */
+}
+.btn-warning:hover:not(:disabled) {
+  background-color: var(--ds-background-warning-hovered);
 }
 
 .schedule-location-select {
@@ -2185,6 +1748,12 @@ body {
 .item-table--inbound .item-table-header,
 .item-table--inbound .item-row {
   grid-template-columns: 110px 110px 70px 90px 110px 110px 1fr 44px;
+}
+
+/* SCR-007 入荷登録: 入荷予定登録（React 版 .item-grid）の列に棚ロケーションを加える */
+.item-table--inbound-register .item-table-header,
+.item-table--inbound-register .item-row {
+  grid-template-columns: minmax(240px, 1fr) 70px 110px 150px 130px 140px 44px;
 }
 
 .item-add-row {
@@ -2523,7 +2092,6 @@ body {
 }
 
 .allocation-print-cell {
-  width: 10rem;
   text-align: center;
   padding: var(--ds-space-100) var(--ds-space-150);
   vertical-align: middle;
@@ -2628,11 +2196,12 @@ body {
   --allocation-col-ordered-at: 10rem;
   --allocation-col-result: 7rem;
   --allocation-col-status: 8rem;
-  --allocation-col-print: 11rem;
+  --allocation-col-print: 9.5rem;
+  --allocation-col-print-narrow: 5.5rem;
 
   table-layout: fixed;
   /* 明細グリッドが必要とする幅を下回らないようにする（下回った分は横スクロール） */
-  min-width: 78rem;
+  min-width: 84rem;
 }
 
 .allocation-col-check {
@@ -2659,22 +2228,28 @@ body {
 .allocation-col-print {
   width: var(--allocation-col-print);
 }
+.allocation-col-print--narrow {
+  width: var(--allocation-col-print-narrow);
+}
 
-/* 明細（展開行）の列。先頭はチェックボックス列・開閉アイコン列・ステータス列ぶんのインデントで、
-   以降は 商品コード / 商品名 / ロット番号 / 数量 / 棚ロケ / 引当数 / 残在庫数 / 結果。
-   「棚ロケ・引当数・残在庫数・結果」は意味的にひとまとまりなので右側へ寄せ、
-   最終列（結果）が伝票行の「引き当て結果」と重なるようにしている */
+/* 明細（展開行）の列。2グループに分けて、すべて右に寄せて並べる。
+   - 出荷予定の登録時の情報（元の要求）: 商品コード / 商品名 / ロット番号 / 賞味期限 / 数量
+   - 引き当て結果: 棚ロケ / ロット番号 / 賞味期限 / 引当数 / 残在庫数 / 結果
+   「引き当て結果」は意味的にひとまとまりなので右側へ寄せ、
+   最終列（結果）が伝票行の「引き当て結果」と重なるようにしている。
+   列はすべて固定幅にし、余った幅は左端の空き列（.allocation-detail-spacer）が吸収する。
+   明細は行ごとに別のグリッドのため、内容に合わせて幅が決まる指定（auto など）にすると行ごとに列がずれる */
 .allocation-detail-header--stock,
 .allocation-detail-item--stock {
   grid-template-columns:
-    calc(
-      var(--allocation-col-check) + var(--allocation-col-expand) +
-        var(--allocation-col-status)
-    )
-    var(--allocation-col-date)
     minmax(0, 1fr)
+    7rem
+    10rem
     8rem
+    6.5rem
     4.5rem
+    6.5rem
+    8rem
     6.5rem
     4.5rem
     5.5rem
@@ -2689,6 +2264,26 @@ body {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 列グループの見出し行（「出荷予定（登録時）」「引き当て結果」）。
+   先頭のインデント列のあとに、グループごとの列数ぶんをまたがせる */
+.allocation-detail-header--group {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.allocation-detail-group--request {
+  grid-column: span 5;
+}
+.allocation-detail-group--result {
+  grid-column: span 6;
+}
+
+/* 「引き当て結果」グループの先頭列。左に区切り線を引いて、元の要求と見分けやすくする */
+.allocation-detail-header--stock > .allocation-detail-group-start,
+.allocation-detail-item--stock > .allocation-detail-group-start,
+.allocation-detail-group--result {
+  border-left: 1px solid var(--ds-border);
 }
 
 /* 明細行の左右 padding は、右端を「引き当て結果」列の右端に合わせるため 0 にする */
@@ -2821,6 +2416,232 @@ body {
   box-shadow: var(--ds-shadow-raised);
 }
 
+/* === SCR-016: 在庫調整 === */
+
+/* 調整の種類。見出し「調整内容」の右端（section-card-header の space-between）に並べる */
+.adj-mode-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-300);
+}
+
+.adj-mode-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-075);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.adj-mode-radio {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--ds-background-brand-bold);
+  cursor: pointer;
+}
+
+/* 1 行目: 棚ロケ、2 行目: 商品・ロット番号・賞味期限・入庫日。
+   日付は日付が収まるぎりぎりの幅に固定し、残りを商品に回す */
+.adj-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 14rem) 9rem 9rem;
+  gap: var(--ds-space-200);
+}
+
+/* 棚ロケの右の空きに詰めず、次の行の先頭から並べる */
+.adj-form-field--row-start {
+  grid-column-start: 1;
+}
+
+.adj-form-grid .form-input:disabled {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+  cursor: not-allowed;
+}
+
+.adj-location-row {
+  display: flex;
+  gap: var(--ds-space-100);
+}
+
+/* 棚ロケコード（例: A-01-01-1）に余裕を持たせた幅に固定する */
+.adj-location-row .form-input {
+  flex: none;
+  width: 14rem;
+}
+
+.adj-location-row .btn {
+  flex-shrink: 0;
+}
+
+/* .btn の display 指定で hidden 属性が効かなくなるのを防ぐ */
+.adj-location-row [hidden] {
+  display: none;
+}
+
+.adj-field-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+/* 在庫数量の調整（左・内容分の幅）と調整理由（右・残りの幅）を横に並べる */
+.adj-qty-reason-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--ds-space-300);
+}
+
+/* 在庫数量の調整: 現在在庫数 + 調整数 = 調整後在庫数 */
+.adj-qty-section {
+  flex: none;
+  gap: var(--ds-space-150);
+}
+
+/* 1 行目: 現在在庫数 + 調整数 = 調整後在庫数、2 行目: 調整数の下に注釈。
+   幅は 5 桁の数量と単位区分（最長の「パレット」）が収まる程度に固定する。
+   調整数は入力欄の余白・スピンボタンとプレースホルダー（例: -5、10）の分だけ広くする */
+.adj-qty-row {
+  display: grid;
+  grid-template-columns: 9rem auto 12rem auto 9rem;
+  gap: var(--ds-space-050) var(--ds-space-100);
+}
+
+/* 調整数の左端から書き始め、収まらない分は右隣の空き（= と調整後在庫数の下）へはみ出させて 1 行で表示する */
+.adj-qty-hint {
+  grid-column: 3;
+  justify-self: start;
+  white-space: nowrap;
+}
+
+.adj-qty-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-050);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+
+/* 調整理由は在庫数量の調整と高さを揃える */
+.adj-reason-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.adj-reason-field .form-textarea {
+  flex: 1;
+}
+
+/* 数値（または入力欄）と単位区分を横に並べる。入力欄の行と数値の行で高さを揃える。
+   単位区分は文字サイズが小さいため、ベースラインで数値と下端を揃える */
+.adj-qty-value-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--ds-space-100);
+  width: 100%;
+  min-height: 2rem;
+}
+
+.adj-qty-box--current {
+  background: var(--ds-background-neutral);
+}
+
+.adj-qty-box--input {
+  background: var(--ds-surface);
+  border-color: var(--ds-border-focused);
+}
+
+.adj-qty-box--after {
+  background: var(--ds-background-success);
+  border-color: var(--ds-border);
+}
+
+.adj-qty-box--after.is-invalid {
+  background: var(--ds-background-danger);
+  border-color: var(--ds-text-danger);
+}
+
+.adj-qty-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+}
+
+.adj-qty-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 2rem;
+  color: var(--ds-text);
+}
+
+.adj-qty-box--after .adj-qty-value {
+  color: var(--ds-text-brand);
+}
+
+.adj-qty-box--after.is-invalid .adj-qty-value {
+  color: var(--ds-text-danger);
+}
+
+.adj-qty-input {
+  flex: 1;
+  min-width: 0;
+  height: 2rem;
+  padding: 0 var(--ds-space-100);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* プレースホルダーは入力値より控えめにし、狭い幅でも全文が見えるようにする */
+.adj-qty-input::placeholder {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.adj-qty-unit {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.adj-qty-op {
+  align-self: center;
+  font-size: 1.25rem;
+  color: var(--ds-text-subtle);
+}
+
+.adj-qty-error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ds-text-danger);
+}
+
+/* 特記事項は 1 行分の高さ（他の入力欄と同じ 2rem）にする。長文は縦方向のリサイズで広げられる */
+.adj-notes-textarea {
+  height: 2rem;
+  min-height: 2rem;
+  padding-top: var(--ds-space-050);
+  padding-bottom: var(--ds-space-050);
+}
+
+/* 既存在庫選択モーダル */
+.adj-stock-pick-wrapper {
+  max-height: 20rem;
+  overflow: auto;
+}
+
+.adj-stock-pick-table tbody tr {
+  cursor: pointer;
+}
+
 /* === 共通モーダル (.ds-modal-*) === */
 .ds-modal-overlay {
   position: fixed;
@@ -2859,6 +2680,31 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: var(--ds-space-100);
+}
+
+/* 確認モーダルの見出し（アイコン + タイトル）。React 版の Modal.jsx が見出しに付ける
+   Tailwind クラス（flex items-center gap-2 text-primary）とアイコンの h-5 w-5 に相当する */
+.ds-modal-title {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  color: var(--ds-text);
+}
+
+.ds-modal-title-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* 警告の確認モーダル。React 版の Modal.jsx の text-warning と、警告アイコンの h-6 w-6 に相当する */
+.ds-modal-title--warning {
+  color: var(--ds-text-warning);
+}
+
+.ds-modal-title-icon--lg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* === SCR-005 入荷予定登録 確認モーダル 商品明細一覧 === */
@@ -2911,81 +2757,6 @@ body {
   padding: var(--ds-space-075) var(--ds-space-100);
   font-size: 0.875rem;
   color: var(--ds-text);
-}
-
-/* === 棚卸管理 (SCR-018) === */
-
-.inventory-flash {
-  position: fixed;
-  top: var(--ds-space-300);
-  right: var(--ds-space-300);
-  z-index: 300;
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-100);
-  padding: var(--ds-space-150) var(--ds-space-200);
-  border-radius: 3px;
-  background: var(--ds-background-success);
-  border: 1px solid var(--ds-border-success);
-  color: var(--ds-text-success);
-  font-size: 0.875rem;
-  font-weight: 500;
-  box-shadow: var(--ds-shadow-raised);
-}
-
-.inventory-control-bar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-150);
-}
-
-.inventory-control-row {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-150);
-}
-
-.inventory-control-row--space-between {
-  justify-content: space-between;
-}
-
-.inventory-last-updated {
-  font-size: 0.75rem;
-  color: var(--ds-text-subtle);
-}
-
-.inventory-detail-row td {
-  padding: 0;
-  border-top: none;
-}
-
-.inventory-detail-inner {
-  padding: var(--ds-space-150) var(--ds-space-300);
-  background: var(--ds-background-neutral);
-}
-
-.inventory-detail-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8125rem;
-}
-
-.inventory-detail-table th,
-.inventory-detail-table td {
-  padding: var(--ds-space-075) var(--ds-space-100);
-  border-bottom: 1px solid var(--ds-border);
-  white-space: nowrap;
-}
-
-.inventory-detail-table th {
-  font-weight: 600;
-  color: var(--ds-text-subtle);
-  background: var(--ds-background-neutral);
-}
-
-.inventory-diff--warning {
-  color: var(--ds-text-warning);
-  font-weight: 600;
 }
 
 /* === SCR-006 入荷予定確定 === */
@@ -3273,6 +3044,25 @@ body {
 .inbound-confirm-list .modal-item-list-row + .modal-item-list-row > span {
   border-top: 1px solid var(--ds-border);
 }
+/* 入荷登録の確認モーダル: 商品・数量・棚ロケーションの3列 */
+.inbound-register-confirm-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  overflow-x: hidden;
+}
+.inbound-register-confirm-list .modal-item-list-row {
+  display: contents;
+}
+.inbound-register-confirm-list .modal-item-list-row > span {
+  padding: var(--ds-space-075) var(--ds-space-150);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inbound-register-confirm-list .modal-item-list-row + .modal-item-list-row > span {
+  border-top: 1px solid var(--ds-border);
+}
 .inbound-confirm-list-head > span {
   position: sticky;
   top: 0;
@@ -3295,10 +3085,13 @@ body {
 .inbound-confirm-lists--side .modal-item-list-row {
   white-space: nowrap;
 }
-/* 中身に合わせて縮むモーダル（横並び表示用） */
+/* 中身に合わせて縮むモーダル。既定（width: 100%）では中身が短くても max-width まで
+   広がり、余白が目立つため。React 版（frontend/src/assets/style.css）と同じ定義 */
 .ds-modal--fit {
   width: auto;
-  max-width: calc(100vw - 3rem);
+  /* 中身に合わせて縮めるが、明細が多いときに縦長・細幅になりすぎないよう下限を持つ */
+  min-width: 28rem;
+  max-width: min(72rem, calc(100vw - 3rem));
 }
 .inbound-confirm-lists--side .modal-item-list-heading {
   margin-top: 0;

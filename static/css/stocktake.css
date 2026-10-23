@@ -1,0 +1,876 @@
+/* ============================================================
+   棚卸モックアップ専用（019 棚卸管理 / 021 棚卸数更新履歴 / 022 棚卸入力 スマホ）
+   この3画面だけが style.css の後に読み込む。色は tokens.css の --ds-* 変数のみを使う。
+   ============================================================ */
+
+/* hidden 属性を display 指定より優先させる（display: flex / grid の要素も隠せるように） */
+[hidden] {
+  display: none !important;
+}
+
+/* === 共通 === */
+
+.stk-hint {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-badge--danger {
+  background-color: var(--ds-background-danger);
+  color: var(--ds-text-danger);
+}
+
+.stk-diff {
+  color: var(--ds-text-danger);
+  font-weight: 600;
+}
+
+.stk-num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.schedule-table th.stk-num {
+  text-align: right;
+}
+
+.stk-item-code {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-050);
+  margin-top: var(--ds-space-050);
+}
+
+.stk-tag {
+  display: inline-block;
+  padding: 0 var(--ds-space-075);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+
+.stk-merged-toggle {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.stk-memo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-075);
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-memo-text {
+  margin: var(--ds-space-075) 0;
+  font-size: 0.875rem;
+  color: var(--ds-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.stk-empty-cell {
+  text-align: center;
+  color: var(--ds-text-subtle);
+}
+
+/* === SCR-018 棚卸管理（PC） === */
+
+.stk-mock-note {
+  margin-bottom: var(--ds-space-300);
+}
+
+.stk-mock-note code {
+  padding: 0 var(--ds-space-050);
+  background-color: var(--ds-background-neutral);
+  border-radius: 3px;
+}
+
+.stk-control-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--ds-space-150);
+}
+
+.stk-control-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-100);
+}
+
+.stk-inline-label {
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-session-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-200);
+  font-size: 0.875rem;
+  color: var(--ds-text);
+}
+
+.stk-last-polled {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-200);
+  margin-top: var(--ds-space-150);
+  font-size: 0.875rem;
+}
+
+.stk-summary-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-050);
+}
+
+/* 左に棚ロケ一覧、右に選んだ棚ロケの明細 */
+.stk-pc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--ds-space-300);
+  align-items: stretch;
+}
+
+.stk-pc-layout .section-card {
+  margin-bottom: 0;
+}
+
+/* ページを画面の高さに収め、左の一覧と右の明細をそれぞれ内側でスクロールさせる。
+   入荷予定一覧などの body.schedule-page（style.css）と同じ考え方。019 だけに効かせる */
+.stk-pc-page,
+.stk-pc-page .app-layout {
+  height: 100%;
+  overflow: hidden;
+}
+
+.stk-pc-page .app-body {
+  overflow: hidden;
+}
+
+.stk-pc-page .app-main {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* 画面が低く .stk-pc-layout の最小の高さを下回るときは、ページ全体のスクロールに戻す */
+}
+
+.stk-pc-page .app-main > * {
+  flex-shrink: 0;
+}
+
+.stk-pc-page .stk-pc-layout {
+  flex: 1 1 auto;
+  min-height: 20rem;
+  grid-template-rows: minmax(0, 1fr); /* 行の高さを内容ではなく残りの高さに合わせる */
+}
+
+.stk-pc-page .stk-pc-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.stk-pc-page .stk-pc-list .table-scroll-x {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.stk-pc-page .stk-pc-detail {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.stk-list-actions,
+.stk-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-100);
+  margin-bottom: var(--ds-space-150);
+}
+
+.stk-col-check {
+  width: 1px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.schedule-table th.stk-col-check {
+  text-align: center;
+}
+
+/* チェックボックスのあるセルは、セル全体を押して切り替えられる */
+td.stk-col-check:has(input) {
+  cursor: pointer;
+}
+
+.stk-clickable {
+  cursor: pointer;
+}
+
+.stk-shelf-table tbody tr.is-selected td {
+  background-color: var(--ds-background-neutral-hovered);
+  font-weight: 600;
+}
+
+.stk-memo-count {
+  color: var(--ds-text-warning);
+  font-weight: 600;
+}
+
+.stk-detail-empty {
+  margin: 0;
+  padding: var(--ds-space-400) 0;
+  text-align: center;
+  color: var(--ds-text-subtle);
+}
+
+.stk-detail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+/* 差異のある行: 行全体の背景と左端の色帯（border-left は列幅をずらすため box-shadow で描く） */
+.stk-row-table tbody tr.stk-row--diff td,
+.stk-row-table tbody tr.stk-row--diff:hover td {
+  background-color: var(--ds-background-danger);
+}
+
+.stk-row-table tbody tr.stk-row--diff td:first-child {
+  box-shadow: inset 4px 0 0 var(--ds-text-danger);
+}
+
+.stk-lot-row td {
+  padding-top: var(--ds-space-050);
+  padding-bottom: var(--ds-space-050);
+  background-color: var(--ds-background-neutral);
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-subheading {
+  margin-top: var(--ds-space-300);
+  margin-bottom: var(--ds-space-100);
+}
+
+.stk-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--ds-space-100);
+}
+
+.stk-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-memo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stk-memo-item {
+  padding: var(--ds-space-100) 0;
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.stk-memo-item.is-done .stk-memo-text {
+  color: var(--ds-text-subtle);
+}
+
+.stk-memo-empty {
+  font-size: 0.875rem;
+  color: var(--ds-text-subtle);
+}
+
+/* === SCR-022 棚卸入力（スマホ） === */
+/* スマホのブラウザで直接開く全画面ページ。横持ちや PC で開いた場合は、本文だけを最大 480px で中央に置く */
+
+.stk-mobile-page {
+  margin: 0;
+  background-color: var(--ds-surface-sunken);
+}
+
+/* ヘッダーと画面下のバーは横幅いっぱいに広げ、本文（.stk-m-main）だけを最大 480px で中央に置く。
+   横持ちや PC で開いたときも、バーが途中で切れて見えないようにするため */
+.stk-m-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ds-surface-sunken);
+}
+
+.stk-m-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: var(--ds-space-150) var(--ds-space-200);
+  background-color: var(--ds-nav-bg);
+  color: var(--ds-nav-text);
+}
+
+.stk-m-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-100);
+}
+
+.stk-m-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ds-text-inverse);
+}
+
+.stk-m-session {
+  margin: var(--ds-space-050) 0 0;
+  font-size: 0.75rem;
+}
+
+.stk-m-main {
+  flex: 1;
+  width: 100%;
+  max-width: 30rem; /* 480px */
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: var(--ds-space-200);
+  /* 画面下に固定した操作バーとタブバーに本文が隠れないよう、その分の余白を取る */
+  padding-bottom: 10rem;
+}
+
+.stk-m-view-title {
+  margin: 0 0 var(--ds-space-150);
+}
+
+/* QR 読取（未実装）: カメラ映像が入る想定の枠 */
+.stk-m-scan-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  aspect-ratio: 1 / 1;
+  margin: var(--ds-space-200) auto var(--ds-space-100);
+  border: 3px dashed var(--ds-border-input);
+  border-radius: 8px;
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+  font-size: 0.875rem;
+}
+
+.stk-m-scan-guide {
+  margin: 0 0 var(--ds-space-300);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--ds-text);
+}
+
+.stk-m-scan-mock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-150);
+  border: 1px dashed var(--ds-border);
+  border-radius: 3px;
+}
+
+.stk-m-scan-mock .stk-hint {
+  margin: 0;
+}
+
+.stk-m-scan-select {
+  height: 2.75rem;
+  font-size: 1rem;
+}
+
+.stk-m-scan-open {
+  height: 2.75rem;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.stk-m-mock-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-050);
+  margin-top: var(--ds-space-300);
+  padding-top: var(--ds-space-200);
+  border-top: 1px dashed var(--ds-border);
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-m-mock-links a {
+  color: var(--ds-text-brand);
+}
+
+/* 画面下に固定する部分（「この棚を完了」の操作バーとタブバー）。横幅いっぱいに広げる */
+.stk-m-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+}
+
+.stk-m-action-bar {
+  padding: var(--ds-space-100) var(--ds-space-200);
+  border-top: 1px solid var(--ds-border);
+  background-color: var(--ds-surface-raised);
+}
+
+/* タブバー（棚ロケ / 数え直し / QR 読取。A4 #35 で採用） */
+.stk-m-tab-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--ds-border);
+  background-color: var(--ds-surface-raised);
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.stk-m-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--ds-space-075) 0 var(--ds-space-100);
+  border: none;
+  background: none;
+  color: var(--ds-text-subtle);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  cursor: pointer;
+}
+
+.stk-m-tab.is-active {
+  color: var(--ds-text-brand);
+  font-weight: 700;
+}
+
+.stk-m-tab-icon {
+  position: relative;
+  display: inline-flex;
+}
+
+.stk-m-tab-badge {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  min-width: 1.125rem;
+  padding: 0 4px;
+  border-radius: 1em;
+  background-color: var(--ds-background-danger-bold);
+  color: var(--ds-text-inverse);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.stk-m-search {
+  width: 100%;
+  height: 2.75rem;
+  margin-bottom: var(--ds-space-150);
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.stk-m-shelf-list,
+.stk-m-row-list,
+.stk-m-memo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-100);
+}
+
+.stk-m-shelf-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-075);
+  width: 100%;
+  padding: var(--ds-space-150);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  background-color: var(--ds-surface-raised);
+  box-shadow: var(--ds-shadow-raised);
+  color: var(--ds-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.stk-m-shelf-card--recount {
+  border: 2px solid var(--ds-text-danger);
+  background-color: var(--ds-background-danger);
+}
+
+.stk-m-shelf-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-100);
+}
+
+.stk-m-shelf-code {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.stk-m-shelf-meta {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-m-empty {
+  padding: var(--ds-space-200);
+  text-align: center;
+  color: var(--ds-text-subtle);
+  font-size: 0.875rem;
+}
+
+.stk-m-back {
+  margin-bottom: var(--ds-space-150);
+}
+
+.stk-m-shelf-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+  margin-bottom: var(--ds-space-100);
+}
+
+.stk-m-shelf-head .heading-l {
+  margin: 0;
+}
+
+.stk-m-notice {
+  margin: 0 0 var(--ds-space-150);
+  padding: var(--ds-space-100) var(--ds-space-150);
+  border-radius: 3px;
+  background-color: var(--ds-background-information);
+  color: var(--ds-text-information);
+  font-size: 0.875rem;
+}
+
+.stk-m-notice--recount {
+  background-color: var(--ds-background-danger);
+  color: var(--ds-text-danger);
+  font-weight: 600;
+}
+
+.stk-m-row {
+  padding: var(--ds-space-150);
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+  background-color: var(--ds-surface-raised);
+}
+
+/* 空欄（未入力・数え直し対象）の行を目立たせる（#8-1） */
+.stk-m-row--empty {
+  border: 2px solid var(--ds-text-warning);
+  background-color: var(--ds-background-warning);
+}
+
+.stk-m-row-item {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--ds-text);
+}
+
+.stk-m-row-item .stk-item-code {
+  display: inline;
+}
+
+/* ロット番号・賞味期限: 文字を大きくしすぎず、見出しは薄く小さく・値は濃く太くして読みやすくする
+   （作業員は 30〜50 代を想定。現物と照らし合わせる値を強く見せる） */
+.stk-m-row-attrs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-150);
+  margin: var(--ds-space-075) 0 0;
+}
+
+.stk-m-attr dt {
+  font-size: 0.75rem;
+  color: var(--ds-text-subtle);
+}
+
+.stk-m-attr dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  word-break: break-all;
+}
+
+.stk-m-attr dd.is-empty {
+  font-weight: 400;
+  color: var(--ds-text-subtle);
+}
+
+.stk-m-row .stk-tag {
+  margin-top: var(--ds-space-075);
+  font-size: 0.8125rem;
+  color: var(--ds-text);
+}
+
+.stk-m-qty {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-100);
+}
+
+.stk-m-qty-input {
+  flex: 1;
+  min-width: 0;
+  height: 2.75rem;
+  font-size: 1.25rem;
+  text-align: right;
+}
+
+.stk-m-qty-input:disabled {
+  background-color: var(--ds-background-neutral);
+  color: var(--ds-text-subtle);
+}
+
+/* 「1つずつ数える」モードの切り替え */
+.stk-m-tally-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  margin-bottom: var(--ds-space-150);
+  font-size: 0.9375rem;
+  color: var(--ds-text);
+  cursor: pointer;
+}
+
+.stk-m-tally-toggle input {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* 「＋1」ボタン: 普段は出さず、「1つずつ数える」モードのときだけ出す（誤タップ防止）。
+   数えながら押し続けるため、入力欄と同じ高さで大きめにする */
+.stk-m-plus {
+  display: none;
+  flex-shrink: 0;
+  width: 4rem;
+  height: 2.75rem;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.stk-m-tally-on .stk-m-plus {
+  display: inline-flex;
+}
+
+/* 「＋1」を押した直後に数字を光らせ、増えたことを分かるようにする */
+.stk-m-qty-flash {
+  animation: stk-m-qty-flash 0.6s ease-out;
+}
+
+@keyframes stk-m-qty-flash {
+  from { background-color: var(--ds-background-success); }
+  to   { background-color: var(--ds-background-input); }
+}
+
+.stk-m-unit {
+  min-width: 4rem;
+  font-size: 1rem;
+  font-weight: 600; /* 数える単位を取り違えないよう目立たせる */
+  color: var(--ds-text);
+}
+
+.stk-m-complete {
+  display: flex;
+  width: 100%;
+  max-width: calc(30rem - 2 * var(--ds-space-200)); /* バーは横幅いっぱいでも、ボタンは本文の幅に合わせる */
+  height: 3rem;
+  margin: 0 auto;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.stk-m-memo {
+  margin-top: var(--ds-space-300);
+  padding: var(--ds-space-150);
+  border-radius: 3px;
+  background-color: var(--ds-surface-raised);
+  box-shadow: var(--ds-shadow-raised);
+}
+
+.stk-m-memo .heading-s {
+  margin: 0 0 var(--ds-space-050);
+}
+
+.stk-m-memo-list {
+  margin: var(--ds-space-100) 0;
+}
+
+.stk-m-memo-item {
+  padding-bottom: var(--ds-space-100);
+  border-bottom: 1px solid var(--ds-border);
+}
+
+.stk-m-memo-item.is-done .stk-memo-text {
+  color: var(--ds-text-subtle);
+}
+
+.stk-m-memo-actions {
+  display: flex;
+  gap: var(--ds-space-100);
+  margin-top: var(--ds-space-075);
+}
+
+.stk-m-memo-text,
+.stk-m-memo-item .form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.stk-m-memo-add {
+  margin-top: var(--ds-space-100);
+}
+
+/* 「この棚を完了」の確認モーダル。共通の .ds-modal は min-width: 24rem のため、スマホ幅に合わせる */
+.stk-mobile-page .ds-modal {
+  min-width: 0;
+  width: calc(100% - 2 * var(--ds-space-200));
+  max-height: calc(100vh - 2 * var(--ds-space-200));
+  overflow-y: auto;
+  padding: var(--ds-space-200);
+  box-sizing: border-box;
+}
+
+.stk-mobile-page .ds-modal-footer .btn {
+  flex: 1;
+  height: 2.75rem;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.stk-m-confirm-lead {
+  margin: 0 0 var(--ds-space-075);
+}
+
+.stk-m-confirm-list {
+  list-style: none;
+  margin: 0 0 var(--ds-space-150);
+  padding: 0;
+  max-height: 40vh;
+  overflow-y: auto;
+  border: 1px solid var(--ds-border);
+  border-radius: 3px;
+}
+
+.stk-m-confirm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-100);
+  padding: var(--ds-space-100) var(--ds-space-150);
+}
+
+.stk-m-confirm-row + .stk-m-confirm-row {
+  border-top: 1px solid var(--ds-border);
+}
+
+.stk-m-confirm-item {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+}
+
+.stk-m-confirm-qty {
+  font-size: 1.125rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stk-m-confirm-empty {
+  padding: var(--ds-space-100) var(--ds-space-150);
+  color: var(--ds-text-subtle);
+}
+
+.stk-m-confirm-memo {
+  margin-bottom: var(--ds-space-150);
+}
+
+.stk-m-confirm-warning {
+  margin: 0;
+  color: var(--ds-text-danger);
+  font-weight: 600;
+}
+
+/* 横持ちなど画面の高さが低いとき: 縦持ち前提のまま、崩れない程度に詰める。
+   ヘッダーを固定せず、下の操作バー・タブバーを細くして、入力の行が見える範囲を確保する */
+@media (max-height: 500px) {
+  .stk-m-header {
+    position: static;
+  }
+
+  .stk-m-main {
+    padding-bottom: 7rem;
+  }
+
+  .stk-m-action-bar {
+    padding: var(--ds-space-050) var(--ds-space-200);
+  }
+
+  .stk-m-complete {
+    height: 2.25rem;
+  }
+
+  .stk-m-tab {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--ds-space-075);
+    padding: var(--ds-space-050) 0;
+  }
+
+  .stk-m-tab svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* スマホ画面にはサイドメニューが無いため、トーストを画面幅いっぱいに出す */
+.stk-mobile-page .toast-container {
+  top: var(--ds-space-100);
+  left: var(--ds-space-100);
+  right: var(--ds-space-100);
+}

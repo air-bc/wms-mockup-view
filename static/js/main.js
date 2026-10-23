@@ -1075,304 +1075,6 @@ function getProductName(code) {
 
 initShelfTransfer();
 
-/* ============================================================
-   SCR-009: 差異管理
-   ============================================================ */
-
-var DIFF_DATA = [
-  { stock: 10, counted: 8,  diff: -2, shelf: 'S-A01', item: 'ITM-001', status: '未確認' },
-  { stock: 5,  counted: 5,  diff: 0,  shelf: 'S-A01', item: 'ITM-002', status: '未確認' },
-  { stock: 20, counted: 23, diff: 3,  shelf: 'S-B03', item: 'ITM-010', status: '未確認' },
-  { stock: 3,  counted: 0,  diff: -3, shelf: 'S-C02', item: 'ITM-003', status: '未確認' },
-  { stock: 15, counted: 15, diff: 0,  shelf: 'S-C02', item: 'ITM-011', status: '未確認' },
-];
-
-var diffState = {
-  filterWarningOnly: false,
-  searchQuery: '',
-};
-
-function initDiffTable() {
-  if (!document.getElementById('diffTableBody')) return;
-  renderDiffTable();
-}
-
-function renderDiffTable() {
-  var tbody = document.getElementById('diffTableBody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-
-  var query = diffState.searchQuery.toLowerCase();
-
-  DIFF_DATA.forEach(function (row) {
-    var matchesFilter = !diffState.filterWarningOnly || row.diff !== 0;
-    var matchesSearch = !query ||
-      row.shelf.toLowerCase().indexOf(query) !== -1 ||
-      row.item.toLowerCase().indexOf(query) !== -1;
-
-    var tr = document.createElement('tr');
-    if (!matchesFilter || !matchesSearch) {
-      tr.className = 'hidden';
-    } else if (row.diff !== 0) {
-      tr.className = 'diff-row-warning';
-    }
-
-    var diffSign = row.diff > 0 ? '+' + row.diff : String(row.diff);
-    var badgeClass = row.status === '確認済み' ? 'checked' : 'unchecked';
-
-    tr.innerHTML =
-      '<td>' + row.stock + '</td>' +
-      '<td>' + row.counted + '</td>' +
-      '<td>' + diffSign + '</td>' +
-      '<td>' + row.shelf + '</td>' +
-      '<td>' + row.item + '</td>' +
-      '<td><span class="diff-status-badge ' + badgeClass + '">' + row.status + '</span></td>';
-
-    tbody.appendChild(tr);
-  });
-}
-
-function toggleDiffFilter() {
-  var btn = document.getElementById('diffFilterToggle');
-  if (!btn) return;
-  diffState.filterWarningOnly = !diffState.filterWarningOnly;
-  btn.dataset.active = String(diffState.filterWarningOnly);
-  if (diffState.filterWarningOnly) {
-    btn.classList.add('active');
-  } else {
-    btn.classList.remove('active');
-  }
-  renderDiffTable();
-}
-
-function handleDiffSearch(value) {
-  diffState.searchQuery = value;
-  renderDiffTable();
-}
-
-function approveAllDiff() {
-  if (!confirm('棚卸数を在庫数として確定します。よろしいですか？')) return;
-  DIFF_DATA.forEach(function (row) {
-    row.stock = row.counted;
-    row.diff = 0;
-    row.status = '確認済み';
-  });
-  renderDiffTable();
-}
-
-initDiffTable();
-
-/* ============================================================
-   SCR-009-1: 棚卸作業（棚一覧）
-   ============================================================ */
-
-var INVENTORY_SHELF_DATA = [
-  { code: 'A-01-01-1', total: 5, scanned: 5 },
-  { code: 'A-01-01-2', total: 3, scanned: 3 },
-  { code: 'A-01-02-1', total: 4, scanned: 2 },
-  { code: 'A-01-02-2', total: 2, scanned: 0 },
-  { code: 'A-01-03-1', total: 4, scanned: 4 },
-  { code: 'A-02-01-1', total: 3, scanned: 1 },
-  { code: 'A-02-01-2', total: 3, scanned: 3 },
-  { code: 'A-02-02-1', total: 5, scanned: 0 },
-  { code: 'A-02-02-2', total: 2, scanned: 2 },
-  { code: 'A-02-03-1', total: 4, scanned: 1 },
-  { code: 'A-03-01-1', total: 3, scanned: 0 },
-  { code: 'A-03-01-2', total: 3, scanned: 3 },
-  { code: 'A-03-02-1', total: 6, scanned: 2 },
-  { code: 'A-03-02-2', total: 2, scanned: 0 },
-  { code: 'A-03-03-1', total: 1, scanned: 1 },
-  { code: 'B-01-01-1', total: 4, scanned: 4 },
-  { code: 'B-01-02-1', total: 3, scanned: 0 },
-  { code: 'B-01-03-1', total: 3, scanned: 2 },
-  { code: 'B-02-01-1', total: 4, scanned: 0 },
-  { code: 'B-02-02-1', total: 5, scanned: 5 },
-];
-
-var inventoryShelfState = {
-  filterCompleted: false,
-  searchQuery: '',
-};
-
-function initInventoryShelfList() {
-  if (!document.getElementById('shelfList')) return;
-  renderShelfList();
-}
-
-function getFilteredShelves() {
-  var query = inventoryShelfState.searchQuery.toLowerCase();
-  return INVENTORY_SHELF_DATA.filter(function (shelf) {
-    var isCompleted = shelf.scanned === shelf.total;
-    var matchesFilter = !inventoryShelfState.filterCompleted || !isCompleted;
-    var matchesSearch = !query || shelf.code.toLowerCase().indexOf(query) !== -1;
-    return matchesFilter && matchesSearch;
-  });
-}
-
-function createShelfCard(shelf) {
-  var isCompleted = shelf.scanned === shelf.total;
-  var pct = shelf.total > 0 ? Math.round((shelf.scanned / shelf.total) * 100) : 0;
-
-  var card = document.createElement('div');
-  card.className = 'shelf-card' + (isCompleted ? ' completed' : '');
-
-  var badge = isCompleted
-    ? '<span class="shelf-card-badge">完了</span>'
-    : '';
-
-  var fillClass = isCompleted ? 'fill-complete' : 'fill-incomplete';
-
-  card.innerHTML =
-    '<div class="shelf-card-header">' +
-      '<span>' + shelf.code + '</span>' +
-      badge +
-    '</div>' +
-    '<div class="shelf-card-progress">' +
-      '<div class="shelf-progress-bar">' +
-        '<div class="shelf-progress-bar-fill ' + fillClass + '" style="width:' + pct + '%"></div>' +
-      '</div>' +
-      '<span class="shelf-progress-text">' + shelf.scanned + ' / ' + shelf.total + '</span>' +
-    '</div>';
-
-  return card;
-}
-
-function renderShelfList() {
-  var list = document.getElementById('shelfList');
-  if (!list) return;
-  list.innerHTML = '';
-  var filtered = getFilteredShelves();
-  filtered.forEach(function (shelf) {
-    list.appendChild(createShelfCard(shelf));
-  });
-}
-
-function toggleShelfCompletedFilter() {
-  inventoryShelfState.filterCompleted = !inventoryShelfState.filterCompleted;
-  var btn = document.getElementById('shelfFilterToggle');
-  if (btn) {
-    btn.classList.toggle('active', inventoryShelfState.filterCompleted);
-    btn.setAttribute('aria-pressed', String(inventoryShelfState.filterCompleted));
-  }
-  renderShelfList();
-}
-
-function handleShelfSearchInput(value) {
-  inventoryShelfState.searchQuery = value;
-  renderShelfList();
-}
-
-function handleShelfScan(code) {
-  var trimmed = code.trim();
-  if (!trimmed) return;
-  var shelf = INVENTORY_SHELF_DATA.find(function (s) {
-    return s.code === trimmed;
-  });
-  if (shelf) {
-    location.href = 'inventory_count_items.html';
-  } else {
-    alert('棚コード「' + trimmed + '」が見つかりません');
-  }
-}
-
-initInventoryShelfList();
-
-/* ============================================================
-   SCR-009-1-1: 棚卸作業（商品一覧）
-   ============================================================ */
-
-var COUNT_ITEMS_SHELF = 'A-01-01-1';
-
-var COUNT_ITEMS_DATA = [
-  { code: 'ITM-001', name: '冷凍食品A', stock: 12, counted: null },
-  { code: 'ITM-002', name: '冷凍食品B', stock: 8,  counted: null },
-  { code: 'ITM-003', name: '冷凍食品C', stock: 5,  counted: null },
-  { code: 'ITM-010', name: '飲料C',     stock: 20, counted: null },
-  { code: 'ITM-011', name: '飲料D',     stock: 3,  counted: null },
-];
-
-var countItemsState = {
-  modalTargetCode: null,
-};
-
-function initCountItems() {
-  var codeEl = document.getElementById('countShelfCode');
-  if (!codeEl) return;
-  codeEl.textContent = COUNT_ITEMS_SHELF;
-  renderCountItemsTable();
-}
-
-function renderCountItemsTable() {
-  var tbody = document.getElementById('countItemsTableBody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-  COUNT_ITEMS_DATA.forEach(function (item) {
-    var isEntered = item.counted !== null;
-    var tr = document.createElement('tr');
-    if (isEntered) tr.classList.add('entered');
-    tr.innerHTML =
-      '<td class="col-num">' + item.stock + '</td>' +
-      '<td class="col-num">' + (isEntered ? item.counted : '-') + '</td>' +
-      '<td>' + item.code + '</td>' +
-      '<td>' + item.name + '</td>' +
-      '<td class="col-status"><span class="count-item-status ' + (isEntered ? 'entered' : 'empty') + '">' +
-        (isEntered ? '入力済み' : '未入力') +
-      '</span></td>';
-    tbody.appendChild(tr);
-  });
-}
-
-function handleCountItemScan(code) {
-  var trimmed = code.trim();
-  if (!trimmed) return;
-  var item = COUNT_ITEMS_DATA.find(function (d) { return d.code === trimmed; });
-  if (item) {
-    openCountModal(trimmed);
-  } else {
-    alert('商品コード「' + trimmed + '」はこの棚に存在しません');
-  }
-}
-
-function openCountModal(code) {
-  var item = COUNT_ITEMS_DATA.find(function (d) { return d.code === code; });
-  if (!item) return;
-  countItemsState.modalTargetCode = code;
-  document.getElementById('countModalCode').textContent = item.code;
-  document.getElementById('countModalName').textContent = item.name;
-  var input = document.getElementById('countModalInput');
-  input.value = item.counted !== null ? item.counted : '';
-  document.getElementById('countModalOverlay').style.display = 'flex';
-  setTimeout(function () { input.focus(); input.select(); }, 50);
-}
-
-function closeCountModal() {
-  document.getElementById('countModalOverlay').style.display = 'none';
-  countItemsState.modalTargetCode = null;
-  document.getElementById('countScanInput').focus();
-}
-
-function confirmCountModal() {
-  var code = countItemsState.modalTargetCode;
-  if (!code) return;
-  var input = document.getElementById('countModalInput');
-  var val = parseInt(input.value, 10);
-  if (isNaN(val) || val < 0) {
-    alert('0以上の整数を入力してください');
-    return;
-  }
-  var item = COUNT_ITEMS_DATA.find(function (d) { return d.code === code; });
-  if (item) item.counted = val;
-  closeCountModal();
-  renderCountItemsTable();
-}
-
-function completeCountItems() {
-  if (!confirm('この棚の棚卸を完了します。よろしいですか？')) return;
-  location.href = 'inventory_count_shelf_list.html';
-}
-
-initCountItems();
-
 // === 在庫修正 (SCR-004-3) ===
 
 var PRODUCT_CODE_MAP = {
@@ -1593,49 +1295,121 @@ if (document.getElementById('manualInputForm')) {
   document.addEventListener('DOMContentLoaded', initManualForm);
 }
 
-// === SCR-006 入荷情報登録 ===
+// === SCR-007 入荷登録 ===
+// 入荷予定登録の React 版（ScheduleCreateView）と同じ構成に、明細の「棚ロケーション」列を加えたもの
 
-var INBOUND_REGISTER_KEEP = ['inboundDate', 'inboundTime', 'slipNo', 'supplier'];
-var INBOUND_REGISTER_CLEAR = ['itemCode', 'itemName', 'shelfLocation', 'quantity', 'unitType', 'lotNo', 'expiryDate', 'note'];
+// INBOUND_ITEM_MASTER は後方（入荷確定）で別データに再定義されるため、専用の名前で持つ
+var INBOUND_REGISTER_ITEM_MASTER = [
+  { code: 'P-001', name: '商品A', unit: 'パレット' },
+  { code: 'P-002', name: '商品B', unit: 'ケース' },
+  { code: 'P-003', name: '商品C', unit: 'ボール' },
+  { code: 'P-004', name: '商品D', unit: 'ピース' },
+  { code: 'P-005', name: '商品E', unit: 'パレット' },
+];
 
-function populateShelfSelect() {
-  var sel = document.getElementById('shelfLocation');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">棚ロケを選択</option>';
-  shelfLocations.forEach(function(s) {
-    var opt = document.createElement('option');
-    opt.value = s.code;
-    opt.textContent = s.code;
-    sel.appendChild(opt);
-  });
+function inboundRegisterItemLabel(item) {
+  return item.code + ' / ' + item.name + '（' + item.unit + '）';
+}
+
+function createInboundRegisterRowHTML() {
+  var itemOptions = INBOUND_REGISTER_ITEM_MASTER.map(function (item) {
+    return '<option value="' + item.code + '">' + inboundRegisterItemLabel(item) + '</option>';
+  }).join('');
+  var locationOptions = shelfLocations.map(function (s) {
+    return '<option value="' + s.code + '">' + s.code + '</option>';
+  }).join('');
+  return '<div class="item-row">' +
+    '<select name="item[]" class="form-input" aria-label="商品" required>' +
+      '<option value="">選択</option>' + itemOptions +
+    '</select>' +
+    '<input type="number" name="quantity[]" class="form-input" min="1" aria-label="数量" required>' +
+    '<input type="text" name="lotNo[]" class="form-input" aria-label="ロット番号">' +
+    '<input type="date" name="expiryDate[]" class="form-input" aria-label="賞味期限">' +
+    '<select name="location[]" class="form-input" aria-label="棚ロケーション" required>' +
+      '<option value="">選択</option>' + locationOptions +
+    '</select>' +
+    '<input type="text" name="itemNote[]" class="form-input" aria-label="特記事項">' +
+    '<button type="button" class="btn btn-icon-subtle" onclick="deleteInboundRegisterRow(this)" aria-label="この行を削除">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' +
+    '</button>' +
+  '</div>';
+}
+
+function addInboundRegisterRow() {
+  var container = document.getElementById('inboundRegisterItemRows');
+  if (!container) return;
+  var div = document.createElement('div');
+  div.innerHTML = createInboundRegisterRowHTML();
+  container.appendChild(div.firstChild);
+  var btn = document.getElementById('addInboundRegisterRowBtn');
+  if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// 最後の1行は削除せず入力内容をクリアする（React 版の handleRemoveRow と同じ挙動）
+function deleteInboundRegisterRow(btn) {
+  var container = document.getElementById('inboundRegisterItemRows');
+  var row = btn.closest('.item-row');
+  if (container.querySelectorAll('.item-row').length <= 1) {
+    row.querySelectorAll('input, select').forEach(function (el) { el.value = ''; });
+    return;
+  }
+  row.remove();
 }
 
 function initInboundRegister() {
-  var today = new Date();
-  var yyyy = today.getFullYear();
-  var mm = String(today.getMonth() + 1).padStart(2, '0');
-  var dd = String(today.getDate()).padStart(2, '0');
   var dateEl = document.getElementById('inboundDate');
-  if (dateEl) dateEl.value = yyyy + '-' + mm + '-' + dd;
-  populateShelfSelect();
+  if (dateEl) {
+    dateEl.value = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo' }).format(new Date());
+  }
+  var sel = document.getElementById('supplier');
+  if (sel && typeof supplierData !== 'undefined') {
+    supplierData.forEach(function (s) {
+      var opt = document.createElement('option');
+      opt.value = s.company;
+      opt.textContent = s.company;
+      sel.appendChild(opt);
+    });
+  }
+  addInboundRegisterRow();
 }
 
-function submitInboundAndContinue() {
-  INBOUND_REGISTER_CLEAR.forEach(function(id) {
+function openInboundRegisterConfirmModal() {
+  var valueOf = function (id) {
     var el = document.getElementById(id);
-    if (!el) return;
-    el.value = '';
-  });
-  var first = document.getElementById(INBOUND_REGISTER_CLEAR[0]);
-  if (first) first.focus();
+    return el && el.value ? el.value : '-';
+  };
+  document.getElementById('inboundRegisterConfirmDate').textContent = valueOf('inboundDate');
+  document.getElementById('inboundRegisterConfirmSlipNo').textContent = valueOf('slipNo');
+  document.getElementById('inboundRegisterConfirmSupplier').textContent = valueOf('supplier');
+
+  var rows = document.querySelectorAll('#inboundRegisterItemRows .item-row');
+  var html = Array.prototype.map.call(rows, function (row) {
+    var code = row.querySelector('[name="item[]"]').value;
+    var item = INBOUND_REGISTER_ITEM_MASTER.filter(function (i) { return i.code === code; })[0];
+    var qty = row.querySelector('[name="quantity[]"]').value || '-';
+    var location = row.querySelector('[name="location[]"]').value || '未選択';
+    return '<li class="modal-item-list-row">' +
+      '<span>' + (item ? item.code + ' / ' + item.name : '商品') + '</span>' +
+      '<span>' + qty + (item ? item.unit : '') + '</span>' +
+      '<span>' + location + '</span>' +
+    '</li>';
+  }).join('');
+
+  // 先頭の見出し行は残したまま明細を差し替える
+  var ul = document.getElementById('inboundRegisterConfirmItemList');
+  var head = ul.querySelector('.inbound-confirm-list-head');
+  ul.innerHTML = (head ? head.outerHTML : '') + html;
+  openModal('inboundRegisterConfirmModal');
 }
 
-function submitInboundAndNavigate() {
-  window.location.href = '004_inbound_schedule_list.html';
+// 登録後は自分自身へ戻る（React 版では入力内容を初期状態に戻す）
+function submitInboundRegister() {
+  window.location.href = '007_inbound_register.html';
 }
 
+// supplierData は後方で定義されるため、読み込み完了後に初期化する
 if (document.getElementById('inboundRegisterForm')) {
-  initInboundRegister();
+  document.addEventListener('DOMContentLoaded', initInboundRegister);
 }
 
 // === SCR-008 出荷予定登録 ===
@@ -2469,12 +2243,13 @@ function allocationDateTimeString(offsetDays, hour, minute) {
 }
 
 // 引き当て成功した棚ロケ1件分。
-// currentQuantity は「その引き当ての直前の在庫数」。画面の残在庫数はここから引当数を引いて求める
-function allocationStock(locationCode, allocatedQuantity, currentQuantity, lotNumber) {
+// currentQuantity は「その引き当ての直前の在庫数」。画面の残在庫数はここから引当数を引いて求める。
+// expiryOffsetDays は賞味期限（表示日からの日数）。明細でロット番号・賞味期限を指定しているときは、それと揃える
+function allocationStock(locationCode, allocatedQuantity, currentQuantity, lotNumber, expiryOffsetDays) {
   return {
     location_code: locationCode,
     lot_number: lotNumber || 'LOT-00001',
-    expiry_date: allocationDateString(120),
+    expiry_date: allocationDateString(expiryOffsetDays === undefined ? 120 : expiryOffsetDays),
     allocated_quantity: allocatedQuantity,
     current_quantity: currentQuantity
   };
@@ -2511,7 +2286,8 @@ function buildAllocationDummyResults() {
         }
       ]
     },
-    // 1つの明細が3つの棚ロケに分割して引き当てられたケース
+    // 1つの明細が3つの棚ロケに分割して引き当てられたケース。
+    // 開始日を翌日にしたときだけ、在庫不足（NG）に差し替える（applyAllocatedShortageDummy を参照）
     {
       schedule_id: 102,
       order_number: 'ORD-20260901-002',
@@ -2527,9 +2303,9 @@ function buildAllocationDummyResults() {
           lot_number: 'LOT-00012', expiry_date: allocationDateString(200),
           quantity: 120, result: true, shortage_quantity: 0,
           allocated_stocks: [
-            allocationStock('B-02-01-1', 50, 50, 'LOT-00012'),
-            allocationStock('B-02-01-2', 40, 40, 'LOT-00012'),
-            allocationStock('B-02-03-1', 30, 90, 'LOT-00012')
+            allocationStock('B-02-01-1', 50, 50, 'LOT-00012', 200),
+            allocationStock('B-02-01-2', 40, 40, 'LOT-00012', 200),
+            allocationStock('B-02-03-1', 30, 90, 'LOT-00012', 200)
           ]
         }
       ]
@@ -2561,7 +2337,7 @@ function buildAllocationDummyResults() {
           item_code: 'ITEM-00005', item_name: 'テスト商品 5', item_unit: 'パック',
           lot_number: 'LOT-00030', expiry_date: allocationDateString(60),
           quantity: 15, result: true, shortage_quantity: 0,
-          allocated_stocks: [allocationStock('C-02-01-1', 15, 45, 'LOT-00030')]
+          allocated_stocks: [allocationStock('C-02-01-1', 15, 45, 'LOT-00030', 60)]
         }
       ]
     },
@@ -2635,6 +2411,22 @@ function buildAllocationDummyResults() {
   ];
 }
 
+// モックアップの裏仕様: 開始日を翌日にして「引き当て実行」すると、引き当て済みの ORD-20260901-002 を
+// 在庫不足（NG）にする。引き当て後に在庫が減り、シミュレーションで不足が判明したケースの確認用。
+// 120 のうち、2つの棚ロケから 90 しか確保できない（不足 30）
+function applyAllocatedShortageDummy(results, startDate) {
+  if (startDate !== allocationDateString(1)) return results;
+  results.forEach(function (schedule) {
+    if (schedule.schedule_id !== 102) return;
+    var item = schedule.items[0];
+    item.allocated_stocks = item.allocated_stocks.slice(0, 2);
+    item.result = false;
+    item.shortage_quantity = 30;
+    schedule.result = false;
+  });
+  return results;
+}
+
 // 画面の状態。React の useState 相当をまとめて持つ
 var allocationState = {
   executed: false,   // 「引き当て実行」を押すまで結果セクションを出さない
@@ -2647,6 +2439,9 @@ var allocationState = {
   statusFilters: { allocated: false, draft: true },
   expandedIds: [],   // 明細を開いている schedule_id
   selectedIds: [],   // チェックされている schedule_id
+  // 引き当て済みの伝票がシミュレーションで NG になったことを知らせるトースト。
+  // 「引き当て実行」を押し直したときに前回の分を消すため、要素を持っておく
+  allocatedFailureToast: null,
   pendingConfirm: null // 確認モーダルで「はい」を押したときに実行する処理
 };
 
@@ -2728,10 +2523,45 @@ function runAllocationCheck() {
   // 実際の通信と同じく非同期で解決させる（ローディング表示の確認のため少し遅らせる）
   setTimeout(function () {
     allocationState.loading = false;
-    allocationState.results = buildAllocationDummyResults();
+    allocationState.results = applyAllocatedShortageDummy(buildAllocationDummyResults(), startDate);
     updateAllocationUpdatedAt();
+    // 絞り込みを切り替えることがあるため、描画より先に呼ぶ
+    notifyAllocatedFailures();
     renderAllocationSections();
   }, 300);
+}
+
+// 引き当て済みの伝票がシミュレーションで NG になっていたら、トーストで知らせる。
+// 伝票が複数あっても1つのトーストにまとめ、× で閉じるまで消さない（対処が必要なため）。
+// 前回の「引き当て実行」で出したトーストは、結果が古くなるため消してから出し直す。
+// NG の伝票をすぐ確認できるよう、ステータスの絞り込みを「引き当て済み」だけに切り替える
+function notifyAllocatedFailures() {
+  if (allocationState.allocatedFailureToast) {
+    allocationState.allocatedFailureToast.remove();
+    allocationState.allocatedFailureToast = null;
+  }
+
+  var failedOrderNumbers = allocationState.results
+    .filter(function (s) { return s.status === 'allocated' && !s.result; })
+    .map(function (s) { return s.order_number; });
+  if (failedOrderNumbers.length === 0) return;
+
+  allocationState.allocatedFailureToast = showToast(
+    'error',
+    '引き当て済みの受注No. ' + failedOrderNumbers.join('、') + ' の在庫不足が判明しました。' +
+      '出荷確定画面で数量を調整するか、伝票を削除して出荷予定登録からやり直してください。',
+    0
+  );
+  setAllocationStatusFilters({ allocated: true, draft: false });
+}
+
+// ステータスの絞り込みを、画面のチェックボックスとあわせて切り替える
+function setAllocationStatusFilters(filters) {
+  allocationState.statusFilters = filters;
+  Object.keys(filters).forEach(function (key) {
+    var checkbox = document.querySelector('[data-allocation-status="' + key + '"]');
+    if (checkbox) checkbox.checked = filters[key];
+  });
 }
 
 // 最終更新は React 側に合わせて「HH:mm」で表示する
@@ -2839,17 +2669,28 @@ function allocationStockLinesHtml(stocks, render, className) {
 }
 
 // 展開時に表示する明細（出荷予定明細 単位）の一覧。
-// 先頭の空セルは、伝票行のチェックボックス列・開閉アイコン列・ステータス列ぶんのインデント
+// 列はすべて右に寄せ、左端の空き列（.allocation-detail-spacer）で余った幅を吸収する。
+// 列は「出荷予定の登録時の情報（元の要求）」と「引き当て結果」の2グループに分ける。
+// 引き当て済みの伝票も、引き当て結果はシミュレーション結果を表示するため、元の要求と並べて比べられるようにする
 function allocationDetailHtml(schedule) {
   var html = '' +
     '<div class="allocation-detail-inner allocation-detail-inner--stock">' +
+      '<div class="allocation-detail-header allocation-detail-header--stock allocation-detail-header--group">' +
+        '<span class="allocation-detail-spacer" aria-hidden="true"></span>' +
+        // 元の要求の列は見出しを付けず、引き当て結果の列だけにグループ名を付ける（列位置を揃えるため空のセルは残す）
+        '<span class="allocation-detail-group allocation-detail-group--request"></span>' +
+        '<span class="allocation-detail-group allocation-detail-group--result">引き当て結果</span>' +
+      '</div>' +
       '<div class="allocation-detail-header allocation-detail-header--stock">' +
-        '<span></span>' +
+        '<span class="allocation-detail-spacer" aria-hidden="true"></span>' +
         '<span>商品コード</span>' +
         '<span>商品名</span>' +
         '<span>ロット番号</span>' +
+        '<span>賞味期限</span>' +
         '<span class="text-right">数量</span>' +
-        '<span>棚ロケ</span>' +
+        '<span class="allocation-detail-group-start">棚ロケ</span>' +
+        '<span>ロット番号</span>' +
+        '<span>賞味期限</span>' +
         '<span class="text-right">引当数</span>' +
         '<span class="text-right">残在庫数</span>' +
         '<span class="text-center">結果</span>' +
@@ -2858,12 +2699,17 @@ function allocationDetailHtml(schedule) {
   schedule.items.forEach(function (item) {
     html += '<div class="allocation-detail-item allocation-detail-item--stock' +
       (item.result ? '' : ' allocation-detail-item--ng-boundary') + '">' +
-      '<span></span>' +
+      '<span class="allocation-detail-spacer" aria-hidden="true"></span>' +
       '<span>' + allocationEscape(item.item_code) + '</span>' +
       '<span>' + allocationEscape(item.item_name) + '</span>' +
       '<span>' + allocationEscape(item.lot_number || ALLOCATION_EMPTY_MARK) + '</span>' +
+      '<span>' + (item.expiry_date ? allocationFormatDate(item.expiry_date) : ALLOCATION_EMPTY_MARK) + '</span>' +
       '<span class="text-right">' + item.quantity + '</span>' +
-      allocationStockLinesHtml(item.allocated_stocks, function (s) { return s.location_code; }) +
+      allocationStockLinesHtml(item.allocated_stocks, function (s) { return s.location_code; }, 'allocation-detail-group-start') +
+      allocationStockLinesHtml(item.allocated_stocks, function (s) { return s.lot_number || ALLOCATION_EMPTY_MARK; }) +
+      allocationStockLinesHtml(item.allocated_stocks, function (s) {
+        return s.expiry_date ? allocationFormatDate(s.expiry_date) : ALLOCATION_EMPTY_MARK;
+      }) +
       allocationStockLinesHtml(item.allocated_stocks, function (s) { return s.allocated_quantity; }, 'text-right') +
       // 残在庫数は「その棚ロケで引き当てた直後の残数」。
       // 引当直前の在庫数（current_quantity）から引当数を引いて求める
@@ -2912,7 +2758,8 @@ function allocationBlockHtml(block) {
             '<col class="allocation-col-ordered-at">' +
             '<col>' +
             '<col class="allocation-col-result">' +
-            '<col class="allocation-col-print">' +
+            // 出荷予定ブロックの「操作」は削除ボタンだけなので、引き当て表印刷ボタンより狭くする
+            '<col class="allocation-col-print' + (block.deletable ? ' allocation-col-print--narrow' : '') + '">' +
           '</colgroup>' +
           '<thead>' +
             '<tr>' +
@@ -2972,7 +2819,7 @@ function allocationBlockHtml(block) {
       '<td class="allocation-print-cell">' +
         (block.deletable
           ? '<button type="button" class="btn btn-danger" onclick="event.stopPropagation(); openAllocationDeleteConfirm(' + id + ')">削除</button>'
-          : '<button type="button" class="btn btn-default" onclick="event.stopPropagation()">引き当て表印刷</button>') +
+          : '<button type="button" class="btn btn-default" onclick="event.stopPropagation(); printAllocationSheet()">引き当て表印刷</button>') +
       '</td>' +
       '</tr>';
 
@@ -3110,6 +2957,11 @@ function openAllocationDeleteConfirm(scheduleId) {
   });
 }
 
+// 引き当て表の印刷は未実装。本実装までは押したことだけをトーストで知らせる
+function printAllocationSheet() {
+  showToast('info', '引き当て表印刷は未実装です', 3000);
+}
+
 function bulkPrintAllocationSheets() {
   var targets = allocationSelectedRowsOf('allocated');
   if (targets.length === 0) return;
@@ -3138,6 +2990,8 @@ function showToast(type, message, duration) {
   if (ms > 0) {
     setTimeout(function () { toast.remove(); }, ms);
   }
+  // 呼び出し元があとから消せるよう、トーストの要素を返す
+  return toast;
 }
 
 // === SCR-017 棚ロケ移動登録 ===
@@ -3562,8 +3416,11 @@ function closeTransferHistoryModal() {
 }
 
 // === SCR-016 在庫調整 ===
-// 「棚ロケ選択 → 棚ロケ別在庫一覧 → 行クリックでフォームへ転記 → 確認モーダル」の流れ。
-// 構造は 017（棚ロケ移動登録）と同じ作りに合わせている。
+// 調整の種類をラジオで切り替える。
+//   既存在庫の数量変更: 棚ロケ選択 → 「既存在庫選択」モーダルで在庫を選ぶ → 商品・入荷情報を補完して変更不可にする
+//   新規在庫の追加    : 棚ロケ・商品・入荷情報を手入力する（現在在庫数は 0。入庫日の初期値は今日）
+// 調整数を入れると調整後在庫数を自動計算し、確認モーダルを経て登録する。
+// 新規在庫の追加で同じ在庫が既にあるときは、確認モーダルの代わりに重複警告モーダルを出し、既存在庫の数量変更へ切り替えさせる。
 
 // 棚ロケ別在庫のダミーデータ（shelfLocations の code に紐づく StockLot 相当）
 var ADJUSTMENT_STOCK_DATA = [
@@ -3578,21 +3435,74 @@ var ADJUSTMENT_STOCK_DATA = [
   { location: 'B-01-01-1', itemCode: 'P-008', itemName: '商品H', lotNo: 'LOT-009', expiryDate: '',           receivedAt: '2026/02/18', qty: 70,  unit: '‐',       note: '' },
   { location: 'B-01-02-1', itemCode: 'P-009', itemName: '商品I', lotNo: 'LOT-010', expiryDate: '2026/10/10', receivedAt: '2026/06/22', qty: 90,  unit: 'ボール',   note: '' },
   { location: 'B-01-02-1', itemCode: 'P-010', itemName: '商品J', lotNo: 'LOT-011', expiryDate: '2026/09/05', receivedAt: '2026/07/08', qty: 110, unit: 'ピース',   note: '要冷蔵' }
-  // ※ C-01-01-1 は在庫なし（「在庫がありません」表示の確認用）
+  // ※ C-01-01-1 は在庫なし（「既存在庫選択」が押せないことの確認用）
+  // ※ 新規在庫の追加で A-01-01-1 / P-002 / LOT-003 / 賞味期限なし / 2026-06-15 を入力すると重複警告になる
 ];
 
-var adjSelectedRow = null;
-var adjSelectedTr  = null;
+// 商品プルダウン用の商品マスタ（ダミー）。P-011・P-012 は在庫なし（新規在庫の追加の確認用）
+var ADJUSTMENT_ITEM_MASTER = [
+  { itemCode: 'P-001', itemName: '商品A', unit: 'パレット' },
+  { itemCode: 'P-002', itemName: '商品B', unit: 'ケース' },
+  { itemCode: 'P-003', itemName: '商品C', unit: 'ピース' },
+  { itemCode: 'P-004', itemName: '商品D', unit: 'ボール' },
+  { itemCode: 'P-005', itemName: '商品E', unit: 'ケース' },
+  { itemCode: 'P-006', itemName: '商品F', unit: 'パレット' },
+  { itemCode: 'P-007', itemName: '商品G', unit: 'ピース' },
+  { itemCode: 'P-008', itemName: '商品H', unit: '‐' },
+  { itemCode: 'P-009', itemName: '商品I', unit: 'ボール' },
+  { itemCode: 'P-010', itemName: '商品J', unit: 'ピース' },
+  { itemCode: 'P-011', itemName: '商品K', unit: 'ケース' },
+  { itemCode: 'P-012', itemName: '商品L', unit: 'ピース' }
+];
+
+// 既存在庫の数量変更では、選んだ在庫の値を表示するだけで変更させない項目
+var ADJ_STOCK_KEY_FIELD_IDS = ['adjItem', 'adjLotNo', 'adjExpiryDate', 'adjReceivedAt'];
+// 既存在庫の数量変更では、在庫を選ぶまで入力させない項目
+var ADJ_INPUT_FIELD_IDS = ['adjQuantity', 'adjReason', 'adjSpecialNotes'];
+
+var adjMode = 'existing';     // 'existing' | 'new'
+var adjSelectedRow = null;    // 既存在庫の数量変更で選んだ在庫（ADJUSTMENT_STOCK_DATA の要素）
+var adjDuplicateRow = null;   // 新規在庫の追加で重複した在庫（重複警告モーダルの表示中のみ）
 
 function initAdjustmentScreen() {
   populateAdjLocationSelect();
-  renderAdjStockTable([]);
+  populateAdjItemSelect();
+
+  document.querySelectorAll('input[name="adjMode"]').forEach(function (radio) {
+    radio.addEventListener('change', onAdjModeChange);
+  });
+  document.getElementById('adjLocation').addEventListener('change', renderAdjFormState);
+  document.getElementById('adjItem').addEventListener('change', renderAdjFormState);
+  ['adjLotNo', 'adjExpiryDate', 'adjReceivedAt', 'adjReason'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', validateAdjustmentForm);
+  });
+  document.getElementById('adjQuantity').addEventListener('input', function () {
+    refreshAdjQty();
+    validateAdjustmentForm();
+  });
+  document.getElementById('adjStockPickBtn').addEventListener('click', openAdjStockPickModal);
+  // 「クリア」は棚ロケも含めて入力内容をすべて消し、初期状態に戻す
+  document.getElementById('adjStockClearBtn').addEventListener('click', resetAdjForm);
+  document.getElementById('adjStockPickCancel').addEventListener('click', function () {
+    closeModal('adjStockPickModal');
+  });
+  document.getElementById('adjRegisterBtn').addEventListener('click', onAdjRegisterClick);
+  document.getElementById('adjDuplicateCancel').addEventListener('click', function () {
+    adjDuplicateRow = null;
+    closeModal('adjDuplicateModal');
+  });
+  document.getElementById('adjDuplicateSwitch').addEventListener('click', switchAdjToExistingFromDuplicate);
+  document.getElementById('adjustmentConfirmOk').addEventListener('click', confirmAdjustment);
+  document.getElementById('adjustmentConfirmCancel').addEventListener('click', function () {
+    closeModal('adjustmentModal');
+  });
+
+  resetAdjForm();
 }
 
 /** 棚ロケ select を shelfLocations から生成する */
 function populateAdjLocationSelect() {
-  var sel = document.getElementById('adjLocationSelect');
-  if (!sel) return;
+  var sel = document.getElementById('adjLocation');
   sel.innerHTML = '<option value="">棚ロケを選択</option>';
   shelfLocations.forEach(function (s) {
     var opt = document.createElement('option');
@@ -3602,177 +3512,304 @@ function populateAdjLocationSelect() {
   });
 }
 
-/** 現在の棚ロケ + キーワードで絞り込んだ在庫行を返す */
-function getAdjFilteredRows() {
-  var sel = document.getElementById('adjLocationSelect');
-  var kwEl = document.getElementById('adjKeyword');
-  var location = sel ? sel.value : '';
+/** 商品 select を「商品コード / 商品名（単位区分）」の形式で生成する（入荷予定登録と同じ表示） */
+function populateAdjItemSelect() {
+  var sel = document.getElementById('adjItem');
+  sel.innerHTML = '<option value="">商品を選択</option>';
+  ADJUSTMENT_ITEM_MASTER.forEach(function (item) {
+    var opt = document.createElement('option');
+    opt.value = item.itemCode;
+    opt.textContent = formatAdjItem(item);
+    sel.appendChild(opt);
+  });
+}
+
+function formatAdjItem(item) {
+  return item.itemCode + ' / ' + item.itemName + '（' + item.unit + '）';
+}
+
+function findAdjItem(itemCode) {
+  return ADJUSTMENT_ITEM_MASTER.find(function (item) { return item.itemCode === itemCode; }) || null;
+}
+
+function getAdjLocationStocks(location) {
   if (!location) return [];
-  var kw = kwEl ? kwEl.value.trim().toLowerCase() : '';
-  return ADJUSTMENT_STOCK_DATA.filter(function (row) {
-    if (row.location !== location) return false;
-    if (!kw) return true;
-    return row.itemCode.toLowerCase().indexOf(kw) !== -1 ||
-           row.itemName.toLowerCase().indexOf(kw) !== -1 ||
-           row.lotNo.toLowerCase().indexOf(kw) !== -1;
-  });
+  return ADJUSTMENT_STOCK_DATA.filter(function (row) { return row.location === location; });
 }
 
-function onAdjLocationChange() {
-  deselectAdjRow();
-  renderAdjStockTable(getAdjFilteredRows());
+/** ダミーデータの「2026/05/10」を date input の「2026-05-10」に変換する */
+function toAdjInputDate(value) {
+  return value ? value.replace(/\//g, '-') : '';
 }
 
-function onAdjKeywordInput() {
-  deselectAdjRow();
-  renderAdjStockTable(getAdjFilteredRows());
+/** date input の値を画面表示用の「2026/05/10」に変換する */
+function formatAdjDate(value) {
+  return value ? value.replace(/-/g, '/') : '‐';
 }
 
-function renderAdjStockTable(rows) {
-  var tbody = document.getElementById('adjTableBody');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-
-  var sel = document.getElementById('adjLocationSelect');
-  var hasLocation = sel && sel.value;
-
-  if (rows.length === 0) {
-    var emptyRow = document.createElement('tr');
-    var emptyCell = document.createElement('td');
-    emptyCell.colSpan = 8;
-    emptyCell.style.textAlign = 'center';
-    emptyCell.style.padding = 'var(--ds-space-300)';
-    emptyCell.textContent = hasLocation ? '在庫がありません' : '棚ロケを選択してください';
-    emptyRow.appendChild(emptyCell);
-    tbody.appendChild(emptyRow);
-  } else {
-    rows.forEach(function (row) {
-      var tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td>' + row.itemCode + '</td>' +
-        '<td>' + row.itemName + '</td>' +
-        '<td>' + (row.lotNo || '‐') + '</td>' +
-        '<td>' + (row.expiryDate || '‐') + '</td>' +
-        '<td>' + row.receivedAt + '</td>' +
-        '<td class="col-right">' + row.qty + '</td>' +
-        '<td>' + row.unit + '</td>' +
-        '<td>' + (row.note || '') + '</td>';
-      tr.addEventListener('click', function () {
-        if (adjSelectedTr === tr) {
-          deselectAdjRow();
-        } else {
-          selectAdjRow(row, tr);
-        }
-      });
-      tbody.appendChild(tr);
-    });
-  }
-
-  var countEl = document.getElementById('adjTotalCount');
-  if (countEl) countEl.textContent = hasLocation ? '全 ' + rows.length + ' 件' : '';
+function todayAdjInputDate() {
+  var d = new Date();
+  var mm = String(d.getMonth() + 1).padStart(2, '0');
+  var dd = String(d.getDate()).padStart(2, '0');
+  return d.getFullYear() + '-' + mm + '-' + dd;
 }
 
-/** 行クリック: 調整フォームへ全項目を転記してフォームを有効化する */
-function selectAdjRow(rowData, tr) {
-  if (adjSelectedTr) adjSelectedTr.classList.remove('is-selected');
-  adjSelectedRow = rowData;
-  adjSelectedTr  = tr;
-  tr.classList.add('is-selected');
-
-  document.getElementById('adjLocation').value    = rowData.location;
-  document.getElementById('adjItemCode').value    = rowData.itemCode;
-  document.getElementById('adjItemName').value    = rowData.itemName;
-  document.getElementById('adjUnitType').value    = rowData.unit;
-  document.getElementById('adjLotNo').value       = rowData.lotNo || '';
-  document.getElementById('adjExpiryDate').value  = rowData.expiryDate || '';
-  document.getElementById('adjReceivedAt').value  = rowData.receivedAt;
-  document.getElementById('adjCurrentQty').value  = rowData.qty;
-  document.getElementById('adjQuantity').value    = '';
-  document.getElementById('adjAfterQty').value    = '';
-  document.getElementById('adjReason').value      = '';
-  document.getElementById('adjSpecialNotes').value = '';
-  document.getElementById('adjustmentForm').disabled = false;
-  validateAdjustmentForm();
+function onAdjModeChange(e) {
+  adjMode = e.target.value;
+  resetAdjForm();
 }
 
-function deselectAdjRow() {
-  if (adjSelectedTr) adjSelectedTr.classList.remove('is-selected');
+/** 入力内容をすべてクリアする。新規在庫の追加では入庫日に今日を入れる */
+function resetAdjForm() {
   adjSelectedRow = null;
-  adjSelectedTr  = null;
-  var form = document.getElementById('adjustmentForm');
-  if (!form) return;
-  ['adjLocation', 'adjItemCode', 'adjItemName', 'adjUnitType', 'adjLotNo', 'adjExpiryDate',
-   'adjReceivedAt', 'adjCurrentQty', 'adjQuantity', 'adjAfterQty', 'adjReason', 'adjSpecialNotes'
+  ['adjLocation', 'adjItem', 'adjLotNo', 'adjExpiryDate', 'adjReceivedAt',
+   'adjQuantity', 'adjReason', 'adjSpecialNotes'
   ].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) el.value = '';
+    document.getElementById(id).value = '';
   });
-  form.disabled = true;
-  var btn = document.getElementById('adjRegisterBtn');
-  if (btn) btn.disabled = true;
+  if (adjMode === 'new') {
+    document.getElementById('adjReceivedAt').value = todayAdjInputDate();
+  }
+  renderAdjFormState();
 }
 
-function onAdjQuantityInput() {
-  recalcAdjAfterQty();
+/** 調整の種類・在庫の選択状況に合わせて、入力可否・ボタン・数量表示を更新する */
+function renderAdjFormState() {
+  var isExisting = adjMode === 'existing';
+  var hasSelection = adjSelectedRow !== null;
+  var location = document.getElementById('adjLocation').value;
+  var stocks = getAdjLocationStocks(location);
+
+  // 棚ロケは、既存在庫を選んでいる間だけ変更不可（変えるには「クリア」する）
+  document.getElementById('adjLocation').disabled = isExisting && hasSelection;
+  ADJ_STOCK_KEY_FIELD_IDS.forEach(function (id) {
+    document.getElementById(id).disabled = isExisting;
+  });
+  ADJ_INPUT_FIELD_IDS.forEach(function (id) {
+    document.getElementById(id).disabled = isExisting && !hasSelection;
+  });
+
+  // 「既存在庫選択」は棚ロケに在庫があるときだけ押せる
+  var pickBtn = document.getElementById('adjStockPickBtn');
+  pickBtn.hidden = !isExisting;
+  pickBtn.disabled = stocks.length === 0;
+  document.getElementById('adjStockClearBtn').hidden = !(isExisting && hasSelection);
+
+  refreshAdjQty();
   validateAdjustmentForm();
 }
 
-/** 調整後在庫数 = 現在庫数 + 調整数 */
-function recalcAdjAfterQty() {
-  var afterEl = document.getElementById('adjAfterQty');
-  if (!afterEl) return;
-  if (!adjSelectedRow) { afterEl.value = ''; return; }
+/** 現在在庫数。既存在庫の数量変更で在庫を選んでいなければ null */
+function getAdjCurrentQty() {
+  if (adjMode === 'new') return 0;
+  return adjSelectedRow ? adjSelectedRow.qty : null;
+}
+
+function getAdjUnit() {
+  if (adjMode === 'existing') return adjSelectedRow ? adjSelectedRow.unit : '';
+  var item = findAdjItem(document.getElementById('adjItem').value);
+  return item ? item.unit : '';
+}
+
+/** 調整後在庫数 = 現在在庫数 + 調整数 を計算して表示する */
+function refreshAdjQty() {
+  var current = getAdjCurrentQty();
   var delta = parseInt(document.getElementById('adjQuantity').value, 10);
-  afterEl.value = isNaN(delta) ? '' : String(adjSelectedRow.qty + delta);
+  var after = (current === null || isNaN(delta)) ? null : current + delta;
+  var isNegative = after !== null && after < 0;
+
+  document.getElementById('adjCurrentQty').textContent = current === null ? '‐' : String(current);
+  document.getElementById('adjAfterQty').textContent = after === null ? '‐' : String(after);
+  document.getElementById('adjAfterBox').classList.toggle('is-invalid', isNegative);
+  document.getElementById('adjQtyError').hidden = !isNegative;
+
+  // 単位区分が未確定（在庫・商品が未選択）のときは空にし、数値が中央からずれないよう要素ごと隠す
+  var unit = getAdjUnit();
+  document.querySelectorAll('.adj-qty-unit').forEach(function (el) {
+    el.textContent = unit;
+    el.hidden = unit === '';
+  });
 }
 
 function validateAdjustmentForm() {
-  var btn = document.getElementById('adjRegisterBtn');
-  if (!btn) return;
-  if (!adjSelectedRow) { btn.disabled = true; return; }
-  var delta  = parseInt(document.getElementById('adjQuantity').value, 10);
-  var reason = (document.getElementById('adjReason').value || '').trim();
-  // 調整数は 0 不可・調整後在庫数は負不可
-  var valid = !isNaN(delta) && delta !== 0 &&
-              (adjSelectedRow.qty + delta) >= 0 &&
+  var current = getAdjCurrentQty();
+  var delta = parseInt(document.getElementById('adjQuantity').value, 10);
+  var location = document.getElementById('adjLocation').value;
+  var itemCode = document.getElementById('adjItem').value;
+  var receivedAt = document.getElementById('adjReceivedAt').value;
+  var reason = document.getElementById('adjReason').value.trim();
+  // 調整数は 0 不可・調整後在庫数は負不可（新規在庫の追加は現在在庫数が 0 のため、正の数のみになる）
+  var valid = current !== null && location !== '' && itemCode !== '' && receivedAt !== '' &&
+              !isNaN(delta) && delta !== 0 && current + delta >= 0 &&
               reason !== '';
-  btn.disabled = !valid;
+  document.getElementById('adjRegisterBtn').disabled = !valid;
+}
+
+/** 既存在庫選択モーダル: 選んだ棚ロケの在庫一覧を表示する */
+function openAdjStockPickModal() {
+  var location = document.getElementById('adjLocation').value;
+  var stocks = getAdjLocationStocks(location);
+  if (stocks.length === 0) return;
+
+  document.getElementById('adjStockPickSummary').textContent = '棚ロケ ' + location + '：全 ' + stocks.length + ' 件';
+  var tbody = document.getElementById('adjStockPickBody');
+  tbody.innerHTML = '';
+  stocks.forEach(function (row) {
+    var tr = document.createElement('tr');
+    if (row === adjSelectedRow) tr.classList.add('is-selected');
+    [
+      row.itemCode,
+      row.itemName,
+      row.lotNo || '‐',
+      row.expiryDate || '‐',
+      row.receivedAt,
+      String(row.qty),
+      row.unit,
+      row.note || ''
+    ].forEach(function (value, i) {
+      var td = document.createElement('td');
+      if (i === 5) td.className = 'col-right';
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+    tr.addEventListener('click', function () {
+      selectAdjStock(row);
+      closeModal('adjStockPickModal');
+    });
+    tbody.appendChild(tr);
+  });
+  openModal('adjStockPickModal');
+}
+
+/** 選んだ在庫で商品・入荷情報を補完する。調整数・調整理由・特記事項はクリアする */
+function selectAdjStock(row) {
+  adjSelectedRow = row;
+  document.getElementById('adjItem').value       = row.itemCode;
+  document.getElementById('adjLotNo').value      = row.lotNo || '';
+  document.getElementById('adjExpiryDate').value = toAdjInputDate(row.expiryDate);
+  document.getElementById('adjReceivedAt').value = toAdjInputDate(row.receivedAt);
+  ADJ_INPUT_FIELD_IDS.forEach(function (id) {
+    document.getElementById(id).value = '';
+  });
+  renderAdjFormState();
+}
+
+/** 「登録する」: 新規在庫の追加で同じ在庫が既にあれば重複警告、なければ確認モーダルを出す */
+function onAdjRegisterClick() {
+  if (adjMode === 'new') {
+    var duplicate = findAdjDuplicateStock();
+    if (duplicate) {
+      openAdjDuplicateModal(duplicate);
+      return;
+    }
+  }
+  openAdjustmentModal();
+}
+
+/** 棚ロケ・商品・ロット番号・賞味期限・入庫日がすべて一致する在庫を返す。
+ *  ロット番号の空文字・賞味期限の未入力も「指定なし」ではなく値として比較する */
+function findAdjDuplicateStock() {
+  var location   = document.getElementById('adjLocation').value;
+  var itemCode   = document.getElementById('adjItem').value;
+  var lotNo      = document.getElementById('adjLotNo').value.trim();
+  var expiryDate = document.getElementById('adjExpiryDate').value;
+  var receivedAt = document.getElementById('adjReceivedAt').value;
+  return ADJUSTMENT_STOCK_DATA.find(function (row) {
+    return row.location === location &&
+           row.itemCode === itemCode &&
+           (row.lotNo || '') === lotNo &&
+           toAdjInputDate(row.expiryDate) === expiryDate &&
+           toAdjInputDate(row.receivedAt) === receivedAt;
+  }) || null;
+}
+
+/** 重複警告モーダル: 重複した在庫の内容を表示する */
+function openAdjDuplicateModal(row) {
+  adjDuplicateRow = row;
+  var item = findAdjItem(row.itemCode);
+  var rows = [
+    ['棚ロケ',     row.location],
+    ['商品',       item ? formatAdjItem(item) : row.itemCode + ' / ' + row.itemName],
+    ['ロット番号', row.lotNo || '‐'],
+    ['賞味期限',   row.expiryDate || '‐'],
+    ['入庫日',     row.receivedAt],
+    ['現在在庫数', row.qty + ' ' + row.unit]
+  ];
+  renderAdjConfirmRows('adjDuplicateBody', rows);
+  openModal('adjDuplicateModal');
+}
+
+/** 重複した在庫を選んだ状態で既存在庫の数量変更に切り替える。調整数・調整理由・特記事項は引き継ぐ
+ *  （新規の調整数は正の数のため、既存在庫ではそのまま加算になる） */
+function switchAdjToExistingFromDuplicate() {
+  var row = adjDuplicateRow;
+  if (!row) return;
+  var kept = {};
+  ADJ_INPUT_FIELD_IDS.forEach(function (id) {
+    kept[id] = document.getElementById(id).value;
+  });
+
+  // radio の checked を直接変えても change イベントは発火しないため、resetAdjForm() は走らない
+  adjMode = 'existing';
+  document.querySelector('input[name="adjMode"][value="existing"]').checked = true;
+  document.getElementById('adjLocation').value = row.location;
+  selectAdjStock(row);
+  ADJ_INPUT_FIELD_IDS.forEach(function (id) {
+    document.getElementById(id).value = kept[id];
+  });
+  renderAdjFormState();
+
+  adjDuplicateRow = null;
+  closeModal('adjDuplicateModal');
+}
+
+/** 確認項目の表（.modal-confirm-table）の行として、ラベル・値の組を並べる */
+function renderAdjConfirmRows(tbodyId, rows) {
+  var tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  rows.forEach(function (pair) {
+    var tr = document.createElement('tr');
+    var th = document.createElement('th');
+    th.scope = 'row';
+    th.textContent = pair[0];
+    var td = document.createElement('td');
+    td.textContent = pair[1];
+    tr.appendChild(th);
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  });
 }
 
 function openAdjustmentModal() {
-  if (!adjSelectedRow) return;
-  var delta  = parseInt(document.getElementById('adjQuantity').value, 10);
-  if (isNaN(delta) || delta === 0) return;
-  var reason = document.getElementById('adjReason').value.trim();
-  var notes  = document.getElementById('adjSpecialNotes').value.trim();
+  var current = getAdjCurrentQty();
+  var delta = parseInt(document.getElementById('adjQuantity').value, 10);
+  if (current === null || isNaN(delta) || delta === 0) return;
+  var item = findAdjItem(document.getElementById('adjItem').value);
+  var unit = getAdjUnit();
+  var notes = document.getElementById('adjSpecialNotes').value.trim();
 
   var rows = [
-    ['棚ロケ',       adjSelectedRow.location],
-    ['商品コード',   adjSelectedRow.itemCode],
-    ['商品名',       adjSelectedRow.itemName],
-    ['単位区分',     adjSelectedRow.unit],
-    ['ロット番号',   adjSelectedRow.lotNo || '‐'],
-    ['賞味期限',     adjSelectedRow.expiryDate || '‐'],
-    ['入庫日',       adjSelectedRow.receivedAt],
-    ['現在庫数',     adjSelectedRow.qty + ' ' + adjSelectedRow.unit],
-    ['調整数',       (delta > 0 ? '+' + delta : String(delta)) + ' ' + adjSelectedRow.unit],
-    ['調整後在庫数', (adjSelectedRow.qty + delta) + ' ' + adjSelectedRow.unit],
-    ['調整理由',     reason],
+    ['調整の種類',   adjMode === 'existing' ? '既存在庫の数量変更' : '新規在庫の追加'],
+    ['棚ロケ',       document.getElementById('adjLocation').value],
+    ['商品',         item ? formatAdjItem(item) : '‐'],
+    ['ロット番号',   document.getElementById('adjLotNo').value.trim() || '‐'],
+    ['賞味期限',     formatAdjDate(document.getElementById('adjExpiryDate').value)],
+    ['入庫日',       formatAdjDate(document.getElementById('adjReceivedAt').value)],
+    ['現在在庫数',   current + ' ' + unit],
+    // 確認では増減を見誤らないよう符号を付ける
+    ['調整数',       (delta > 0 ? '+' + delta : String(delta)) + ' ' + unit],
+    ['調整後在庫数', (current + delta) + ' ' + unit],
+    ['調整理由',     document.getElementById('adjReason').value.trim()],
     ['特記事項',     notes || '‐']
   ];
-  var html = '<dl class="transfer-confirm-dl">';
-  rows.forEach(function (pair) {
-    html += '<dt>' + pair[0] + '</dt><dd>' + pair[1] + '</dd>';
-  });
-  html += '</dl>';
-  document.getElementById('adjustmentConfirmBody').innerHTML = html;
-  document.getElementById('adjustmentModal').style.display = 'flex';
+  renderAdjConfirmRows('adjustmentConfirmBody', rows);
+  openModal('adjustmentModal');
 }
 
 function confirmAdjustment() {
-  document.getElementById('adjustmentModal').style.display = 'none';
+  closeModal('adjustmentModal');
   showAdjustmentFlash('在庫調整を登録しました');
-  deselectAdjRow();
+  resetAdjForm();
 }
 
 function showAdjustmentFlash(message) {
@@ -3781,310 +3818,6 @@ function showAdjustmentFlash(message) {
   el.textContent = message;
   el.style.display = 'flex';
   setTimeout(function () { el.style.display = 'none'; }, 3000);
-}
-
-// === 棚卸管理 (SCR-018) ===
-
-var INVENTORY_DUMMY_DATA = [
-  {
-    location: 'A-01-01',
-    items: [
-      { itemCode: 'P-001', itemName: '商品A', lotNo: 'LOT-001', countQty: 98,  stockQty: 100, unit: 'パレット' },
-      { itemCode: 'P-001', itemName: '商品A', lotNo: 'LOT-002', countQty: 80,  stockQty: 80,  unit: 'パレット' }
-    ]
-  },
-  {
-    location: 'A-01-02',
-    items: [
-      { itemCode: 'P-002', itemName: '商品B', lotNo: 'LOT-003', countQty: 60,  stockQty: 60,  unit: 'ケース' }
-    ]
-  },
-  {
-    location: 'A-02-01',
-    items: [
-      { itemCode: 'P-001', itemName: '商品A', lotNo: 'LOT-004', countQty: 125, stockQty: 120, unit: 'パレット' }
-    ]
-  },
-  {
-    location: 'A-02-02',
-    items: [
-      { itemCode: 'P-002', itemName: '商品B', lotNo: 'LOT-005', countQty: 45,  stockQty: 45,  unit: 'ケース' }
-    ]
-  },
-  {
-    location: 'B-01-01',
-    items: [
-      { itemCode: 'P-003', itemName: '商品C', lotNo: 'LOT-006', countQty: 290, stockQty: 300, unit: 'ピース' }
-    ]
-  },
-  {
-    location: 'B-01-02',
-    items: [
-      { itemCode: 'P-004', itemName: '商品D', lotNo: 'LOT-007', countQty: 50,  stockQty: 50,  unit: 'ボール' }
-    ]
-  },
-  {
-    location: 'B-02-01',
-    items: [
-      { itemCode: 'P-003', itemName: '商品C', lotNo: 'LOT-008', countQty: 153, stockQty: 150, unit: 'ピース' }
-    ]
-  },
-  {
-    location: 'B-02-02',
-    items: [
-      { itemCode: 'P-004', itemName: '商品D', lotNo: 'LOT-009', countQty: 30,  stockQty: 30,  unit: 'ボール' },
-      { itemCode: 'P-005', itemName: '商品E', lotNo: 'LOT-010', countQty: 80,  stockQty: 80,  unit: 'ケース' }
-    ]
-  },
-  {
-    location: 'C-01-01',
-    items: [
-      { itemCode: 'P-006', itemName: '商品F', lotNo: 'LOT-011', countQty: 200, stockQty: 200, unit: 'パレット' }
-    ]
-  },
-  {
-    location: 'C-01-02',
-    items: [
-      { itemCode: 'P-005', itemName: '商品E', lotNo: 'LOT-012', countQty: 55,  stockQty: 60,  unit: 'ケース' }
-    ]
-  },
-  {
-    location: 'C-02-01',
-    items: [
-      { itemCode: 'P-006', itemName: '商品F', lotNo: 'LOT-013', countQty: 180, stockQty: 180, unit: 'パレット' }
-    ]
-  },
-  {
-    location: 'C-02-02',
-    items: [
-      { itemCode: 'P-005', itemName: '商品E', lotNo: 'LOT-014', countQty: 100, stockQty: 100, unit: 'ケース' }
-    ]
-  },
-  {
-    location: 'D-01-01',
-    items: [
-      { itemCode: 'P-009', itemName: '商品I', lotNo: 'LOT-016', countQty: 88,  stockQty: 90,  unit: 'ボール' }
-    ]
-  },
-  {
-    location: 'D-02-01',
-    items: [
-      { itemCode: 'P-007', itemName: '商品G', lotNo: 'LOT-018', countQty: 250, stockQty: 250, unit: 'ピース' }
-    ]
-  },
-  {
-    location: 'D-02-02',
-    items: [
-      { itemCode: 'P-008', itemName: '商品H', lotNo: 'LOT-019', countQty: 70,  stockQty: 70,  unit: String.fromCharCode(8212) }
-    ]
-  }
-];
-
-var inventoryLocations = [];
-var inventoryExpanded = new Set();
-var inventoryRefreshCount = 0;
-
-function initInventory() {
-  inventoryLocations = INVENTORY_DUMMY_DATA.map(function(d) {
-    return { location: d.location, status: 'pending', checked: false, items: d.items };
-  });
-  inventoryExpanded = new Set();
-  inventoryRefreshCount = 0;
-}
-
-function startInventory() {
-  document.getElementById('inventoryGuide').style.display = 'none';
-  document.getElementById('inventoryTableArea').style.display = '';
-  document.getElementById('inventoryStartBtn').disabled = true;
-  document.getElementById('inventoryRefreshBtn').disabled = false;
-  document.getElementById('inventoryLastUpdated').textContent = inventoryFormatDatetime(new Date());
-  renderInventoryTable();
-}
-
-function renderInventoryTable() {
-  var tbody = document.getElementById('inventoryTableBody');
-  if (!tbody) return;
-
-  var html = '';
-  inventoryLocations.forEach(function(loc) {
-    var isExpanded   = inventoryExpanded.has(loc.location);
-    var canCheck     = loc.status === 'done';
-    var rowClass     = 'is-location-row' + (isExpanded ? ' is-expanded' : '');
-    var cursor       = 'cursor: pointer;';
-
-    html += '<tr class="' + rowClass + '" data-location="' + loc.location + '" style="' + cursor + '">';
-    html += '<td style="text-align: center;" onclick="event.stopPropagation()">';
-    html += '<input type="checkbox" class="inventory-checkbox"';
-    html += (canCheck ? '' : ' disabled');
-    html += (loc.checked ? ' checked' : '');
-    html += ' data-location="' + loc.location + '">';
-    html += '</td>';
-    html += '<td>' + loc.location + '</td>';
-    html += '<td>' + inventoryStatusBadge(loc.status) + '</td>';
-    html += '<td>' + inventoryDiffBadge(loc) + '</td>';
-    html += '</tr>';
-
-    {
-      var isPending = loc.status === 'pending';
-      html += '<tr class="inventory-detail-row" data-detail-for="' + loc.location + '"';
-      html += (isExpanded ? '' : ' style="display: none;"') + '>';
-      html += '<td colspan="4"><div class="inventory-detail-inner">';
-      html += '<table class="inventory-detail-table">';
-      html += '<thead><tr>';
-      html += '<th>商品コード</th><th>商品名</th><th>ロット番号</th>';
-      html += '<th style="text-align: right;">棚卸数量</th>';
-      html += '<th style="text-align: right;">現在在庫数</th>';
-      html += '<th style="text-align: right;">差異</th>';
-      html += '<th>単位区分</th>';
-      html += '</tr></thead><tbody>';
-      loc.items.forEach(function(item) {
-        var dash = String.fromCharCode(8212);
-        var countQtyCell, diffCell;
-        if (isPending) {
-          countQtyCell = dash;
-          diffCell     = '<td style="text-align: right;">' + dash + '</td>';
-        } else {
-          var diff    = item.countQty - item.stockQty;
-          var diffStr = diff > 0 ? '+' + diff : String(diff);
-          var diffClass = diff !== 0 ? ' class="inventory-diff--warning"' : '';
-          countQtyCell = item.countQty;
-          diffCell     = '<td style="text-align: right;"' + diffClass + '>' + diffStr + '</td>';
-        }
-        html += '<tr>';
-        html += '<td>' + item.itemCode + '</td>';
-        html += '<td>' + item.itemName + '</td>';
-        html += '<td>' + item.lotNo + '</td>';
-        html += '<td style="text-align: right;">' + countQtyCell + '</td>';
-        html += '<td style="text-align: right;">' + item.stockQty + '</td>';
-        html += diffCell;
-        html += '<td>' + item.unit + '</td>';
-        html += '</tr>';
-      });
-      html += '</tbody></table></div></td></tr>';
-    }
-  });
-
-  tbody.innerHTML = html;
-
-  tbody.querySelectorAll('tr.is-location-row').forEach(function(tr) {
-    tr.addEventListener('click', function(e) {
-      if (e.target.type === 'checkbox') return;
-      toggleInventoryDetail(tr.dataset.location);
-    });
-  });
-
-  tbody.querySelectorAll('.inventory-checkbox').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-      var loc = inventoryLocations.find(function(l) { return l.location === cb.dataset.location; });
-      if (loc) loc.checked = cb.checked;
-      validateInventoryApproveBtn();
-    });
-  });
-}
-
-function inventoryStatusBadge(status) {
-  var map = {
-    pending:     ['status-badge--subtle',      '未着手'],
-    in_progress: ['status-badge--information', '進行中'],
-    done:        ['status-badge--warning',     '完了'],
-    approved:    ['status-badge--success',     '承認済み']
-  };
-  var entry = map[status] || map.pending;
-  return '<span class="status-badge ' + entry[0] + '">' + entry[1] + '</span>';
-}
-
-function inventoryDiffBadge(loc) {
-  if (loc.status !== 'done' && loc.status !== 'approved') return String.fromCharCode(8212);
-  var hasDiff = loc.items.some(function(item) { return item.countQty !== item.stockQty; });
-  if (hasDiff) return '<span class="status-badge status-badge--warning">⚠ 差異あり</span>';
-  return '<span class="status-badge status-badge--subtle">差異なし</span>';
-}
-
-function toggleInventoryDetail(location) {
-  var loc = inventoryLocations.find(function(l) { return l.location === location; });
-  if (!loc) return;
-  if (inventoryExpanded.has(location)) {
-    inventoryExpanded.delete(location);
-  } else {
-    inventoryExpanded.add(location);
-  }
-  renderInventoryTable();
-}
-
-function refreshInventory() {
-  inventoryRefreshCount++;
-  inventoryAdvanceStatus();
-  renderInventoryTable();
-  validateInventoryApproveBtn();
-  validateInventoryCompleteBtn();
-  document.getElementById('inventoryLastUpdated').textContent = inventoryFormatDatetime(new Date());
-}
-
-function inventoryAdvanceStatus() {
-  var groups = [
-    { step: 1, locs: ['A-01-01', 'A-01-02', 'A-02-01', 'A-02-02'] },
-    { step: 2, locs: ['B-01-01', 'B-01-02', 'B-02-01', 'B-02-02'] },
-    { step: 3, locs: ['C-01-01', 'C-01-02', 'C-02-01', 'C-02-02'] },
-    { step: 4, locs: ['D-01-01', 'D-02-01', 'D-02-02'] }
-  ];
-  groups.forEach(function(g) {
-    g.locs.forEach(function(code) {
-      var loc = inventoryLocations.find(function(l) { return l.location === code; });
-      if (!loc || loc.status === 'approved') return;
-      if (inventoryRefreshCount === g.step && loc.status === 'pending') {
-        loc.status = 'in_progress';
-      } else if (inventoryRefreshCount === g.step + 1 && loc.status === 'in_progress') {
-        loc.status = 'done';
-      } else if (inventoryRefreshCount > g.step + 1 && loc.status === 'pending') {
-        loc.status = 'done';
-      }
-    });
-  });
-}
-
-function approveSelected() {
-  inventoryLocations.forEach(function(loc) {
-    if (loc.checked) { loc.status = 'approved'; loc.checked = false; }
-  });
-  renderInventoryTable();
-  validateInventoryApproveBtn();
-  validateInventoryCompleteBtn();
-}
-
-function validateInventoryApproveBtn() {
-  var has = inventoryLocations.some(function(loc) { return loc.checked; });
-  document.getElementById('inventoryApproveBtn').disabled = !has;
-}
-
-function validateInventoryCompleteBtn() {
-  var all = inventoryLocations.every(function(loc) { return loc.status === 'approved'; });
-  document.getElementById('inventoryCompleteBtn').disabled = !all;
-}
-
-function completeInventory() {
-  closeModal('inventoryCompleteModal');
-  var flash = document.getElementById('inventoryFlash');
-  flash.textContent = '棚卸が完了しました';
-  flash.style.display = 'flex';
-  setTimeout(function() { flash.style.display = 'none'; }, 3000);
-  initInventory();
-  document.getElementById('inventoryTableArea').style.display = 'none';
-  document.getElementById('inventoryGuide').style.display = '';
-  document.getElementById('inventoryStartBtn').disabled = false;
-  document.getElementById('inventoryRefreshBtn').disabled = true;
-  document.getElementById('inventoryApproveBtn').disabled = true;
-  document.getElementById('inventoryCompleteBtn').disabled = true;
-  document.getElementById('inventoryLastUpdated').textContent = String.fromCharCode(8212);
-}
-
-function inventoryFormatDatetime(date) {
-  var pad = function(n) { return String(n).padStart(2, '0'); };
-  return date.getFullYear() + '/' + pad(date.getMonth() + 1) + '/' + pad(date.getDate()) +
-    ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
-}
-
-if (document.getElementById('inventoryTableBody')) {
-  initInventory();
 }
 
 /* ============================================================
