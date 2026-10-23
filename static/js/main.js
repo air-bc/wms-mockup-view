@@ -19,73 +19,6 @@ function handleFileChange(inputId, labelId) {
   }
 }
 
-// === オフキャンバスパネル制御 (SCR-002) ===
-
-function openDefinitionPanel() {
-  document.getElementById('definitionOverlay').classList.add('is-open');
-  document.getElementById('definitionPanel').classList.add('is-open');
-}
-
-function closeDefinitionPanel() {
-  document.getElementById('definitionOverlay').classList.remove('is-open');
-  document.getElementById('definitionPanel').classList.remove('is-open');
-}
-
-/**
- * 定義テーブルをキーワードで絞り込む
- * @param {string} query - 検索文字列（ファイルコード・商品名対象）
- */
-function filterDefinitionTable(query) {
-  const q = query.toLowerCase().trim();
-  const rows = document.querySelectorAll('#definitionTableBody tr');
-  rows.forEach(function (row) {
-    const csvCol  = (row.dataset.csvCol  || '').toLowerCase();
-    const dbField = (row.dataset.dbField || '').toLowerCase();
-    const match = !q || csvCol.includes(q) || dbField.includes(q);
-    row.classList.toggle('hidden', !match);
-  });
-}
-
-// Escape キーでオフキャンバスを閉じる
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeDefinitionPanel();
-});
-
-// === 雑コード変換テンプレート エントリ操作 (SCR-002 機能3) ===
-
-/**
- * 雑コード入力行（コード名 + テンプレート + 削除ボタン）を末尾に追加する
- */
-function addMiscCodeEntry() {
-  var list = document.getElementById('miscCodeList');
-  if (!list) return;
-
-  var row = document.createElement('div');
-  row.className = 'misc-code-row';
-  row.setAttribute('role', 'listitem');
-  row.innerHTML =
-    '<input type="text" class="misc-code-name-input" placeholder="雑コード名" aria-label="雑コード名">' +
-    '<input type="text" class="template-input" placeholder="例: {品番}-{日付}" aria-label="変換テンプレート">' +
-    '<button type="button" class="btn btn-icon-subtle" onclick="deleteMiscCodeEntry(this)" aria-label="このエントリを削除">' +
-      '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
-        '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>' +
-      '</svg>' +
-    '</button>';
-
-  list.appendChild(row);
-  // 追加した行のコード名フィールドにフォーカス
-  row.querySelector('.misc-code-name-input').focus();
-}
-
-/**
- * 削除ボタンが属する .misc-code-row を DOM から除去する
- * @param {HTMLElement} btn - クリックされた削除ボタン要素
- */
-function deleteMiscCodeEntry(btn) {
-  var row = btn.closest('.misc-code-row');
-  if (row) row.remove();
-}
-
 // === 在庫明細フィルタ (SCR-004-1) ===
 
 /**
@@ -3821,164 +3754,563 @@ function showAdjustmentFlash(message) {
 }
 
 /* ============================================================
-   SCR-003: 取引先定義
+   SCR-002 / SCR-003: 商品マスタ・取引先マスタ（一覧・登録・登録の確認）
+   React 版（frontend/src/views/masters/）の画面を再現する
    ============================================================ */
 
+// 取引先マスタのサンプルデータ。入荷予定登録・入荷登録の取引先の選択肢にも使う。
+// inUse は入荷予定・出荷予定から参照されている取引先（削除不可）
 var supplierData = [
-  { company: '株式会社山田商事',   kana: 'やまだしょうじ',        zip: '100-0001', address: '東京都千代田区千代田1-1-1',       tel: '03-1234-5678',  contact: '山田 太郎', hasConversion: true  },
-  { company: '田中物産株式会社',   kana: 'たなかぶっさん',        zip: '530-0001', address: '大阪府大阪市北区梅田2-2-2',       tel: '06-2345-6789',  contact: '田中 花子', hasConversion: false },
-  { company: '合同会社鈴木倉庫',   kana: 'すずきそうこ',          zip: '460-0001', address: '愛知県名古屋市中村区3-3-3',       tel: '052-345-6789',  contact: '',          hasConversion: false },
-  { company: '佐藤運輸株式会社',   kana: 'さとううんゆ',          zip: '810-0001', address: '福岡県福岡市博多区4-4-4',         tel: '092-456-7890',  contact: '佐藤 次郎', hasConversion: false },
-  { company: '高橋商店',           kana: 'たかはししょうてん',     zip: '060-0001', address: '北海道札幌市中央区5-5-5',         tel: '011-567-8901',  contact: '',          hasConversion: false },
-  { company: '株式会社伊藤製作所', kana: 'いとうせいさくしょ',     zip: '980-0001', address: '宮城県仙台市青葉区6-6-6',         tel: '022-678-9012',  contact: '伊藤 美穂', hasConversion: false },
-  { company: '渡辺食品株式会社',   kana: 'わたなべしょくひん',     zip: '220-0001', address: '神奈川県横浜市西区7-7-7',         tel: '045-789-0123',  contact: '渡辺 誠',   hasConversion: false },
-  { company: '中村流通合同会社',   kana: 'なかむらりゅうつう',     zip: '380-0001', address: '長野県長野市8-8-8',               tel: '026-890-1234',  contact: '',          hasConversion: false },
-  { company: '小林産業株式会社',   kana: 'こばやしさんぎょう',     zip: '600-0001', address: '京都府京都市下京区9-9-9',         tel: '075-901-2345',  contact: '小林 隆',   hasConversion: true  },
-  { company: '加藤物流株式会社',   kana: 'かとうぶつりゅう',       zip: '380-0002', address: '長野県松本市1-1-2',               tel: '0263-12-3456',  contact: '加藤 律子', hasConversion: false },
-  { company: '吉田商事株式会社',   kana: 'よしだしょうじ',         zip: '100-0002', address: '東京都千代田区丸の内1-2-3',       tel: '03-2345-6789',  contact: '',          hasConversion: false },
-  { company: '山本運輸株式会社',   kana: 'やまもとうんゆ',         zip: '530-0002', address: '大阪府大阪市中央区2-3-4',         tel: '06-3456-7890',  contact: '山本 健一', hasConversion: false },
-  { company: '松本倉庫株式会社',   kana: 'まつもとそうこ',         zip: '460-0002', address: '愛知県名古屋市東区3-4-5',         tel: '052-456-7890',  contact: '',          hasConversion: false },
-  { company: '井上商店',           kana: 'いのうえしょうてん',     zip: '810-0002', address: '福岡県福岡市中央区4-5-6',         tel: '092-567-8901',  contact: '井上 涼子', hasConversion: false },
-  { company: '木村製作所',         kana: 'きむらせいさくしょ',     zip: '060-0002', address: '北海道札幌市北区5-6-7',           tel: '011-678-9012',  contact: '',          hasConversion: false },
-  { company: '林物産株式会社',     kana: 'はやしぶっさん',         zip: '980-0002', address: '宮城県仙台市宮城野区6-7-8',       tel: '022-789-0123',  contact: '林 正樹',   hasConversion: false },
-  { company: '清水食品株式会社',   kana: 'しみずしょくひん',       zip: '220-0002', address: '神奈川県横浜市港北区7-8-9',       tel: '045-890-1234',  contact: '',          hasConversion: false },
-  { company: '斎藤流通株式会社',   kana: 'さいとうりゅうつう',     zip: '380-0003', address: '長野県上田市8-9-10',              tel: '0268-23-4567',  contact: '斎藤 博',   hasConversion: false },
-  { company: '山口産業株式会社',   kana: 'やまぐちさんぎょう',     zip: '750-0001', address: '山口県山口市1-2-3',               tel: '083-123-4567',  contact: '',          hasConversion: false },
-  { company: '前田物流株式会社',   kana: 'まえだぶつりゅう',       zip: '690-0001', address: '島根県松江市2-3-4',               tel: '0852-23-4567',  contact: '前田 由美', hasConversion: true  },
-  { company: '後藤商事株式会社',   kana: 'ごとうしょうじ',         zip: '450-0001', address: '愛知県名古屋市西区3-4-5',         tel: '052-567-8901',  contact: '',          hasConversion: false },
-  { company: '長谷川運輸株式会社', kana: 'はせがわうんゆ',          zip: '330-0001', address: '埼玉県さいたま市大宮区4-5-6',     tel: '048-678-9012',  contact: '長谷川 徹', hasConversion: false },
-  { company: '石川倉庫株式会社',   kana: 'いしかわそうこ',          zip: '920-0001', address: '石川県金沢市5-6-7',               tel: '076-789-0123',  contact: '',          hasConversion: false },
-  { company: '橋本商店',           kana: 'はしもとしょうてん',     zip: '630-0001', address: '奈良県奈良市6-7-8',               tel: '0742-12-3456',  contact: '橋本 典子', hasConversion: false },
-  { company: '村上製作所',         kana: 'むらかみせいさくしょ',   zip: '950-0001', address: '新潟県新潟市中央区7-8-9',         tel: '025-890-1234',  contact: '',          hasConversion: false }
+  { company: '株式会社山田商事',   kana: 'やまだしょうじ',        zip: '1000001', address: '東京都千代田区千代田1-1-1',       tel: '0312345678',  contact: '山田 太郎', inUse: true  },
+  { company: '田中物産株式会社',   kana: 'たなかぶっさん',        zip: '5300001', address: '大阪府大阪市北区梅田2-2-2',       tel: '0623456789',  contact: '田中 花子', inUse: true  },
+  { company: '合同会社鈴木倉庫',   kana: 'すずきそうこ',          zip: '4600001', address: '愛知県名古屋市中村区3-3-3',       tel: '0523456789',  contact: '',          inUse: false },
+  { company: '佐藤運輸株式会社',   kana: 'さとううんゆ',          zip: '8100001', address: '福岡県福岡市博多区4-4-4',         tel: '0924567890',  contact: '佐藤 次郎', inUse: false },
+  { company: '高橋商店',           kana: 'たかはししょうてん',     zip: '0600001', address: '北海道札幌市中央区5-5-5',         tel: '0115678901',  contact: '',          inUse: false },
+  { company: '株式会社伊藤製作所', kana: 'いとうせいさくしょ',     zip: '9800001', address: '宮城県仙台市青葉区6-6-6',         tel: '0226789012',  contact: '伊藤 美穂', inUse: false },
+  { company: '渡辺食品株式会社',   kana: 'わたなべしょくひん',     zip: '2200001', address: '神奈川県横浜市西区7-7-7',         tel: '0457890123',  contact: '渡辺 誠',   inUse: false },
+  { company: '中村流通合同会社',   kana: 'なかむらりゅうつう',     zip: '3800001', address: '長野県長野市8-8-8',               tel: '0268901234',  contact: '',          inUse: false },
+  { company: '小林産業株式会社',   kana: 'こばやしさんぎょう',     zip: '6000001', address: '京都府京都市下京区9-9-9',         tel: '0759012345',  contact: '小林 隆',   inUse: true  },
+  { company: '加藤物流株式会社',   kana: 'かとうぶつりゅう',       zip: '3800002', address: '長野県松本市1-1-2',               tel: '0263123456',  contact: '加藤 律子', inUse: false },
+  { company: '吉田商事株式会社',   kana: 'よしだしょうじ',         zip: '1000002', address: '東京都千代田区丸の内1-2-3',       tel: '0323456789',  contact: '',          inUse: false },
+  { company: '山本運輸株式会社',   kana: 'やまもとうんゆ',         zip: '5300002', address: '大阪府大阪市中央区2-3-4',         tel: '0634567890',  contact: '山本 健一', inUse: false },
+  { company: '松本倉庫株式会社',   kana: 'まつもとそうこ',         zip: '4600002', address: '愛知県名古屋市東区3-4-5',         tel: '0524567890',  contact: '',          inUse: false },
+  { company: '井上商店',           kana: 'いのうえしょうてん',     zip: '8100002', address: '福岡県福岡市中央区4-5-6',         tel: '0925678901',  contact: '井上 涼子', inUse: false },
+  { company: '木村製作所',         kana: 'きむらせいさくしょ',     zip: '0600002', address: '北海道札幌市北区5-6-7',           tel: '0116789012',  contact: '',          inUse: false },
+  { company: '林物産株式会社',     kana: 'はやしぶっさん',         zip: '9800002', address: '宮城県仙台市宮城野区6-7-8',       tel: '0227890123',  contact: '林 正樹',   inUse: false },
+  { company: '清水食品株式会社',   kana: 'しみずしょくひん',       zip: '2200002', address: '神奈川県横浜市港北区7-8-9',       tel: '0458901234',  contact: '',          inUse: false },
+  { company: '斎藤流通株式会社',   kana: 'さいとうりゅうつう',     zip: '3800003', address: '長野県上田市8-9-10',              tel: '0268234567',  contact: '斎藤 博',   inUse: false },
+  { company: '山口産業株式会社',   kana: 'やまぐちさんぎょう',     zip: '7500001', address: '山口県山口市1-2-3',               tel: '0831234567',  contact: '',          inUse: false },
+  { company: '前田物流株式会社',   kana: 'まえだぶつりゅう',       zip: '6900001', address: '島根県松江市2-3-4',               tel: '0852234567',  contact: '前田 由美', inUse: false },
+  { company: '後藤商事株式会社',   kana: 'ごとうしょうじ',         zip: '4500001', address: '愛知県名古屋市西区3-4-5',         tel: '0525678901',  contact: '',          inUse: false },
+  { company: '長谷川運輸株式会社', kana: 'はせがわうんゆ',          zip: '3300001', address: '埼玉県さいたま市大宮区4-5-6',     tel: '0486789012',  contact: '長谷川 徹', inUse: false },
+  { company: '石川倉庫株式会社',   kana: 'いしかわそうこ',          zip: '9200001', address: '石川県金沢市5-6-7',               tel: '0767890123',  contact: '',          inUse: false },
+  { company: '橋本商店',           kana: 'はしもとしょうてん',     zip: '6300001', address: '奈良県奈良市6-7-8',               tel: '0742123456',  contact: '橋本 典子', inUse: false },
+  { company: '村上製作所',         kana: 'むらかみせいさくしょ',   zip: '9500001', address: '新潟県新潟市中央区7-8-9',         tel: '0258901234',  contact: '',          inUse: false }
 ];
 
-var supplierCurrentPage = 1;
-var supplierPageSize = 20;
-var supplierFilteredData = supplierData.slice();
+// 商品マスタのサンプルデータ。inUse は在庫・入荷予定・出荷予定から参照されている商品（削除不可・単位区分変更不可）
+var itemMasterData = [
+  { code: 'ITEM001', name: 'ミネラルウォーター 500ml', unit: '本',     inUse: true  },
+  { code: 'ITEM001', name: 'ミネラルウォーター 500ml', unit: 'ケース', inUse: false },
+  { code: 'ITEM002', name: '緑茶 500ml',               unit: '本',     inUse: true  },
+  { code: 'ITEM003', name: 'ボールペン 黒',            unit: '本',     inUse: false },
+  { code: 'ITEM004', name: 'コピー用紙 A4',            unit: '枚',     inUse: false },
+  { code: 'ITEM004', name: 'コピー用紙 A4',            unit: '箱',     inUse: true  },
+  { code: 'ITEM005', name: '紙コップ 205ml',           unit: '袋',     inUse: false },
+  { code: 'ITEM006', name: 'ゴミ袋 45L',               unit: '袋',     inUse: false },
+  { code: 'ITEM007', name: '単三電池',                 unit: 'セット', inUse: true  },
+  { code: 'ITEM008', name: 'ガムテープ',               unit: '個',     inUse: false },
+  { code: 'ITEM009', name: 'ダンボール 100サイズ',     unit: '枚',     inUse: false },
+  { code: 'ITEM010', name: '緩衝材 エアキャップ',      unit: '個',     inUse: false },
+  { code: 'ITEM011', name: 'ハンドソープ 詰替',        unit: '個',     inUse: true  },
+  { code: 'ITEM012', name: 'ペーパータオル',           unit: 'ケース', inUse: false },
+  { code: 'ITEM013', name: '軍手',                     unit: 'セット', inUse: false },
+  { code: 'ITEM014', name: '養生テープ',               unit: '個',     inUse: false },
+  { code: 'ITEM015', name: 'ストレッチフィルム',       unit: '本',     inUse: false },
+  { code: 'ITEM016', name: 'PPバンド',                 unit: '個',     inUse: false },
+  { code: 'ITEM017', name: '結束バンド',               unit: '袋',     inUse: false },
+  { code: 'ITEM018', name: '油性マーカー 黒',          unit: '本',     inUse: false },
+  { code: 'ITEM019', name: 'クラフト封筒 角2',         unit: '枚',     inUse: false },
+  { code: 'ITEM020', name: 'ラベルシール',             unit: '枚',     inUse: false },
+  { code: 'ITEM021', name: 'カッターナイフ',           unit: '個',     inUse: false },
+  { code: 'ITEM022', name: 'マスク',                   unit: '箱',     inUse: false },
+  { code: 'ITEM023', name: 'アルコール除菌スプレー',   unit: '本',     inUse: false }
+];
 
-function renderSupplierPage(page) {
-  var tbody = document.getElementById('supplierTableBody');
-  if (!tbody) return;
-  supplierCurrentPage = page;
-  var start = (page - 1) * supplierPageSize;
-  var rows = supplierFilteredData.slice(start, start + supplierPageSize);
-  tbody.innerHTML = rows.map(function(s) {
-    var convCell = s.hasConversion
-      ? '<span class="body-s" style="margin-right:var(--ds-space-100);">あり</span><button type="button" class="btn-edit" onclick="openConversionModal(\'' + s.company.replace(/'/g, "\\'") + '\')" aria-label="' + s.company + 'の変換定義を編集">編集</button>'
-      : '<span class="body-s text-subtle" style="margin-right:var(--ds-space-100);">なし</span><button type="button" class="btn btn-primary" style="height:1.5rem;font-size:0.75rem;padding:0 var(--ds-space-100);" onclick="openConversionModal(\'' + s.company.replace(/'/g, "\\'") + '\')" aria-label="' + s.company + 'の変換定義を登録">登録</button>';
-    return '<tr>' +
-      '<td>' + s.company + '</td>' +
-      '<td>' + s.kana + '</td>' +
-      '<td>〒' + s.zip + '</td>' +
-      '<td>' + s.address + '</td>' +
-      '<td>' + s.tel + '</td>' +
-      '<td>' + (s.contact || '<span class="text-subtle">—</span>') + '</td>' +
-      '<td style="white-space:nowrap;">' + convCell + '</td>' +
-      '</tr>';
-  }).join('');
-  renderSupplierPagination();
+// 一覧・登録・確認の 3 画面で使う、マスタごとの差分（列・文言・遷移先）
+var MASTER_CONFIGS = {
+  item: {
+    listPage: '002_item_definition.html',
+    newPage: '002-2_item_register.html',
+    confirmPage: '002-3_item_register_confirm.html',
+    data: itemMasterData,
+    fields: [
+      { key: 'code', label: '商品コード', required: true,
+        pattern: /^[A-Za-z0-9_-]+$/, patternMessage: '商品コードは半角英数字・ハイフン・アンダースコアのみ使用できます' },
+      { key: 'name', label: '商品名', required: true },
+      { key: 'unit', label: '単位区分', required: true }
+    ],
+    searchKeys: ['code', 'name'],
+    emptyMessage: '該当する商品はありません',
+    inUseReason: '在庫・入荷予定・出荷予定から参照されているため削除できません',
+    // 参照されている商品は単位区分を変更できない（編集モーダルで読み取り専用にする）
+    lockedWhenInUse: 'unit',
+    lockedReason: '在庫・入荷予定・出荷予定から参照されているため変更できません',
+    deleteMessage: function (r) { return '商品「' + r.code + ' ' + r.name + '」を削除します。よろしいですか？'; },
+    deletedMessage: '商品を削除しました',
+    updatedMessage: '商品を更新しました',
+    // 確認画面のサンプル行。line は CSV 上の行番号（手入力の行は null）
+    confirmSamples: [
+      { line: null, code: 'ITEM024', name: 'クリアファイル A4', unit: '枚', error: '' },
+      { line: null, code: 'ITEM025', name: 'ホチキス針',        unit: '箱', error: '' },
+      { line: 2,    code: 'ITEM026', name: 'ガムテープ 布',     unit: '個', error: '' },
+      { line: 3,    code: 'ITEM001', name: 'ミネラルウォーター 500ml', unit: '本', error: '既に登録されています' },
+      { line: 4,    code: 'ITEM 027', name: '付箋',            unit: '個', error: '商品コードは半角英数字・ハイフン・アンダースコアのみ使用できます' },
+      { line: 5,    code: 'ITEM026', name: 'ガムテープ 布',     unit: '個', error: 'この画面に同じ内容の行があります' }
+    ]
+  },
+  supplier: {
+    listPage: '003_supplier_definition.html',
+    newPage: '003-2_supplier_register.html',
+    confirmPage: '003-3_supplier_register_confirm.html',
+    data: supplierData,
+    fields: [
+      { key: 'company', label: '会社名', required: true },
+      { key: 'kana', label: '会社名（かな）', required: true,
+        pattern: /^[ぁ-ゔー\s]+$/, patternMessage: '会社名（かな）はひらがなと「ー」で入力してください' },
+      { key: 'zip', label: '郵便番号', required: true,
+        pattern: /^\d{7}$/, patternMessage: '郵便番号はハイフンなしの半角数字7桁で入力してください（例: 1000001）' },
+      { key: 'address', label: '住所', required: true },
+      { key: 'tel', label: '電話番号', required: true,
+        pattern: /^\d+$/, patternMessage: '電話番号はハイフンなしの半角数字のみで入力してください（例: 0312345678）' },
+      { key: 'contact', label: '担当者名', required: false }
+    ],
+    searchKeys: ['company', 'kana'],
+    emptyMessage: '該当する取引先はありません',
+    inUseReason: '入荷予定・出荷予定から参照されているため削除できません',
+    lockedWhenInUse: null,
+    deleteMessage: function (r) { return '取引先「' + r.company + '」を削除します。よろしいですか？'; },
+    deletedMessage: '取引先を削除しました',
+    updatedMessage: '取引先を更新しました',
+    confirmSamples: [
+      { line: null, company: '株式会社青木商会', kana: 'あおきしょうかい', zip: '1500001', address: '東京都渋谷区神宮前1-1-1', tel: '0331234567', contact: '青木 一郎', error: '' },
+      { line: 2,    company: '森田物流株式会社', kana: 'もりたぶつりゅう', zip: '4600003', address: '愛知県名古屋市中区1-2-3', tel: '0521234567', contact: '',          error: '' },
+      { line: 3,    company: '株式会社山田商事', kana: 'やまだしょうじ',   zip: '1000001', address: '東京都千代田区千代田1-1-1', tel: '0312345678', contact: '山田 太郎', error: '既に登録されています' },
+      { line: 4,    company: '岡本産業株式会社', kana: 'オカモトサンギョウ', zip: '6500001', address: '兵庫県神戸市中央区1-1-1', tel: '0781234567', contact: '',        error: '会社名（かな）はひらがなと「ー」で入力してください' }
+    ]
+  }
+};
+
+// 空欄の任意項目は React 版と同じく「-」で表示する
+function masterCellText(value) {
+  return value ? allocationEscape(value) : '-';
 }
 
-function renderSupplierPagination() {
-  var container = document.getElementById('paginationRow');
-  if (!container) return;
-  var totalPages = Math.ceil(supplierFilteredData.length / supplierPageSize);
+// 入力欄の値を集める（data-field 属性で項目を対応づける）
+function masterReadForm(form, config) {
+  var values = {};
+  config.fields.forEach(function (f) {
+    var input = form.querySelector('[data-field="' + f.key + '"]');
+    values[f.key] = input ? input.value.trim() : '';
+  });
+  return values;
+}
+
+// 必須・形式のチェック。エラーは各入力欄の下（data-error-for）に出す。問題なければ true
+function masterValidateForm(form, config) {
+  var values = masterReadForm(form, config);
+  var ok = true;
+  config.fields.forEach(function (f) {
+    var message = '';
+    if (f.required && values[f.key] === '') {
+      message = f.label + 'を入力してください';
+    } else if (values[f.key] !== '' && f.pattern && !f.pattern.test(values[f.key])) {
+      message = f.patternMessage;
+    }
+    var input = form.querySelector('[data-field="' + f.key + '"]');
+    var errorEl = form.querySelector('[data-error-for="' + f.key + '"]');
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.hidden = !message;
+    }
+    if (input) {
+      if (message) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+    }
+    if (message) ok = false;
+  });
+  return ok;
+}
+
+function masterClearForm(form) {
+  form.querySelectorAll('[data-field]').forEach(function (input) {
+    input.value = '';
+    input.removeAttribute('aria-invalid');
+  });
+  form.querySelectorAll('[data-error-for]').forEach(function (el) {
+    el.textContent = '';
+    el.hidden = true;
+  });
+}
+
+// --- 確認ダイアログ（React 版の confirm() ＝ ConfirmRoot 相当） ---
+// 一覧の更新・削除と、登録画面の破棄で共用する。マークアップは初回に生成する
+
+var MASTER_CONFIRM_ICONS = {
+  primary: '<circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>',
+  danger: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>'
+};
+
+var masterConfirmCallback = null;
+
+function openMasterConfirm(options) {
+  var overlay = document.getElementById('masterConfirmModal');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'masterConfirmModal';
+    overlay.className = 'ds-modal-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'masterConfirmTitle');
+    overlay.innerHTML =
+      '<div class="ds-modal ds-modal--fit">' +
+        '<div class="ds-modal-header">' +
+          '<h2 class="heading-s ds-modal-title" id="masterConfirmTitle">' +
+            '<svg class="ds-modal-title-icon ds-modal-title-icon--lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"' +
+            ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>' +
+            '<span></span>' +
+          '</h2>' +
+        '</div>' +
+        '<div class="ds-modal-body">' +
+          '<p class="body-m" id="masterConfirmMessage"></p>' +
+          '<table class="modal-confirm-table" id="masterConfirmItems"><tbody></tbody></table>' +
+        '</div>' +
+        '<div class="ds-modal-footer">' +
+          '<button type="button" class="btn btn-default" id="masterConfirmNo">キャンセル</button>' +
+          '<button type="button" class="btn" id="masterConfirmYes"></button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    document.getElementById('masterConfirmNo').addEventListener('click', function () { closeMasterConfirm(false); });
+    document.getElementById('masterConfirmYes').addEventListener('click', function () { closeMasterConfirm(true); });
+  }
+
+  var variant = options.variant || 'primary';
+  var title = overlay.querySelector('.ds-modal-title');
+  title.classList.toggle('ds-modal-title--danger', variant === 'danger');
+  title.querySelector('svg').innerHTML = MASTER_CONFIRM_ICONS[variant];
+  title.querySelector('span').textContent = options.title;
+  document.getElementById('masterConfirmMessage').textContent = options.message;
+
+  var items = options.items || [];
+  var table = document.getElementById('masterConfirmItems');
+  table.hidden = items.length === 0;
+  table.querySelector('tbody').innerHTML = items.map(function (item) {
+    return '<tr><th scope="row">' + allocationEscape(item.label) + '</th><td>' + allocationEscape(item.value) + '</td></tr>';
+  }).join('');
+
+  var yes = document.getElementById('masterConfirmYes');
+  yes.className = 'btn ' + (variant === 'danger' ? 'btn-danger' : 'btn-primary');
+  yes.textContent = options.yesText || 'OK';
+
+  masterConfirmCallback = options.onYes;
+  overlay.style.display = 'flex';
+}
+
+function closeMasterConfirm(ok) {
+  document.getElementById('masterConfirmModal').style.display = 'none';
+  var callback = masterConfirmCallback;
+  masterConfirmCallback = null;
+  if (ok && callback) callback();
+}
+
+// --- 一覧（002 / 003） ---
+
+var MASTER_PAGE_SIZE = 20;
+var masterListState = null;
+
+function initMasterList(kind) {
+  var config = MASTER_CONFIGS[kind];
+  masterListState = { kind: kind, config: config, keyword: '', page: 1, editing: null };
+
+  document.getElementById('masterSearchForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    masterListState.keyword = document.getElementById('masterSearchInput').value.trim().toLowerCase();
+    masterListState.page = 1;
+    renderMasterList();
+  });
+  document.getElementById('masterEditForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    saveMasterEdit();
+  });
+
+  renderMasterList();
+
+  // 確認画面の「登録する」から戻ってきたとき、登録結果のトーストを出す
+  // （React 版は確認画面で notify.success してから一覧へ移る。モックアップは別ファイルのため一覧側で出す）
+  var params = new URLSearchParams(location.search);
+  if (params.has('registered')) {
+    var skipped = Number(params.get('skipped') || 0);
+    showToast('success', skipped > 0
+      ? params.get('registered') + '件登録しました（' + skipped + '件スキップ）'
+      : params.get('registered') + '件登録しました');
+    history.replaceState(null, '', location.pathname);
+  }
+}
+
+function masterFilteredRows() {
+  var s = masterListState;
+  if (!s.keyword) return s.config.data.slice();
+  return s.config.data.filter(function (row) {
+    return s.config.searchKeys.some(function (key) {
+      return (row[key] || '').toLowerCase().indexOf(s.keyword) !== -1;
+    });
+  });
+}
+
+function renderMasterList() {
+  var s = masterListState;
+  var rows = masterFilteredRows();
+  var totalPages = Math.ceil(rows.length / MASTER_PAGE_SIZE);
+  // 最終ページの最後の1件を削除したときなどは、範囲内のページに丸める（React 版はサーバーが丸める）
+  s.page = Math.min(Math.max(s.page, 1), Math.max(totalPages, 1));
+
+  var tbody = document.getElementById('masterTableBody');
+  var colCount = s.config.fields.length + 1;
+  var start = (s.page - 1) * MASTER_PAGE_SIZE;
+  var pageRows = rows.slice(start, start + MASTER_PAGE_SIZE);
+
+  if (pageRows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="' + colCount + '" class="text-subtle text-center">' + s.config.emptyMessage + '</td></tr>';
+  } else {
+    tbody.innerHTML = pageRows.map(function (row) {
+      var index = s.config.data.indexOf(row);
+      var cells = s.config.fields.map(function (f) {
+        return '<td>' + masterCellText(row[f.key]) + '</td>';
+      }).join('');
+      var deleteBtn = row.inUse
+        ? '<button type="button" class="btn-delete" disabled title="' + s.config.inUseReason + '">削除</button>'
+        : '<button type="button" class="btn-delete" onclick="deleteMasterRow(' + index + ')">削除</button>';
+      return '<tr>' + cells +
+        '<td><div class="master-row-actions">' +
+          '<button type="button" class="btn-edit" onclick="openMasterEdit(' + index + ')">編集</button>' +
+          deleteBtn +
+        '</div></td></tr>';
+    }).join('');
+  }
+
+  renderMasterPagination(totalPages);
+}
+
+function renderMasterPagination(totalPages) {
+  var s = masterListState;
+  var container = document.getElementById('masterPagination');
   container.innerHTML = '';
   if (totalPages <= 1) return;
 
-  var prevBtn = document.createElement('button');
-  prevBtn.className = 'history-pagination-btn';
-  prevBtn.textContent = '< 前へ';
-  prevBtn.disabled = (supplierCurrentPage === 1);
-  prevBtn.setAttribute('aria-label', '前のページ');
-  prevBtn.addEventListener('click', function() { renderSupplierPage(supplierCurrentPage - 1); });
-  container.appendChild(prevBtn);
-
-  for (var i = 1; i <= totalPages; i++) {
-    (function(p) {
-      var btn = document.createElement('button');
-      btn.className = 'history-pagination-btn' + (p === supplierCurrentPage ? ' is-active' : '');
-      btn.textContent = p;
-      btn.setAttribute('aria-label', p + 'ページ');
-      if (p === supplierCurrentPage) btn.setAttribute('aria-current', 'page');
-      btn.addEventListener('click', function() { renderSupplierPage(p); });
-      container.appendChild(btn);
-    })(i);
+  function addButton(label, page, options) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'history-pagination-btn' + (options.active ? ' is-active' : '');
+    btn.textContent = label;
+    btn.disabled = !!options.disabled;
+    if (options.ariaLabel) btn.setAttribute('aria-label', options.ariaLabel);
+    if (options.active) btn.setAttribute('aria-current', 'page');
+    btn.addEventListener('click', function () {
+      s.page = page;
+      renderMasterList();
+    });
+    container.appendChild(btn);
   }
 
-  var nextBtn = document.createElement('button');
-  nextBtn.className = 'history-pagination-btn';
-  nextBtn.textContent = '次へ >';
-  nextBtn.disabled = (supplierCurrentPage >= totalPages);
-  nextBtn.setAttribute('aria-label', '次のページ');
-  nextBtn.addEventListener('click', function() { renderSupplierPage(supplierCurrentPage + 1); });
-  container.appendChild(nextBtn);
+  addButton('< 前へ', s.page - 1, { disabled: s.page === 1, ariaLabel: '前のページ' });
+  for (var p = 1; p <= totalPages; p++) {
+    addButton(String(p), p, { active: p === s.page, ariaLabel: p + 'ページ' });
+  }
+  addButton('次へ >', s.page + 1, { disabled: s.page >= totalPages, ariaLabel: '次のページ' });
 }
 
-function searchSuppliers() {
-  var keyword = (document.getElementById('supplierSearchInput').value || '').trim().toLowerCase();
-  supplierFilteredData = keyword
-    ? supplierData.filter(function(s) {
-        return s.company.toLowerCase().indexOf(keyword) !== -1 ||
-               s.kana.indexOf(keyword) !== -1 ||
-               s.contact.toLowerCase().indexOf(keyword) !== -1;
-      })
-    : supplierData.slice();
-  renderSupplierPage(1);
+function openMasterEdit(index) {
+  var s = masterListState;
+  var row = s.config.data[index];
+  var form = document.getElementById('masterEditForm');
+  s.editing = index;
+  masterClearForm(form);
+  s.config.fields.forEach(function (f) {
+    form.querySelector('[data-field="' + f.key + '"]').value = row[f.key] || '';
+  });
+
+  // 参照されている商品は単位区分を読み取り専用にし、理由を欄の下に出す
+  var lockedKey = s.config.lockedWhenInUse;
+  if (lockedKey) {
+    var lockedInput = form.querySelector('[data-field="' + lockedKey + '"]');
+    var locked = !!row.inUse;
+    lockedInput.readOnly = locked;
+    lockedInput.classList.toggle('is-readonly', locked);
+    var hint = form.querySelector('[data-hint-for="' + lockedKey + '"]');
+    hint.textContent = locked ? s.config.lockedReason : '';
+    hint.hidden = !locked;
+  }
+
+  document.getElementById('masterEditModal').style.display = 'flex';
 }
 
-function uploadSupplierCsv() {
+function closeMasterEdit() {
+  document.getElementById('masterEditModal').style.display = 'none';
+  masterListState.editing = null;
+}
+
+// 「保存」→ 更新確認 → 反映してトースト（React 版の ItemFormModal / PartnerFormModal と同じ流れ）
+function saveMasterEdit() {
+  var s = masterListState;
+  var form = document.getElementById('masterEditForm');
+  if (!masterValidateForm(form, s.config)) return;
+  var values = masterReadForm(form, s.config);
+
+  openMasterConfirm({
+    title: '更新確認',
+    message: '以下の内容で更新します。よろしいですか？',
+    items: s.config.fields.map(function (f) {
+      return { label: f.label, value: values[f.key] || '-' };
+    }),
+    onYes: function () {
+      var row = s.config.data[s.editing];
+      s.config.fields.forEach(function (f) { row[f.key] = values[f.key]; });
+      closeMasterEdit();
+      showToast('success', s.config.updatedMessage);
+      renderMasterList();
+    }
+  });
+}
+
+function deleteMasterRow(index) {
+  var s = masterListState;
+  var row = s.config.data[index];
+  openMasterConfirm({
+    title: '削除確認',
+    variant: 'danger',
+    message: s.config.deleteMessage(row),
+    yesText: '削除',
+    onYes: function () {
+      s.config.data.splice(index, 1);
+      showToast('success', s.config.deletedMessage);
+      renderMasterList();
+    }
+  });
+}
+
+// --- 登録（002-2 / 003-2） ---
+// 追加した行（登録前データ）はモックアップでは件数だけを数える。確認画面はサンプル行を表示する
+
+var masterRegisterState = null;
+
+function initMasterRegister(kind) {
+  var config = MASTER_CONFIGS[kind];
+  var form = document.getElementById('masterRegisterForm');
+  masterRegisterState = { config: config, count: 0 };
+
+  // onSubmit は「追加して続ける」。Enter キーでの送信もこちらに寄せる
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    addMasterDraft(false);
+  });
+  form.addEventListener('input', updateMasterRegisterBar);
+
   var fileInput = document.getElementById('csvFileInput');
-  var errorDiv  = document.getElementById('csvErrorMessage');
-  var successDiv = document.getElementById('csvSuccessMessage');
-  errorDiv.style.display = 'none';
-  successDiv.style.display = 'none';
-  if (!fileInput || !fileInput.files || !fileInput.files.length) {
-    errorDiv.textContent = 'ファイルを選択してください。';
-    errorDiv.style.display = '';
+  fileInput.addEventListener('change', function () {
+    handleFileChange('csvFileInput', 'csvSelectedName');
+    document.getElementById('csvUploadBtn').disabled = fileInput.files.length === 0;
+  });
+  // 取り込んだ行は確認画面に合流する（ヘッダ不一致などファイル全体の問題はトーストで知らせる）
+  document.getElementById('csvUploadBtn').addEventListener('click', function () {
+    location.href = config.confirmPage;
+  });
+
+  updateMasterRegisterBar();
+}
+
+function masterRegisterHasInput() {
+  var form = document.getElementById('masterRegisterForm');
+  var values = masterReadForm(form, masterRegisterState.config);
+  return Object.keys(values).some(function (key) { return values[key] !== ''; });
+}
+
+// 「確認画面へ（N件）」は、0 件で入力欄も空のときは押せない
+function updateMasterRegisterBar() {
+  var btn = document.getElementById('masterGoConfirmBtn');
+  btn.textContent = '確認画面へ（' + masterRegisterState.count + '件）';
+  btn.disabled = masterRegisterState.count === 0 && !masterRegisterHasInput();
+}
+
+function addMasterDraft(goConfirm) {
+  var s = masterRegisterState;
+  var form = document.getElementById('masterRegisterForm');
+  if (!masterValidateForm(form, s.config)) return;
+  s.count += 1;
+  masterClearForm(form);
+  updateMasterRegisterBar();
+  if (goConfirm) location.href = s.config.confirmPage;
+}
+
+// 下部バーの「確認画面へ」。入力途中の値を捨てないよう、値があれば追加してから移動する
+function goMasterConfirm() {
+  if (masterRegisterHasInput()) {
+    addMasterDraft(true);
     return;
   }
-  successDiv.textContent = '25件登録しました。';
-  successDiv.style.display = '';
-  setTimeout(function() { successDiv.style.display = 'none'; }, 4000);
+  location.href = masterRegisterState.config.confirmPage;
 }
 
-function openConversionModal(companyName) {
-  var title = document.getElementById('conversionModalTitle');
-  if (title) title.textContent = '変換定義 — ' + companyName;
-  var nameSpan = document.getElementById('convCsvSelectedName');
-  if (nameSpan) nameSpan.textContent = 'ファイルを選択してください (.csv)';
-  var fileInput = document.getElementById('convCsvFileInput');
-  if (fileInput) fileInput.value = '';
-  var errDiv = document.getElementById('convCsvErrorMessage');
-  if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
-  document.getElementById('conversionModalOverlay').style.display = 'flex';
-  document.getElementById('conversionModalOverlay').dataset.company = companyName;
-}
-
-function closeConversionModal() {
-  document.getElementById('conversionModalOverlay').style.display = 'none';
-}
-
-function uploadConversionCsv() {
-  var fileInput = document.getElementById('convCsvFileInput');
-  var errDiv = document.getElementById('convCsvErrorMessage');
-  errDiv.style.display = 'none';
-  if (!fileInput || !fileInput.files || !fileInput.files.length) {
-    errDiv.textContent = 'ファイルを選択してください。';
-    errDiv.style.display = '';
+function cancelMasterRegister() {
+  var s = masterRegisterState;
+  if (s.count === 0) {
+    location.href = s.config.listPage;
     return;
   }
-  var companyName = document.getElementById('conversionModalOverlay').dataset.company;
-  var item = supplierData.find(function(s) { return s.company === companyName; });
-  if (item) item.hasConversion = true;
-  supplierFilteredData = supplierData.slice();
-  renderSupplierPage(supplierCurrentPage);
-  closeConversionModal();
+  openMasterConfirm({
+    title: '破棄確認',
+    variant: 'danger',
+    message: '追加した' + s.count + '件を破棄して一覧に戻ります。よろしいですか？',
+    yesText: '破棄',
+    onYes: function () { location.href = s.config.listPage; }
+  });
 }
 
-if (document.getElementById('supplierTableBody')) {
-  renderSupplierPage(1);
+// --- 登録の確認（002-3 / 003-3） ---
+
+var masterConfirmState = null;
+
+function initMasterConfirm(kind) {
+  var config = MASTER_CONFIGS[kind];
+  masterConfirmState = { config: config, rows: config.confirmSamples.slice() };
+  renderMasterConfirm();
+}
+
+function renderMasterConfirm() {
+  var s = masterConfirmState;
+  var registrable = s.rows.filter(function (row) { return !row.error; }).length;
+
+  document.getElementById('masterConfirmHeading').textContent =
+    '登録内容の確認（全' + s.rows.length + '件 / 登録対象' + registrable + '件）';
+
+  document.getElementById('masterConfirmBody').innerHTML = s.rows.map(function (row, i) {
+    var cells = s.config.fields.map(function (f) {
+      return '<td>' + masterCellText(row[f.key]) + '</td>';
+    }).join('');
+    var judge = row.error
+      ? '<span class="text-danger"><span aria-hidden="true">× </span>' + allocationEscape(row.error) + '</span>'
+      : '<span class="text-success"><span aria-hidden="true">○</span><span class="sr-only">登録対象</span></span>';
+    return '<tr>' +
+      // CSV 取り込み行はファイル上の行番号を出す。手入力行は番号を持たない
+      '<td>' + (row.line === null ? '-' : row.line) + '</td>' +
+      cells +
+      '<td>' + judge + '</td>' +
+      '<td><button type="button" class="btn-delete" onclick="removeMasterConfirmRow(' + i + ')">削除</button></td>' +
+      '</tr>';
+  }).join('');
+
+  var btn = document.getElementById('masterRegisterBtn');
+  btn.textContent = '登録する（' + registrable + '件）';
+  btn.disabled = registrable === 0;
+}
+
+function removeMasterConfirmRow(index) {
+  var s = masterConfirmState;
+  s.rows.splice(index, 1);
+  // 行が 0 件になったら見せるものがないので登録画面へ戻す（履歴に確認画面を残さない）
+  if (s.rows.length === 0) {
+    location.replace(s.config.newPage);
+    return;
+  }
+  renderMasterConfirm();
+}
+
+// エラーの行は自動的に除外して登録する。結果のトーストは一覧で出す
+function registerMasterRows() {
+  var s = masterConfirmState;
+  var registrable = s.rows.filter(function (row) { return !row.error; }).length;
+  var skipped = s.rows.length - registrable;
+  location.href = s.config.listPage + '?registered=' + registrable + '&skipped=' + skipped;
 }
 
 // === SCR-020 在庫調整履歴 ===

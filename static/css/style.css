@@ -356,34 +356,6 @@ body {
   margin-bottom: var(--ds-space-200);
 }
 
-/* === Current File Row (SCR-002) === */
-.current-file-row {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-100);
-  padding: var(--ds-space-100) var(--ds-space-150);
-  background-color: var(--ds-background-neutral);
-  border: 1px solid var(--ds-border);
-  border-radius: 3px;
-  margin-bottom: var(--ds-space-200);
-}
-
-.current-file-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--ds-text-subtle);
-  white-space: nowrap;
-}
-
-.current-file-path {
-  font-size: 0.75rem;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  color: var(--ds-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* === Off-canvas Panel (SCR-002) === */
 .offcanvas-overlay {
   position: fixed;
@@ -480,177 +452,13 @@ body {
   color: var(--ds-text-subtle);
 }
 
-/* === Filter Input (SCR-002) === */
-.filter-input {
-  width: 100%;
-}
-
-/* === Definition Table (SCR-002) === */
-.definition-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.75rem;
-}
-
-.definition-table th {
-  text-align: left;
-  padding: var(--ds-space-100) var(--ds-space-150);
-  background-color: var(--ds-background-neutral);
-  color: var(--ds-text-subtle);
-  font-weight: 600;
-  border-bottom: 2px solid var(--ds-border);
-  white-space: nowrap;
-}
-
-.definition-table td {
-  padding: var(--ds-space-100) var(--ds-space-150);
-  border-bottom: 1px solid var(--ds-border);
-  color: var(--ds-text);
-}
-
-.definition-table tr:last-child td {
-  border-bottom: none;
-}
-
-.definition-table tbody tr:hover td {
-  background-color: var(--ds-background-neutral);
-}
-
-.definition-table tr.hidden {
-  display: none;
-}
-
-/* === Mapping Type Badge (SCR-002) === */
-.mapping-type-badge {
-  display: inline-block;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.mapping-type-badge.standard {
-  background-color: var(--ds-background-neutral);
-  color: var(--ds-text-subtle);
-}
-.mapping-type-badge.special {
-  background-color: var(--ds-background-information);
-  color: var(--ds-text-information);
-}
-
-/* === Misc Code Section (SCR-002) === */
-.misc-code-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-150);
-}
-
-.misc-code-row {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-200);
-}
-
-.misc-code-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--ds-text);
-  width: 8rem;
-  flex-shrink: 0;
-}
-
-.template-input {
-  flex: 1;
-  height: 2rem;
-  padding: 0 var(--ds-space-150);
-  border: 1px solid var(--ds-border-input);
-  border-radius: 3px;
-  background-color: var(--ds-background-input);
-  color: var(--ds-text);
-  font-size: 0.875rem;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  transition: border-color 0.15s;
-}
-
-.template-input:focus {
-  outline: none;
-  border-color: var(--ds-border-focused);
-}
-
-.template-input::placeholder {
-  color: var(--ds-text-subtle);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-}
-
-.placeholder-hints {
-  margin-top: var(--ds-space-200);
-  padding-top: var(--ds-space-200);
-  border-top: 1px solid var(--ds-border);
-}
-
-.placeholder-hints-label {
-  font-size: 0.75rem;
-  color: var(--ds-text-subtle);
-  margin-bottom: var(--ds-space-100);
-}
-
-.placeholder-tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ds-space-075);
-  margin-bottom: var(--ds-space-100);
-}
-
-.placeholder-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--ds-space-050) var(--ds-space-100);
-  background-color: var(--ds-background-neutral);
-  border: 1px solid var(--ds-border);
-  border-radius: 3px;
-  font-size: 0.75rem;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  color: var(--ds-text-brand);
-  user-select: all;
-  cursor: text;
-}
-
-.placeholder-example {
-  font-size: 0.75rem;
-  color: var(--ds-text-subtle);
-}
-
+/* === Section Footer Row（_cheatsheet.html で使用） === */
 .section-footer-row {
   display: flex;
   justify-content: flex-end;
   margin-top: var(--ds-space-300);
   padding-top: var(--ds-space-200);
   border-top: 1px solid var(--ds-border);
-}
-
-/* === Misc Code Name Input (SCR-002 機能3) === */
-.misc-code-name-input {
-  width: 8rem;
-  flex-shrink: 0;
-  height: 2rem;
-  padding: 0 var(--ds-space-150);
-  border: 1px solid var(--ds-border-input);
-  border-radius: 3px;
-  background-color: var(--ds-background-input);
-  color: var(--ds-text);
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: border-color 0.15s;
-}
-
-.misc-code-name-input:focus {
-  outline: none;
-  border-color: var(--ds-border-focused);
-}
-
-.misc-code-name-input::placeholder {
-  color: var(--ds-text-subtle);
-  font-weight: 400;
 }
 
 /* === Icon-only Subtle Button (削除ボタン等) === */
@@ -2012,24 +1820,6 @@ body {
   align-items: center;
   gap: var(--ds-space-100);
   margin-bottom: var(--ds-space-200);
-}
-
-.upload-error-message {
-  margin-top: var(--ds-space-150);
-  padding: var(--ds-space-100) var(--ds-space-150);
-  background-color: var(--ds-background-danger);
-  color: var(--ds-text-danger);
-  border-radius: 3px;
-  font-size: 0.875rem;
-}
-
-.upload-success-banner {
-  margin-top: var(--ds-space-150);
-  padding: var(--ds-space-100) var(--ds-space-150);
-  background-color: var(--ds-background-success);
-  color: var(--ds-text-success);
-  border-radius: 3px;
-  font-size: 0.875rem;
 }
 
 .user-form-field {
@@ -3564,4 +3354,208 @@ body {
   font-size: 1rem;
   line-height: 1;
   padding: 0;
+}
+
+/* ============================================================
+   SCR-002 / SCR-003 商品マスタ・取引先マスタ（一覧・登録・登録の確認）
+   React 版（frontend/src/assets/style.css・layout.css）の定義を持ち込んだもの。
+   「Tailwind の代用」と書いたクラスは React 版では Tailwind のユーティリティで
+   書いているため、React 実装時は持ち込まない
+   ============================================================ */
+
+/* React 版の .app-layout（layout.css）と同じく、画面全体をビューポートの高さに固定し、
+   サイドバーと本文を別々にスクロールさせる。下部固定バーと .table-scroll はこれが前提。
+   既存のモックアップ（min-height: 100vh で画面全体がスクロールする）は変えないよう、
+   マスタの画面にだけ付ける */
+.app-layout--viewport {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-layout--viewport .app-sidebar {
+  overflow-y: auto;
+}
+
+/* 一覧画面用の固定レイアウト（layout.css）。本文自体はスクロールさせず、
+   内側の .table-scroll（一覧の行）だけをスクロールさせる */
+.app-main--fixed {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main--fixed > *:not(.section-card--fill) {
+  flex-shrink: 0;
+}
+
+/* Tailwind の代用: 下部固定バー（.page-action-bar）を置く画面の .app-main。
+   登録画面は `flex flex-col pb-0`、確認画面は `app-main--fixed pb-0` に相当する */
+.app-main--action-bar {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+
+/* 固定レイアウトで、残りの高さいっぱいに広がるカード */
+.section-card--fill {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.section-card--fill .history-pagination {
+  padding-bottom: 0;
+}
+
+/* 行が少ないときはカードを内容の高さに収める（.section-card--fill と併用） */
+.section-card--fill.section-card--fit {
+  flex-grow: 0;
+  flex-basis: auto;
+}
+
+/* Tailwind の代用: 確認画面のカード（`mb-(--ds-space-300)`）。
+   --fill が margin-bottom を 0 にするため戻す */
+.section-card--confirm {
+  margin-bottom: var(--ds-space-300);
+}
+
+/* 一覧の行だけをスクロールさせる領域。列ヘッダーは sticky で固定する */
+.table-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.table-scroll .data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: none;
+  box-shadow: inset 0 -2px 0 var(--ds-border);
+}
+
+/* Tailwind の代用: 一覧の検索フォームと「新規追加」の行
+   （`mb-4 flex flex-wrap items-center justify-between gap-3`） */
+.master-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-150);
+  margin-bottom: var(--ds-space-200);
+}
+
+.master-list-toolbar .supplier-search-row {
+  margin-bottom: 0;
+}
+
+.search-input {
+  width: 16rem;
+}
+
+/* Tailwind の代用: 一覧の操作列（`pl-6` と `flex items-center gap-2`） */
+.master-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-100);
+  padding-left: var(--ds-space-300);
+}
+
+/* 参照されていて削除できない行の「削除」 */
+.btn-delete:disabled {
+  color: var(--ds-text-subtle);
+  cursor: not-allowed;
+  background: none;
+  border-color: transparent;
+  text-decoration: line-through;
+}
+
+.btn-delete:disabled:hover {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.text-success {
+  color: var(--ds-text-success);
+}
+
+/* === フォーム共通レイアウト === */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-space-200);
+}
+
+/* Tailwind の代用: 登録画面の入力カード（`gap-(--ds-space-075)`） */
+.form-grid--compact {
+  gap: var(--ds-space-075);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-075);
+}
+
+.form-field--full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ds-text-subtle);
+}
+
+.form-required {
+  color: var(--ds-text-danger);
+  margin-left: 0.125rem; /* React 版は --ds-space-025（モックアップの tokens.css に無い） */
+}
+
+/* Tailwind の代用: 入力欄の下のエラー・補足（`mt-1`） */
+.form-field-message {
+  margin-top: var(--ds-space-050);
+}
+
+/* Tailwind の代用: 入力カードのボタン行（`section-action-row mt-4 mb-0`） */
+.section-action-row--form {
+  margin-top: var(--ds-space-200);
+  margin-bottom: 0;
+}
+
+/* Tailwind の代用: 見出しと「?」を横に並べる（`flex items-center gap-3`） */
+.heading-with-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-150);
+}
+
+/* === 下部固定バー（登録画面・確認画面のページ操作行） === */
+.page-action-bar {
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-200);
+  margin-left: calc(-1 * var(--ds-space-400));
+  margin-right: calc(-1 * var(--ds-space-400));
+  padding: var(--ds-space-150) var(--ds-space-400);
+  background-color: var(--ds-surface-sunken);
+  border-top: 1px solid var(--ds-border);
+}
+
+/* 本文を固定する画面（確認画面）では、バーの下に本文が潜り込まないため罫線は要らない */
+.app-main--fixed .page-action-bar {
+  border-top: none;
+}
+
+/* 削除の確認モーダル。React 版の Modal.jsx の text-danger と、danger アイコンの h-6 w-6 に相当する */
+.ds-modal-title--danger {
+  color: var(--ds-text-danger);
 }
