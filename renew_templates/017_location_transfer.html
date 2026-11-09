@@ -24,7 +24,9 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
         </button>
         <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="adm_003_company_info.html" class="user-dropdown-item" role="menuitem">会社情報</a>
           <a href="adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+          <a class="user-dropdown-item" role="menuitem" aria-disabled="true">ログアウト</a>
         </div>
       </div>
     </header>
@@ -180,14 +182,13 @@
           <div class="transfer-table-wrapper">
             <table class="schedule-table" id="transferStockTable" aria-label="移動元の在庫一覧">
               <thead>
+                <!-- 商品・数量の列は入荷予定一覧と同じ見せ方（「商品コード / 商品名」、数量と単位区分を 1 セル） -->
                 <tr>
-                  <th scope="col">商品コード</th>
-                  <th scope="col">商品名</th>
+                  <th scope="col">商品</th>
+                  <th scope="col" class="qty-col">在庫数</th>
                   <th scope="col">ロット番号</th>
                   <th scope="col">賞味期限</th>
                   <th scope="col">入庫日</th>
-                  <th scope="col" class="col-right">在庫数</th>
-                  <th scope="col">単位区分</th>
                   <th scope="col">特記事項</th>
                 </tr>
               </thead>
@@ -205,26 +206,36 @@
           <hr class="section-divider">
           <fieldset id="transferForm" class="transfer-form" disabled>
             <legend class="visually-hidden">移動内容入力フォーム</legend>
-            <div class="transfer-form-grid">
+            <!-- 配置は 016（在庫調整）と揃える: 棚ロケ（移動元 → 移動先）→ 商品・ロット番号・賞味期限・入庫日 → 数量と理由 -->
+            <div class="adj-form-grid">
 
-              <div class="transfer-form-field">
-                <label for="transferSrcLocation" class="transfer-form-label">移動元棚ロケ</label>
-                <input type="text" id="transferSrcLocation" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
-              <div class="transfer-form-field">
-                <label for="transferItemCode" class="transfer-form-label">商品コード</label>
-                <input type="text" id="transferItemCode" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
+              <!-- 棚ロケ: 移動元 → 移動先。確認モーダルと同じボックスで並べる -->
+              <div class="transfer-form-field transfer-form-field--full">
+                <h3 class="heading-s">棚ロケ</h3>
+                <div class="transfer-location-row">
+                  <div class="adj-qty-box adj-qty-box--current">
+                    <span class="adj-qty-label">移動元棚ロケ</span>
+                    <span class="adj-qty-value-row">
+                      <output id="transferSrcLocation" class="adj-qty-value">‐</output>
+                    </span>
+                  </div>
+                  <span class="adj-qty-op" aria-hidden="true">→</span>
+                  <div class="adj-qty-box adj-qty-box--after">
+                    <label for="transferDestLocation" class="adj-qty-label">移動先棚ロケ <span class="manual-form-required" aria-label="必須">*</span></label>
+                    <span class="adj-qty-value-row">
+                      <select id="transferDestLocation" class="form-input transfer-location-select">
+                        <option value="">棚ロケを選択</option>
+                      </select>
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              <div class="transfer-form-field">
-                <label for="transferItemName" class="transfer-form-label">商品名</label>
-                <input type="text" id="transferItemName" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
+              <!-- 商品は入荷予定登録と同じ「商品コード / 商品名（単位区分）」の 1 欄で表示する -->
+              <div class="transfer-form-field adj-form-field--row-start">
+                <label for="transferItem" class="transfer-form-label">商品</label>
+                <input type="text" id="transferItem" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
               </div>
-              <div class="transfer-form-field">
-                <label for="transferUnitType" class="transfer-form-label">単位区分</label>
-                <input type="text" id="transferUnitType" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
-
               <div class="transfer-form-field">
                 <label for="transferLotNo" class="transfer-form-label">ロット番号</label>
                 <input type="text" id="transferLotNo" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
@@ -233,35 +244,50 @@
                 <label for="transferExpiryDate" class="transfer-form-label">賞味期限</label>
                 <input type="text" id="transferExpiryDate" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
               </div>
-
               <div class="transfer-form-field">
                 <label for="transferReceivedAt" class="transfer-form-label">入庫日</label>
                 <input type="text" id="transferReceivedAt" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
               </div>
-              <div class="transfer-form-field">
-                <label for="transferCurrentQty" class="transfer-form-label">現在庫数</label>
-                <input type="text" id="transferCurrentQty" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
 
-              <div class="transfer-form-field transfer-form-field--full">
-                <label for="transferDestLocation" class="transfer-form-label">移動先棚ロケ <span class="manual-form-required" aria-label="必須">*</span></label>
-                <select id="transferDestLocation" class="form-input">
-                  <option value="">棚ロケを選択</option>
-                </select>
-              </div>
+              <!-- 移動数量（左）と移動理由（右） -->
+              <div class="transfer-form-field--full adj-qty-reason-row">
 
-              <div class="transfer-form-field">
-                <label for="transferQty" class="transfer-form-label">移動数量 <span class="manual-form-required" aria-label="必須">*</span></label>
-                <input type="number" id="transferQty" class="form-input manual-form-qty" min="1" step="1" placeholder="数量を入力" autocomplete="off">
-              </div>
-              <div class="transfer-form-field">
-                <label for="transferAfterQty" class="transfer-form-label">移動後の残数</label>
-                <input type="text" id="transferAfterQty" class="form-input transfer-form-input--readonly" readonly tabindex="-1">
-              </div>
+                <!-- 移動数量: 移動元の現在庫数 − 移動数量 = 移動元の残数 -->
+                <div class="transfer-form-field adj-qty-section">
+                  <h3 class="heading-s">移動数量</h3>
+                  <div class="adj-qty-row">
+                    <div class="adj-qty-box adj-qty-box--current">
+                      <span class="adj-qty-label">移動元の現在庫数</span>
+                      <span class="adj-qty-value-row">
+                        <output id="transferCurrentQty" class="adj-qty-value">‐</output>
+                        <span class="adj-qty-unit" hidden></span>
+                      </span>
+                    </div>
+                    <span class="adj-qty-op" aria-hidden="true">−</span>
+                    <div class="adj-qty-box adj-qty-box--input">
+                      <label for="transferQty" class="adj-qty-label">移動数量 <span class="manual-form-required" aria-label="必須">*</span></label>
+                      <span class="adj-qty-value-row">
+                        <input type="number" id="transferQty" class="form-input adj-qty-input" min="1" step="1" placeholder="数量を入力" autocomplete="off">
+                        <span class="adj-qty-unit" hidden></span>
+                      </span>
+                    </div>
+                    <span class="adj-qty-op" aria-hidden="true">=</span>
+                    <div id="transferAfterBox" class="adj-qty-box adj-qty-box--after">
+                      <span class="adj-qty-label">移動元の残数</span>
+                      <span class="adj-qty-value-row">
+                        <output id="transferAfterQty" class="adj-qty-value">‐</output>
+                        <span class="adj-qty-unit" hidden></span>
+                      </span>
+                    </div>
+                  </div>
+                  <p id="transferQtyError" class="adj-qty-error" role="alert" hidden>移動数量が移動元の現在庫数を超えるため登録できません。</p>
+                </div>
 
-              <div class="transfer-form-field transfer-form-field--full">
-                <label for="transferReason" class="transfer-form-label">移動理由 <span class="manual-form-required" aria-label="必須">*</span></label>
-                <textarea id="transferReason" class="form-input form-textarea" placeholder="例: ピッキング効率化のため前列へ移動" autocomplete="off"></textarea>
+                <div class="transfer-form-field adj-reason-field">
+                  <label for="transferReason" class="transfer-form-label">移動理由 <span class="manual-form-required" aria-label="必須">*</span></label>
+                  <textarea id="transferReason" class="form-input form-textarea" placeholder="例: ピッキング効率化のため前列へ移動" autocomplete="off"></textarea>
+                </div>
+
               </div>
 
             </div>
@@ -275,15 +301,68 @@
     </div>
   </div>
 
-  <!-- 機能4: 確認モーダル -->
+  <!-- 機能4: 確認モーダル（React 版の confirm() ＝ ConfirmRoot と同じ構成: アイコン付き見出し・確認項目の表。016 と同じ） -->
   <div id="transferConfirmModal" class="ds-modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="transferConfirmTitle">
-    <div class="ds-modal">
+    <div class="ds-modal ds-modal--fit">
       <div class="ds-modal-header">
-        <h2 class="heading-s" id="transferConfirmTitle">棚ロケ移動の確認</h2>
+        <h2 class="heading-s ds-modal-title" id="transferConfirmTitle">
+          <svg class="ds-modal-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M8.5 12.5l2.5 2.5 4.5-5"/>
+          </svg>
+          <span>棚ロケ移動の確認</span>
+        </h2>
       </div>
       <div class="ds-modal-body">
-        <p>以下の内容で棚ロケ移動を登録しますか？</p>
-        <div id="transferConfirmBody"></div>
+        <!-- 棚ロケ: 移動元 → 移動先 -->
+        <div class="transfer-confirm-locations">
+          <div class="adj-qty-box adj-qty-box--current">
+            <span class="adj-qty-label">移動元棚ロケ</span>
+            <span id="transferConfirmSrc" class="adj-qty-value"></span>
+          </div>
+          <span class="adj-qty-op" aria-hidden="true">→</span>
+          <div class="adj-qty-box adj-qty-box--after">
+            <span class="adj-qty-label">移動先棚ロケ</span>
+            <span id="transferConfirmDest" class="adj-qty-value"></span>
+          </div>
+        </div>
+
+        <!-- 移動する在庫（商品・ロット番号・賞味期限・入庫日） -->
+        <table class="modal-confirm-table">
+          <tbody id="transferConfirmBody"></tbody>
+        </table>
+
+        <!-- 移動数量: フォームと同じ「移動元の現在庫数 − 移動数量 = 移動元の残数」 -->
+        <div class="adj-qty-row transfer-confirm-qty">
+          <div class="adj-qty-box adj-qty-box--current">
+            <span class="adj-qty-label">移動元の現在庫数</span>
+            <span class="adj-qty-value-row">
+              <span id="transferConfirmCurrentQty" class="adj-qty-value"></span>
+              <span class="adj-qty-unit"></span>
+            </span>
+          </div>
+          <span class="adj-qty-op" aria-hidden="true">−</span>
+          <div class="adj-qty-box adj-qty-box--input">
+            <span class="adj-qty-label">移動数量</span>
+            <span class="adj-qty-value-row">
+              <span id="transferConfirmQty" class="adj-qty-value"></span>
+              <span class="adj-qty-unit"></span>
+            </span>
+          </div>
+          <span class="adj-qty-op" aria-hidden="true">=</span>
+          <div class="adj-qty-box adj-qty-box--after">
+            <span class="adj-qty-label">移動元の残数</span>
+            <span class="adj-qty-value-row">
+              <span id="transferConfirmAfterQty" class="adj-qty-value"></span>
+              <span class="adj-qty-unit"></span>
+            </span>
+          </div>
+        </div>
+
+        <table class="modal-confirm-table">
+          <tbody id="transferConfirmReasonBody"></tbody>
+        </table>
       </div>
       <div class="ds-modal-footer">
         <button type="button" id="transferConfirmCancel" class="btn btn-default">修正する</button>
@@ -292,8 +371,8 @@
     </div>
   </div>
 
-  <!-- フラッシュメッセージ -->
-  <div id="transferFlash" class="transfer-flash" style="display: none;" role="alert" aria-live="polite"></div>
+  <!-- トースト通知（確定後の完了メッセージ） -->
+  <div class="toast-container" id="toastContainer" role="region" aria-label="通知" aria-live="polite"></div>
 
   <script src="../static/js/sticky-notes.js"></script>
   <script src="../static/js/main.js"></script>

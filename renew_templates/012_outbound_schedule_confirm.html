@@ -24,7 +24,9 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
         </button>
         <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="adm_003_company_info.html" class="user-dropdown-item" role="menuitem">会社情報</a>
           <a href="adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+          <a class="user-dropdown-item" role="menuitem" aria-disabled="true">ログアウト</a>
         </div>
       </div>
     </header>
@@ -194,6 +196,7 @@
                       <li>出荷を確定する伝票は、チェックボックスにチェックを入れて、「確定」ボタンを押してください。</li>
                       <li>明細を編集した上で出荷を確定する場合は、「編集」ボタンで明細を編集し、チェックボックスにチェックを入れて、「確定」ボタンを押してください。</li>
                       <li>データベースへの反映は「確定」ボタンを押したときにまとめて行います。</li>
+                      <li><span class="schedule-shortage-badge">在庫不足</span>引き当て後に在庫が変動し、在庫が足りなくなった行。この行がある伝票は選択できません。「編集」で数量や在庫を直してください</li>
                     </ul>
                   </span>
                 </span>
@@ -212,8 +215,10 @@
                     <th scope="col">商品</th>
                     <th scope="col">棚ロケーション</th>
                     <th scope="col" class="schedule-col-qty">数量</th>
+                    <th scope="col" class="schedule-col-shortage" aria-label="在庫不足"></th>
                     <th scope="col">ロット番号</th>
                     <th scope="col">賞味期限</th>
+                    <th scope="col">入庫日</th>
                     <th scope="col">特記事項</th>
                   </tr>
                 </thead>
@@ -221,7 +226,7 @@
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-001" data-item-code="P-001" data-item-name="商品A"
                       data-unit="パレット" data-customer="佐々木商事" data-schedule-date="2026-05-09"
-                      data-qty="100" data-lot-no="LOT-2025-001" data-expiry-date="2026-12-31" data-remarks="">
+                      data-qty="100" data-lot-no="LOT-2025-001" data-expiry-date="2026-12-31" data-received-at="2026-04-01" data-remarks="">
                     <td class="slip-cell" rowspan="2">
                       <div class="slip-cell-inner">
                         <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
@@ -231,26 +236,28 @@
                     </td>
                     <td class="schedule-item-name-cell">P-001 / 商品A</td>
                     <td class="schedule-location-cell">A-01-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">100</span><span class="schedule-qty-unit-text">パレット</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">100</span><span class="schedule-qty-unit-text">パレット</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-001</td>
                     <td class="schedule-expiry-cell">2026/12/31</td>
+                    <td class="schedule-received-cell">2026/04/01</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-001" data-item-code="P-002" data-item-name="商品B"
                       data-unit="ケース" data-customer="佐々木商事" data-schedule-date="2026-05-09"
-                      data-qty="50" data-lot-no="LOT-2025-002" data-expiry-date="2026-06-30" data-remarks="">
+                      data-qty="50" data-lot-no="LOT-2025-002" data-expiry-date="2026-06-30" data-received-at="2026-03-15" data-remarks="">
                     <td class="schedule-item-name-cell">P-002 / 商品B</td>
                     <td class="schedule-location-cell">A-01-02</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">50</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">50</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-002</td>
                     <td class="schedule-expiry-cell">2026/06/30</td>
+                    <td class="schedule-received-cell">2026/03/15</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-002" data-item-code="P-003" data-item-name="商品C"
                       data-unit="ピース" data-customer="田中物産" data-schedule-date="2026-05-09"
-                      data-qty="200" data-lot-no="LOT-2025-003" data-expiry-date="" data-remarks="">
+                      data-qty="200" data-lot-no="LOT-2025-003" data-expiry-date="" data-received-at="2026-04-03" data-remarks="">
                     <td class="slip-cell" rowspan="2">
                       <div class="slip-cell-inner">
                         <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
@@ -260,26 +267,28 @@
                     </td>
                     <td class="schedule-item-name-cell">P-003 / 商品C</td>
                     <td class="schedule-location-cell">B-02-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">200</span><span class="schedule-qty-unit-text">ピース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">200</span><span class="schedule-qty-unit-text">ピース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-003</td>
                     <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-received-cell">2026/04/03</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-002" data-item-code="P-004" data-item-name="商品D"
                       data-unit="ボール" data-customer="田中物産" data-schedule-date="2026-05-09"
-                      data-qty="30" data-lot-no="LOT-2025-004" data-expiry-date="2027-03-15" data-remarks="">
+                      data-qty="30" data-lot-no="LOT-2025-004" data-expiry-date="2027-03-15" data-received-at="2026-02-20" data-remarks="">
                     <td class="schedule-item-name-cell">P-004 / 商品D</td>
                     <td class="schedule-location-cell">B-02-02</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">30</span><span class="schedule-qty-unit-text">ボール</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">30</span><span class="schedule-qty-unit-text">ボール</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-004</td>
                     <td class="schedule-expiry-cell">2027/03/15</td>
+                    <td class="schedule-received-cell">2026/02/20</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-003" data-item-code="P-005" data-item-name="商品E"
                       data-unit="ケース" data-customer="鈴木運輸" data-schedule-date="2026-05-09"
-                      data-qty="80" data-lot-no="" data-expiry-date="2026-09-01" data-remarks="">
+                      data-qty="80" data-lot-no="" data-expiry-date="2026-09-01" data-received-at="2026-04-05" data-remarks="">
                     <td class="slip-cell" rowspan="2">
                       <div class="slip-cell-inner">
                         <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
@@ -289,26 +298,28 @@
                     </td>
                     <td class="schedule-item-name-cell">P-005 / 商品E</td>
                     <td class="schedule-location-cell">C-03-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">80</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">80</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">-</td>
                     <td class="schedule-expiry-cell">2026/09/01</td>
+                    <td class="schedule-received-cell">2026/04/05</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-003" data-item-code="P-006" data-item-name="商品F"
                       data-unit="パレット" data-customer="鈴木運輸" data-schedule-date="2026-05-09"
-                      data-qty="150" data-lot-no="LOT-2025-006" data-expiry-date="" data-remarks="要冷蔵">
+                      data-qty="150" data-lot-no="LOT-2025-006" data-expiry-date="" data-received-at="2026-03-28" data-remarks="要冷蔵">
                     <td class="schedule-item-name-cell">P-006 / 商品F</td>
                     <td class="schedule-location-cell">C-03-02</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">150</span><span class="schedule-qty-unit-text">パレット</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">150</span><span class="schedule-qty-unit-text">パレット</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-006</td>
                     <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-received-cell">2026/03/28</td>
                     <td class="schedule-remarks-cell">要冷蔵</td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-004" data-item-code="P-007" data-item-name="商品G"
                       data-unit="ピース" data-customer="伊藤商店" data-schedule-date="2026-05-09"
-                      data-qty="60" data-lot-no="LOT-2025-007" data-expiry-date="2026-11-30" data-remarks="">
+                      data-qty="60" data-lot-no="LOT-2025-007" data-expiry-date="2026-11-30" data-received-at="2026-04-02" data-remarks="">
                     <td class="slip-cell" rowspan="2">
                       <div class="slip-cell-inner">
                         <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
@@ -318,9 +329,10 @@
                     </td>
                     <td class="schedule-item-name-cell">P-007 / 商品G</td>
                     <td class="schedule-location-cell">D-04-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">ピース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">ピース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-007</td>
                     <td class="schedule-expiry-cell">2026/11/30</td>
+                    <td class="schedule-received-cell">2026/04/02</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <!-- 一部の明細だけを取消した伝票（編集モーダルの「取消」で取消した想定）。
@@ -328,20 +340,21 @@
                   <tr class="schedule-item-row schedule-row--cancelled"
                       data-doc-no="ORD-20260509-004" data-item-code="P-008" data-item-name="商品H"
                       data-unit="ケース" data-customer="伊藤商店" data-schedule-date="2026-05-09"
-                      data-qty="40" data-lot-no="LOT-2025-008" data-expiry-date="2027-01-20" data-remarks="欠品のため取消"
+                      data-qty="40" data-lot-no="LOT-2025-008" data-expiry-date="2027-01-20" data-received-at="2026-03-10" data-remarks="欠品のため取消"
                       data-original-remarks="">
                     <td class="schedule-item-name-cell">P-008 / 商品H</td>
                     <td class="schedule-location-cell">D-04-02</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-008</td>
                     <td class="schedule-expiry-cell">2027/01/20</td>
+                    <td class="schedule-received-cell">2026/03/10</td>
                     <td class="schedule-remarks-cell">欠品のため取消</td>
                   </tr>
                   <!-- すべての明細が取消された伝票（＝伝票そのものの取消） -->
                   <tr class="schedule-item-row schedule-row--cancelled"
                       data-doc-no="ORD-20260509-005" data-item-code="P-009" data-item-name="商品I"
                       data-unit="ケース" data-customer="山田商会" data-schedule-date="2026-05-09"
-                      data-qty="25" data-lot-no="LOT-2025-009" data-expiry-date="" data-remarks="出荷取りやめ"
+                      data-qty="25" data-lot-no="LOT-2025-009" data-expiry-date="" data-received-at="2026-04-08" data-remarks="出荷取りやめ"
                       data-original-remarks="">
                     <td class="slip-cell" rowspan="1">
                       <div class="slip-cell-inner">
@@ -352,16 +365,17 @@
                     </td>
                     <td class="schedule-item-name-cell">P-009 / 商品I</td>
                     <td class="schedule-location-cell">A-01-03</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">25</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">25</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-009</td>
                     <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-received-cell">2026/04/08</td>
                     <td class="schedule-remarks-cell">出荷取りやめ</td>
                   </tr>
                   <!-- 商品が1つだけの伝票 -->
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-006" data-item-code="P-010" data-item-name="商品J"
                       data-unit="ケース" data-customer="大和フーズ" data-schedule-date="2026-05-09"
-                      data-qty="12" data-lot-no="LOT-2025-010" data-expiry-date="2027-05-31" data-remarks="">
+                      data-qty="12" data-lot-no="LOT-2025-010" data-expiry-date="2027-05-31" data-received-at="2026-03-30" data-remarks="">
                     <td class="slip-cell" rowspan="1">
                       <div class="slip-cell-inner">
                         <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
@@ -371,9 +385,10 @@
                     </td>
                     <td class="schedule-item-name-cell">P-010 / 商品J</td>
                     <td class="schedule-location-cell">B-02-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">12</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">12</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-010</td>
                     <td class="schedule-expiry-cell">2027/05/31</td>
+                    <td class="schedule-received-cell">2026/03/30</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <!-- 引き当てでは C-03-01 から 100 ケースを取る予定だったが、
@@ -381,7 +396,7 @@
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-007" data-item-code="P-011" data-item-name="商品K"
                       data-unit="ケース" data-customer="桜井商会" data-schedule-date="2026-05-09"
-                      data-qty="60" data-lot-no="LOT-2025-011" data-expiry-date="2027-02-28" data-remarks=""
+                      data-qty="60" data-lot-no="LOT-2025-011" data-expiry-date="2027-02-28" data-received-at="2026-03-05" data-remarks=""
                       data-original-qty="100">
                     <td class="slip-cell" rowspan="3">
                       <div class="slip-cell-inner">
@@ -392,31 +407,67 @@
                     </td>
                     <td class="schedule-item-name-cell">P-011 / 商品K</td>
                     <td class="schedule-location-cell">C-03-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">60</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-011</td>
                     <td class="schedule-expiry-cell">2027/02/28</td>
+                    <td class="schedule-received-cell">2026/03/05</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row schedule-row--split"
                       data-doc-no="ORD-20260509-007" data-item-code="P-011" data-item-name="商品K"
                       data-unit="ケース" data-customer="桜井商会" data-schedule-date="2026-05-09"
-                      data-qty="40" data-lot-no="LOT-2025-012" data-expiry-date="2027-08-31" data-remarks="">
+                      data-qty="40" data-lot-no="LOT-2025-012" data-expiry-date="2027-08-31" data-received-at="2026-04-10" data-remarks="">
                     <td class="schedule-item-name-cell">P-011 / 商品K <span class="schedule-split-badge">棚分割</span></td>
                     <td class="schedule-location-cell">D-04-01</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-012</td>
                     <td class="schedule-expiry-cell">2027/08/31</td>
+                    <td class="schedule-received-cell">2026/04/10</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                   <tr class="schedule-item-row"
                       data-doc-no="ORD-20260509-007" data-item-code="P-012" data-item-name="商品L"
                       data-unit="パレット" data-customer="桜井商会" data-schedule-date="2026-05-09"
-                      data-qty="15" data-lot-no="LOT-2025-013" data-expiry-date="" data-remarks="">
+                      data-qty="15" data-lot-no="LOT-2025-013" data-expiry-date="" data-received-at="2026-04-06" data-remarks="">
                     <td class="schedule-item-name-cell">P-012 / 商品L</td>
                     <td class="schedule-location-cell">A-01-02</td>
-                    <td class="schedule-cell-qty-unit"><span class="schedule-qty-value">15</span><span class="schedule-qty-unit-text">パレット</span></td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">15</span><span class="schedule-qty-unit-text">パレット</span></td><td class="schedule-shortage-cell"></td>
                     <td class="schedule-lot-cell">LOT-2025-013</td>
                     <td class="schedule-expiry-cell">-</td>
+                    <td class="schedule-received-cell">2026/04/06</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+<!-- 引き当てで、棚ロケ・ロット番号・賞味期限が同じで入庫日だけが違う在庫に分かれた明細（入庫日の古い順に引き当てる）。
+                       在庫は入庫日も含めて区別されるため、明細が2行に分かれる -->
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-008" data-item-code="P-013" data-item-name="商品M"
+                      data-unit="ケース" data-customer="大和フーズ" data-schedule-date="2026-05-09"
+                      data-qty="30" data-lot-no="LOT-2025-014" data-expiry-date="2027-04-30" data-received-at="2026-03-01" data-remarks="">
+                    <td class="slip-cell" rowspan="2">
+                      <div class="slip-cell-inner">
+                        <input type="checkbox" class="row-checkbox" onchange="onOutboundSlipCheckboxChange(this)" aria-label="この伝票を確定対象にする">
+                        <div class="slip-cell-text"><span class="slip-doc-no">ORD-20260509-008</span><span class="slip-supplier">大和フーズ</span></div>
+                        <button type="button" class="btn btn-default" onclick="openOutboundEditModal(this)">編集</button>
+                      </div>
+                    </td>
+                    <td class="schedule-item-name-cell">P-013 / 商品M</td>
+                    <td class="schedule-location-cell">E-01-01</td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">30</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
+                    <td class="schedule-lot-cell">LOT-2025-014</td>
+                    <td class="schedule-expiry-cell">2027/04/30</td>
+                    <td class="schedule-received-cell">2026/03/01</td>
+                    <td class="schedule-remarks-cell"></td>
+                  </tr>
+                  <tr class="schedule-item-row"
+                      data-doc-no="ORD-20260509-008" data-item-code="P-013" data-item-name="商品M"
+                      data-unit="ケース" data-customer="大和フーズ" data-schedule-date="2026-05-09"
+                      data-qty="40" data-lot-no="LOT-2025-014" data-expiry-date="2027-04-30" data-received-at="2026-03-20" data-remarks="">
+                    <td class="schedule-item-name-cell">P-013 / 商品M</td>
+                    <td class="schedule-location-cell">E-01-01</td>
+                    <td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage"><span class="schedule-qty-value">40</span><span class="schedule-qty-unit-text">ケース</span></td><td class="schedule-shortage-cell"></td>
+                    <td class="schedule-lot-cell">LOT-2025-014</td>
+                    <td class="schedule-expiry-cell">2027/04/30</td>
+                    <td class="schedule-received-cell">2026/03/20</td>
                     <td class="schedule-remarks-cell"></td>
                   </tr>
                 </tbody>
@@ -430,7 +481,7 @@
     </div>
   </div>
 
-  <!-- 伝票単位の編集モーダル（棚ロケーション・数量・ロット番号・賞味期限・特記事項の変更、
+  <!-- 伝票単位の編集モーダル（在庫（棚ロケーション・ロット番号・賞味期限・入庫日）・数量・特記事項の変更、
        明細の取消、棚分割）
        ※ レイアウトは入荷確定（006）と共通のため inbound-edit-* のクラスをそのまま流用する -->
   <div id="outboundEditModal" class="ds-modal-overlay" style="display: none;"
@@ -465,14 +516,16 @@
           </span>
         </div>
         <div class="inbound-edit-table-wrapper">
-          <table class="schedule-table inbound-edit-table">
+          <table class="schedule-table inbound-edit-table outbound-edit-table" id="outboundEditTable">
             <thead>
               <tr>
                 <th scope="col">商品</th>
                 <th scope="col">棚ロケーション</th>
                 <th scope="col" class="schedule-cell-right">数量</th>
+                <th scope="col" aria-label="在庫不足"></th>
                 <th scope="col">ロット番号</th>
                 <th scope="col">賞味期限</th>
+                <th scope="col">入庫日</th>
                 <th scope="col">特記事項</th>
                 <th scope="col">操作</th>
               </tr>
@@ -484,7 +537,7 @@
           <span class="body-s text-subtle">引き当てと違う棚からも取った場合は、その行の「棚分割」で同じ商品の行を追加します。伝票に無い商品を追加する場合は出荷予定登録からやり直してください。</span>
         </div>
         <p id="outboundEditApplyHint" class="inbound-confirm-error inbound-edit-apply-hint">
-          棚ロケーション・数量が未入力の明細があります。入力するか、その明細を取消／削除してください。
+          在庫（棚ロケーション・ロット番号・賞味期限・入庫日）が未選択、または数量が未入力の明細があります。入力するか、その明細を取消／削除してください。
         </p>
       </div>
       <div class="ds-modal-footer">
@@ -524,8 +577,8 @@
         <div id="outboundConfirmLists" class="inbound-confirm-lists inbound-confirm-lists--side">
           <section class="inbound-confirm-list-section">
             <p class="modal-item-list-heading inbound-confirm-list-title">出荷済みにする明細</p>
-            <ul id="outboundConfirmItemList" class="modal-item-list inbound-confirm-list inbound-confirm-list--received">
-              <li class="modal-item-list-row inbound-confirm-list-head"><span>出荷先</span><span>商品</span><span>棚ロケ</span></li>
+            <ul id="outboundConfirmItemList" class="modal-item-list inbound-confirm-list inbound-confirm-list--received outbound-confirm-list--with-received">
+              <li class="modal-item-list-row inbound-confirm-list-head"><span>出荷先</span><span>商品</span><span>棚ロケ</span><span>入庫日</span></li>
             </ul>
           </section>
           <section class="inbound-confirm-list-section" id="outboundConfirmCancelSection">
@@ -556,16 +609,67 @@
 
     // === SCR-012 出荷確定 ===
     // 仕様: 引き当て済みの出荷予定を伝票単位で確認し、出荷済みにする。
-    // 一覧は確認用で、棚ロケーション・数量・ロット番号・賞味期限・特記事項の変更、明細の取消、
+    // 一覧は確認用で、在庫（棚ロケーション・ロット番号・賞味期限・入庫日）・数量・特記事項の変更、明細の取消、
     // 棚分割（引き当てと違う棚からも取った場合）はすべて伝票セルの「編集」モーダルで行う。
+    // 在庫は入庫日も含めて区別されるため、棚ロケーション・ロット番号・賞味期限が同じでも入庫日が違えば別の明細になる。
     // データベースへの反映は「確定」ボタンを押したときにまとめて行う。
+    // 引き当て後に在庫が変動し、その出荷日の一覧で同じ在庫を確保している明細の数量の合計が在庫数を超えた明細には
+    // 「在庫不足」の印を出し、その伝票は選択できない（数量の右の専用の列に2行で出す。残在庫の数は出さない）。
+    // 在庫数は検索したときの値に固定し、明細の数量・在庫は編集後の値で判定し直す。
 
-    var OUTBOUND_CONFIRM_LOCATIONS = [
-      'A-01-01', 'A-01-02', 'A-01-03',
-      'B-02-01', 'B-02-02', 'B-02-03',
-      'C-03-01', 'C-03-02',
-      'D-04-01', 'D-04-02'
-    ];
+    // 在庫数（GET /api/outbound/schedules/confirm/ の stock_quantity に相当）。
+    // キーは 商品コード|棚ロケーション|ロット番号|賞味期限|入庫日。ここに無い在庫は、数量が足りているものとして扱う。
+    // 見本として、P-005（ORD-20260509-003、数量 80）の在庫を 50 にして在庫不足を出す
+    var OUTBOUND_CONFIRM_STOCK_QUANTITIES = {
+      'P-005|C-03-01||2026-09-01|2026-04-05': 50
+    };
+
+    var OUTBOUND_SHORTAGE_BADGE =
+      '<span class="schedule-shortage-badge schedule-shortage-badge--stacked"' +
+      ' title="引き当て後に在庫が変動し、在庫不足が発生しています。入荷予定一覧で今後の入荷予定を確認してください">' +
+      '在庫<br>不足</span>';
+
+    function outboundStockKey(o) {
+      return [o.itemCode, o.location, o.lotNo, o.expiryDate, o.receivedAt].join('|');
+    }
+
+    // 在庫不足の在庫のキー。同じ在庫を確保している明細（取消を除く）の数量の合計が在庫数を超えた在庫
+    function computeOutboundShortKeys(items) {
+      var requested = {};
+      items.forEach(function (o) {
+        if (o.cancelled || !o.receivedAt) return;
+        var key = outboundStockKey(o);
+        requested[key] = (requested[key] || 0) + (Number(o.qty) > 0 ? Number(o.qty) : 0);
+      });
+      var shortKeys = {};
+      Object.keys(requested).forEach(function (key) {
+        if (key in OUTBOUND_CONFIRM_STOCK_QUANTITIES && requested[key] > OUTBOUND_CONFIRM_STOCK_QUANTITIES[key]) {
+          shortKeys[key] = true;
+        }
+      });
+      return shortKeys;
+    }
+
+    function isOutboundItemShort(o, shortKeys) {
+      return !o.cancelled && !!o.receivedAt && !!shortKeys[outboundStockKey(o)];
+    }
+
+    // 編集モーダルで選べる在庫（GET /api/outbound/schedules/confirm/stock-lots/ に相当）。
+    // 一覧の明細が確保している在庫（captureOutboundStockCandidates を参照）に、ここで定義した在庫を加えたものを候補にする。
+    var OUTBOUND_CONFIRM_EXTRA_STOCKS = {
+      'P-001': [
+        { location: 'A-01-03', lotNo: 'LOT-2025-001', expiryDate: '2026-12-31', receivedAt: '2026-04-20' },
+        // 棚ロケーション・ロット番号・賞味期限が同じで、入庫日だけが違う在庫
+        { location: 'A-01-01', lotNo: 'LOT-2025-001', expiryDate: '2026-12-31', receivedAt: '2026-04-25' }
+      ],
+      'P-003': [
+        { location: 'B-02-03', lotNo: 'LOT-2025-003', expiryDate: '', receivedAt: '2026-04-12' }
+      ],
+      'P-013': [
+        { location: 'E-01-01', lotNo: 'LOT-2025-014', expiryDate: '2027-04-30', receivedAt: '2026-04-05' },
+        { location: 'E-01-02', lotNo: 'LOT-2025-015', expiryDate: '2027-06-30', receivedAt: '2026-04-05' }
+      ]
+    };
 
     function outboundJpDate(iso) {
       return iso ? iso.replace(/-/g, '/') : '-';
@@ -609,6 +713,7 @@
         qty: row.dataset.qty || '',
         lotNo: row.dataset.lotNo || '',
         expiryDate: row.dataset.expiryDate || '',
+        receivedAt: row.dataset.receivedAt || '',
         remarks: row.dataset.remarks || '',
         cancelled: row.classList.contains('schedule-row--cancelled'),
         split: row.classList.contains('schedule-row--split')
@@ -620,11 +725,14 @@
       return '<td class="schedule-item-name-cell">' + o.itemCode + ' / ' + o.itemName +
           (o.split ? ' <span class="schedule-split-badge">棚分割</span>' : '') + '</td>' +
         '<td class="schedule-location-cell">' + (o.location || '‐') + '</td>' +
-        '<td class="schedule-cell-qty-unit">' +
+        '<td class="schedule-cell-qty-unit schedule-cell-qty-unit--before-shortage">' +
           '<span class="schedule-qty-value">' + o.qty + '</span>' +
           '<span class="schedule-qty-unit-text">' + (o.unit || '') + '</span></td>' +
+        // 在庫不足の印は refreshOutboundShortages が描画する
+        '<td class="schedule-shortage-cell"></td>' +
         '<td class="schedule-lot-cell">' + (o.lotNo || '-') + '</td>' +
         '<td class="schedule-expiry-cell">' + outboundJpDate(o.expiryDate) + '</td>' +
+        '<td class="schedule-received-cell">' + outboundJpDate(o.receivedAt) + '</td>' +
         '<td class="schedule-remarks-cell">' + (o.remarks || '') + '</td>';
     }
 
@@ -642,6 +750,7 @@
       tr.dataset.qty = o.qty;
       tr.dataset.lotNo = o.lotNo;
       tr.dataset.expiryDate = o.expiryDate;
+      tr.dataset.receivedAt = o.receivedAt || '';
       tr.dataset.remarks = o.remarks || '';
       tr.innerHTML = buildOutboundRowHTML(o);
       return tr;
@@ -702,6 +811,8 @@
 
     function onOutboundSlipCheckboxChange(cb) {
       applyOutboundSlipSelection(cb.closest('tr'), cb.checked);
+      // 在庫不足の伝票のチェックを外したら、選択できない状態に戻す
+      refreshOutboundShortages();
       updateOutboundSelectAllState();
       refreshOutboundConfirmButton();
     }
@@ -719,7 +830,31 @@
       });
     }
 
+    // 在庫不足の印を描画し、在庫不足の明細がある伝票は選択できないようにする。
+    // チェックが付いた伝票は、外せなくならないよう操作できるままにする
+    function refreshOutboundShortages() {
+      var rows = getOutboundRows();
+      var shortKeys = computeOutboundShortKeys(rows.map(readOutboundRow));
+      var shortDocs = {};
+      rows.forEach(function (r) {
+        var short = isOutboundItemShort(readOutboundRow(r), shortKeys);
+        var cell = r.querySelector('.schedule-shortage-cell');
+        if (cell) cell.innerHTML = short ? OUTBOUND_SHORTAGE_BADGE : '';
+        if (short) shortDocs[r.dataset.docNo] = true;
+      });
+      getOutboundSlipRows().forEach(function (slipRow) {
+        var cb = slipRow.querySelector('.row-checkbox');
+        if (!cb) return;
+        var locked = !!shortDocs[slipRow.dataset.docNo] && !cb.checked;
+        cb.disabled = locked;
+        slipRow.querySelectorAll('.slip-cell').forEach(function (cell) {
+          cell.classList.toggle('slip-cell--locked', locked);
+        });
+      });
+    }
+
     function refreshAllOutboundSlipRows() {
+      refreshOutboundShortages();
       getOutboundSlipRows().forEach(function (r) { refreshOutboundSlipRow(r.dataset.docNo); });
       updateOutboundSelectAllState();
       refreshOutboundConfirmButton();
@@ -728,9 +863,10 @@
     function updateOutboundSelectAllState() {
       var selectAll = document.getElementById('selectAllRows');
       if (!selectAll) return;
+      // 選択できない伝票（在庫不足）は全選択の対象に数えない
       var checkboxes = getOutboundSlipRows()
         .map(function (r) { return r.querySelector('.row-checkbox'); })
-        .filter(function (cb) { return !!cb; });
+        .filter(function (cb) { return !!cb && !cb.disabled; });
       var checkedCount = checkboxes.filter(function (cb) { return cb.checked; }).length;
       selectAll.disabled = checkboxes.length === 0;
       selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
@@ -742,7 +878,7 @@
       if (!selectAll) return;
       getOutboundSlipRows().forEach(function (slipRow) {
         var cb = slipRow.querySelector('.row-checkbox');
-        if (!cb) return;
+        if (!cb || cb.disabled) return;
         cb.checked = selectAll.checked;
         applyOutboundSlipSelection(slipRow, cb.checked);
       });
@@ -785,7 +921,7 @@
     }
 
     // --- 伝票単位の編集モーダル ---
-    // 棚ロケーション・数量・ロット番号・賞味期限・特記事項の変更、明細の取消、
+    // 在庫（棚ロケーション・ロット番号・賞味期限・入庫日）・数量・特記事項の変更、明細の取消、
     // 棚分割（同じ商品を複数の棚から取る）を行う。
     // 商品は差し替えられず、伝票に無い商品も足せない（伝票の商品を変えるのは出荷予定登録の役目）。
 
@@ -813,20 +949,134 @@
         o.qty = original('originalQty', o.qty);
         o.lotNo = original('originalLotNo', o.lotNo);
         o.expiryDate = original('originalExpiryDate', o.expiryDate);
+        o.receivedAt = original('originalReceivedAt', o.receivedAt);
         o.remarks = original('originalRemarks', o.remarks);
         if (!outboundOriginalItems[o.docNo]) outboundOriginalItems[o.docNo] = [];
         outboundOriginalItems[o.docNo].push(o);
       });
     }
 
-    function buildOutboundLocationSelect(selected) {
-      return '<select class="form-input schedule-location-select"' +
-        ' onchange="refreshOutboundEditRowStates()" aria-label="棚ロケーション">' +
-        '<option value="">—</option>' +
-        OUTBOUND_CONFIRM_LOCATIONS.map(function (loc) {
-          return '<option value="' + loc + '"' + (loc === selected ? ' selected' : '') + '>' + loc + '</option>';
-        }).join('') +
-        '</select>';
+    // --- 編集モーダルの在庫の選択 ---
+    // 在庫は 棚ロケーション → ロット番号 → 賞味期限 → 入庫日 の順に絞り込んで選ぶ（入庫日まで選ぶと在庫が1件に決まる）。
+    // 上位の項目を変えたら、下位の項目は選び直させる（候補が1件だけなら自動で選ぶ）。
+
+    // 商品コード -> 選べる在庫の一覧（棚ロケーション・ロット番号・賞味期限・入庫日の昇順）
+    var outboundStockCandidates = {};
+
+    var OUTBOUND_STOCK_FIELDS = ['location', 'lotNo', 'expiryDate', 'receivedAt'];
+    var OUTBOUND_STOCK_FIELD_LABELS = {
+      location: '棚ロケーション', lotNo: 'ロット番号', expiryDate: '賞味期限', receivedAt: '入庫日'
+    };
+
+    // 一覧の明細が確保している在庫と、OUTBOUND_CONFIRM_EXTRA_STOCKS の在庫を、商品ごとの候補にする。
+    // 棚分割で足した行（登録内容には含めない）の在庫も候補に入れるため、登録内容ではなく一覧の全行から集める
+    function captureOutboundStockCandidates() {
+      outboundStockCandidates = {};
+      var add = function (itemCode, stock) {
+        var list = outboundStockCandidates[itemCode] || (outboundStockCandidates[itemCode] = []);
+        var exists = list.some(function (s) {
+          return OUTBOUND_STOCK_FIELDS.every(function (f) { return s[f] === stock[f]; });
+        });
+        if (!exists) list.push(stock);
+      };
+      getOutboundRows().map(readOutboundRow).forEach(function (o) {
+        add(o.itemCode, { location: o.location, lotNo: o.lotNo, expiryDate: o.expiryDate, receivedAt: o.receivedAt });
+      });
+      Object.keys(OUTBOUND_CONFIRM_EXTRA_STOCKS).forEach(function (itemCode) {
+        OUTBOUND_CONFIRM_EXTRA_STOCKS[itemCode].forEach(function (stock) { add(itemCode, stock); });
+      });
+      Object.keys(outboundStockCandidates).forEach(function (itemCode) {
+        outboundStockCandidates[itemCode].sort(function (a, b) {
+          // 賞味期限なし（空文字）は同じ棚ロケーション・ロット番号の中で先頭にする
+          var keys = OUTBOUND_STOCK_FIELDS;
+          for (var i = 0; i < keys.length; i++) {
+            if (a[keys[i]] !== b[keys[i]]) return a[keys[i]] < b[keys[i]] ? -1 : 1;
+          }
+          return 0;
+        });
+      });
+    }
+
+    // select の値。ロット番号なし・賞味期限なし（空文字）と、未選択（value=""）を区別するため接頭辞を付ける
+    function toOutboundStockOptionValue(raw) {
+      return 'v:' + raw;
+    }
+
+    function fromOutboundStockOptionValue(value) {
+      return value ? value.slice(2) : null;
+    }
+
+    // ロット番号なし・賞味期限なしは、一覧（出荷予定情報）と同じく「-」で表示する（未選択の「—」とは別の選択肢）
+    function formatOutboundStockOption(field, raw) {
+      if (field === 'lotNo') return raw || '-';
+      if (field === 'expiryDate') return outboundJpDate(raw);
+      if (field === 'receivedAt') return outboundJpDate(raw);
+      return raw;
+    }
+
+    // 行の在庫の選択を読む。未選択の項目（とその下位）は null
+    function readOutboundStockSelection(tr) {
+      var selection = {};
+      var unset = false;
+      OUTBOUND_STOCK_FIELDS.forEach(function (field) {
+        var select = tr.querySelector('.outbound-edit-stock-cell[data-field="' + field + '"] select');
+        var value = unset || !select ? null : fromOutboundStockOptionValue(select.value);
+        if (value === null) unset = true;
+        selection[field] = value;
+      });
+      return selection;
+    }
+
+    // selection（各項目の値。未選択は null）に合わせて、行の4つの select を描き直す
+    function renderOutboundStockSelects(tr, selection) {
+      var candidates = outboundStockCandidates[tr.dataset.itemCode] || [];
+      var matched = candidates;
+      var upperUnset = false;
+      OUTBOUND_STOCK_FIELDS.forEach(function (field) {
+        // 上位の項目で絞り込んだ候補から、この項目の選択肢を作る（重複を除く）
+        var options = [];
+        if (!upperUnset) {
+          matched.forEach(function (stock) {
+            if (options.every(function (o) { return o.raw !== stock[field]; })) {
+              options.push({ raw: stock[field] });
+            }
+          });
+        }
+        var selected = selection[field];
+        var isValid = options.some(function (o) { return o.raw === selected; });
+        if (!isValid) selected = options.length === 1 ? options[0].raw : null;
+        var cell = tr.querySelector('.outbound-edit-stock-cell[data-field="' + field + '"]');
+        cell.innerHTML =
+          '<select class="form-input" onchange="onOutboundStockSelectChange(this)"' +
+          ' data-no-options="' + (options.length === 0 ? '1' : '') + '"' +
+          ' aria-label="' + OUTBOUND_STOCK_FIELD_LABELS[field] + '">' +
+          '<option value="">—</option>' +
+          options.map(function (o) {
+            return '<option value="' + toOutboundStockOptionValue(o.raw) + '"' + (o.raw === selected ? ' selected' : '') + '>' +
+              formatOutboundStockOption(field, o.raw) + '</option>';
+          }).join('') +
+          '</select>';
+        if (selected === null) {
+          upperUnset = true;
+        } else {
+          matched = matched.filter(function (stock) { return stock[field] === selected; });
+        }
+      });
+      applyOutboundEditRowDisabled(tr);
+    }
+
+    // 上位の項目を変えたら、それより下位の選択を解除して描き直す
+    function onOutboundStockSelectChange(select) {
+      var tr = select.closest('tr');
+      var changedField = select.closest('.outbound-edit-stock-cell').dataset.field;
+      var selection = readOutboundStockSelection(tr);
+      var reset = false;
+      OUTBOUND_STOCK_FIELDS.forEach(function (field) {
+        if (reset) selection[field] = null;
+        if (field === changedField) reset = true;
+      });
+      renderOutboundStockSelects(tr, selection);
+      refreshOutboundEditRowStates();
     }
 
     /**
@@ -834,16 +1084,46 @@
      * 伝票に登録されている行は「取消」（記録を残す）、
      * 棚分割で足した行は「削除」（記録を残さない）。
      */
+    // 操作ボタンは列幅を節約するためアイコンにし、名前は title（ツールチップ）と aria-label で示す
+    var OUTBOUND_EDIT_ICONS = {
+      // 棚分割（凡例の棚分割アイコンと同じ矢印）
+      split: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"' +
+        ' stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 5V12H18.5"/><path d="M15 8.5L18.5 12L15 15.5"/></svg>',
+      // 取消（斜線入りの円）
+      cancel: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"' +
+        ' stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M6.5 17.5L17.5 6.5"/></svg>',
+      // 取消解除（元に戻す矢印）
+      undo: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"' +
+        ' stroke-linecap="round" stroke-linejoin="round"><path d="M9 7L5 11L9 15"/><path d="M5 11H14A5 5 0 0 1 14 21H11"/></svg>',
+      // 削除（ごみ箱）
+      remove: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">' +
+        '<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>'
+    };
+
+    function buildOutboundEditIconButton(className, onclick, label, icon) {
+      return '<button type="button" class="btn outbound-edit-icon-btn ' + className + '" onclick="' + onclick + '"' +
+        ' title="' + label + '" aria-label="' + label + '">' + OUTBOUND_EDIT_ICONS[icon] + '</button>';
+    }
+
+    // 取消ボタンの見た目（取消中は「取消解除」）
+    function applyOutboundEditCancelButton(btn, cancelled) {
+      var label = cancelled ? '取消解除' : '取消';
+      btn.innerHTML = OUTBOUND_EDIT_ICONS[cancelled ? 'undo' : 'cancel'];
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
+      btn.classList.toggle('btn-danger', !cancelled);
+      btn.classList.toggle('btn-default', cancelled);
+    }
+
     function buildOutboundEditRowActions(o) {
-      var splitBtn = '<button type="button" class="btn btn-default outbound-edit-split-btn"' +
-        ' onclick="splitOutboundEditItem(this)" aria-label="棚を分割して行を追加">棚分割</button>';
+      var splitBtn = buildOutboundEditIconButton(
+        'btn-default outbound-edit-split-btn', 'splitOutboundEditItem(this)', '棚分割（同じ商品の行を追加）', 'split');
       if (o.split) {
-        return splitBtn +
-          '<button type="button" class="btn btn-danger" onclick="deleteOutboundEditItem(this)">削除</button>';
+        return splitBtn + buildOutboundEditIconButton('btn-danger', 'deleteOutboundEditItem(this)', '削除', 'remove');
       }
-      return splitBtn +
-        '<button type="button" class="btn ' + (o.cancelled ? 'btn-default' : 'btn-danger') + ' outbound-edit-cancel-btn"' +
-        ' onclick="toggleOutboundEditCancel(this)">' + (o.cancelled ? '取消解除' : '取消') + '</button>';
+      return splitBtn + buildOutboundEditIconButton(
+        (o.cancelled ? 'btn-default' : 'btn-danger') + ' outbound-edit-cancel-btn', 'toggleOutboundEditCancel(this)',
+        o.cancelled ? '取消解除' : '取消', o.cancelled ? 'undo' : 'cancel');
     }
 
     function buildOutboundEditRowHTML(o) {
@@ -860,7 +1140,8 @@
             itemBody +
           '</div>' +
         '</td>' +
-        '<td>' + buildOutboundLocationSelect(o.location) + '</td>' +
+        // 在庫の select は createOutboundEditRow で中身を描画する（上位の選択で下位の候補が変わるため）
+        '<td class="outbound-edit-stock-cell" data-field="location"></td>' +
         '<td>' +
           '<div class="inbound-edit-qty-cell">' +
             '<input type="number" class="form-input schedule-qty-input" value="' + o.qty + '" min="1"' +
@@ -868,8 +1149,11 @@
             '<span class="inbound-edit-unit-text">' + (o.unit || '') + '</span>' +
           '</div>' +
         '</td>' +
-        '<td><input type="text" class="form-input schedule-lot-input" value="' + o.lotNo + '" placeholder="ロット番号" aria-label="ロット番号"></td>' +
-        '<td><input type="date" class="form-input schedule-expiry-input" value="' + o.expiryDate + '" aria-label="賞味期限"></td>' +
+        // 在庫不足の印は refreshOutboundEditRowStates が描画する
+        '<td class="outbound-edit-shortage-cell"></td>' +
+        '<td class="outbound-edit-stock-cell" data-field="lotNo"></td>' +
+        '<td class="outbound-edit-stock-cell" data-field="expiryDate"></td>' +
+        '<td class="outbound-edit-stock-cell" data-field="receivedAt"></td>' +
         '<td><input type="text" class="form-input inbound-edit-remarks" value="' + (o.remarks || '') + '" placeholder="特記事項" aria-label="特記事項"></td>' +
         '<td class="schedule-cell-actions">' + buildOutboundEditRowActions(o) + '</td>';
     }
@@ -884,28 +1168,38 @@
       tr.dataset.cancelled = o.cancelled ? '1' : '';
       tr.innerHTML = buildOutboundEditRowHTML(o);
       if (o.cancelled) tr.classList.add('schedule-row--cancelled');
-      applyOutboundEditRowDisabled(tr);
+      renderOutboundStockSelects(tr, {
+        location: o.location || null,
+        lotNo: o.location ? o.lotNo : null,
+        expiryDate: o.location ? o.expiryDate : null,
+        receivedAt: o.location ? o.receivedAt : null
+      });
       return tr;
     }
 
-    // 取消行は入力させない（操作ボタンだけ残す）
+    // 取消行は入力させない（操作ボタンだけ残す）。
+    // 在庫の select は、上位の項目が未選択の間も選べない（renderOutboundStockSelects が候補なしで描画する）
     function applyOutboundEditRowDisabled(tr) {
       var cancelled = tr.dataset.cancelled === '1';
-      tr.querySelectorAll('select, input').forEach(function (el) { el.disabled = cancelled; });
+      tr.querySelectorAll('select, input').forEach(function (el) {
+        el.disabled = cancelled || el.dataset.noOptions === '1';
+      });
       var splitBtn = tr.querySelector('.outbound-edit-split-btn');
       if (splitBtn) splitBtn.disabled = cancelled;
     }
 
     // モーダル1行分の入力値を読み出す
     function readOutboundEditRow(tr) {
+      var stock = readOutboundStockSelection(tr);
       return {
         itemCode: tr.dataset.itemCode || '',
         itemName: tr.dataset.itemName || '',
         unit: tr.dataset.unit || '',
-        location: tr.querySelector('.schedule-location-select').value,
+        location: stock.location || '',
         qty: tr.querySelector('.schedule-qty-input').value,
-        lotNo: tr.querySelector('.schedule-lot-input').value,
-        expiryDate: tr.querySelector('.schedule-expiry-input').value,
+        lotNo: stock.lotNo || '',
+        expiryDate: stock.expiryDate || '',
+        receivedAt: stock.receivedAt || '',
         remarks: tr.querySelector('.inbound-edit-remarks').value,
         split: tr.dataset.split === '1',
         cancelled: tr.dataset.cancelled === '1'
@@ -921,6 +1215,13 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       items.forEach(function (o) { tbody.appendChild(createOutboundEditRow(o)); });
+      // 数量の列幅を、モーダル内で最も長い単位区分の文字数に合わせる（在庫不足の印を数量のすぐ右に出すため）
+      var table = document.getElementById('outboundEditTable');
+      if (table) {
+        var chars = Math.max.apply(null, [1].concat(items.map(function (o) { return (o.unit || '').length; })));
+        table.className = table.className.replace(/\s*outbound-edit-table--unit-\d+/g, '') +
+          ' outbound-edit-table--unit-' + Math.min(chars, 6);
+      }
       refreshOutboundEditSplitFlags();
       refreshOutboundEditRowStates();
     }
@@ -947,9 +1248,7 @@
       tr.dataset.cancelled = tr.dataset.cancelled === '1' ? '' : '1';
       var cancelled = tr.dataset.cancelled === '1';
       tr.classList.toggle('schedule-row--cancelled', cancelled);
-      btn.textContent = cancelled ? '取消解除' : '取消';
-      btn.classList.toggle('btn-danger', !cancelled);
-      btn.classList.toggle('btn-default', cancelled);
+      applyOutboundEditCancelButton(btn, cancelled);
       applyOutboundEditRowDisabled(tr);
       refreshOutboundEditRowStates();
     }
@@ -961,8 +1260,11 @@
     function splitOutboundEditItem(btn) {
       var row = btn.closest('tr');
       var base = readOutboundEditRow(row);
-      // 追加行は棚ロケーション・数量とも未入力にし、分け方は利用者に入力させる
+      // 追加行は在庫・数量とも未入力にし、分け方は利用者に入力させる
       base.location = '';
+      base.lotNo = '';
+      base.expiryDate = '';
+      base.receivedAt = '';
       base.qty = '';
       base.split = true;
       base.cancelled = false;
@@ -1026,7 +1328,7 @@
     /**
      * 行の状態をまとめて再評価する。
      * - 棚分割の元行は、分割行が残っている間は取消できない（元だけ取消すと分割行の扱いが決まらないため）
-     * - 棚ロケーション・数量が未入力の行があると「この内容で反映する」を押せない
+     * - 在庫（棚ロケーション・ロット番号・賞味期限・入庫日）が未選択、または数量が未入力の行があると「この内容で反映する」を押せない
      */
     function refreshOutboundEditRowStates() {
       var rows = getOutboundEditRows();
@@ -1038,15 +1340,23 @@
         var next = rows[i + 1];
         var hasSplitChild = !!next && next.dataset.split === '1' && codeOf(next) === codeOf(tr) && codeOf(tr) !== '';
         cancelBtn.disabled = hasSplitChild && tr.dataset.cancelled !== '1';
-        cancelBtn.title = cancelBtn.disabled ? '棚分割した行を削除すると取消できます' : '';
+        cancelBtn.title = cancelBtn.disabled ? '棚分割した行を削除すると取消できます' : cancelBtn.getAttribute('aria-label');
       });
 
       var invalid = rows.some(function (tr) {
         if (tr.dataset.cancelled === '1') return false;
         var qty = (tr.querySelector('.schedule-qty-input') || {}).value || '';
-        var loc = (tr.querySelector('.schedule-location-select') || {}).value || '';
-        return !loc || !(Number(qty) > 0);
+        return readOutboundStockSelection(tr).receivedAt === null || !(Number(qty) > 0);
       });
+      // 在庫不足の印（一覧と同じ判定）: 一覧のほかの伝票の明細と、このモーダルの明細（編集中の値）で判定する
+      var editItems = rows.map(readOutboundEditRow);
+      var otherItems = getOutboundRows().map(readOutboundRow).filter(function (o) { return o.docNo !== outboundEditDocNo; });
+      var shortKeys = computeOutboundShortKeys(otherItems.concat(editItems));
+      rows.forEach(function (tr, i) {
+        var cell = tr.querySelector('.outbound-edit-shortage-cell');
+        if (cell) cell.innerHTML = isOutboundItemShort(editItems[i], shortKeys) ? OUTBOUND_SHORTAGE_BADGE : '';
+      });
+
       var applyBtn = document.getElementById('outboundEditApplyBtn');
       if (applyBtn) applyBtn.disabled = invalid;
       // 表示・非表示でモーダルの高さが変わらないよう、領域は確保したまま可視性だけ切り替える
@@ -1122,7 +1432,8 @@
       };
       setList('outboundConfirmItemList', targets.map(function (o) {
         return '<li class="modal-item-list-row">' + itemCells(o) +
-          '<span>' + (o.location || '未選択') + '</span></li>';
+          '<span>' + (o.location || '未選択') + '</span>' +
+          '<span>' + outboundJpDate(o.receivedAt) + '</span></li>';
       }).join(''));
       setList('outboundConfirmCancelList', cancelled.map(function (o) {
         return '<li class="modal-item-list-row">' + itemCells(o) + '</li>';
@@ -1185,6 +1496,7 @@
     })();
 
     captureOutboundOriginalItems();
+    captureOutboundStockCandidates();
     refreshAllOutboundSlipRows();
   </script>
 </body>

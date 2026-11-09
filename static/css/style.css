@@ -1991,7 +1991,7 @@ body {
 
   table-layout: fixed;
   /* 明細グリッドが必要とする幅を下回らないようにする（下回った分は横スクロール） */
-  min-width: 84rem;
+  min-width: 90rem;
 }
 
 .allocation-col-check {
@@ -2024,7 +2024,7 @@ body {
 
 /* 明細（展開行）の列。2グループに分けて、すべて右に寄せて並べる。
    - 出荷予定の登録時の情報（元の要求）: 商品コード / 商品名 / ロット番号 / 賞味期限 / 数量
-   - 引き当て結果: 棚ロケ / ロット番号 / 賞味期限 / 引当数 / 残在庫数 / 結果
+   - 引き当て結果: 棚ロケ / ロット番号 / 賞味期限 / 入庫日 / 引当数 / 残在庫数 / 結果
    「引き当て結果」は意味的にひとまとまりなので右側へ寄せ、
    最終列（結果）が伝票行の「引き当て結果」と重なるようにしている。
    列はすべて固定幅にし、余った幅は左端の空き列（.allocation-detail-spacer）が吸収する。
@@ -2040,6 +2040,7 @@ body {
     4.5rem
     6.5rem
     8rem
+    6.5rem
     6.5rem
     4.5rem
     5.5rem
@@ -2066,7 +2067,7 @@ body {
   grid-column: span 5;
 }
 .allocation-detail-group--result {
-  grid-column: span 6;
+  grid-column: span 7;
 }
 
 /* 「引き当て結果」グループの先頭列。左に区切り線を引いて、元の要求と見分けやすくする */
@@ -2090,8 +2091,8 @@ body {
   box-shadow: inset 3px 0 0 0 var(--ds-background-danger-bold);
 }
 
-/* 1つの明細が複数の棚ロケに分割して引き当てられるため、
-   棚ロケ・引当数・残在庫数のセルは中で複数行に積む */
+/* 1つの明細が複数の在庫に分割して引き当てられるため、
+   引き当て結果のセル（棚ロケ・ロット番号・賞味期限・入庫日・引当数・残在庫数）は中で複数行に積む */
 .allocation-stock-lines {
   display: flex;
   flex-direction: column;
@@ -2118,8 +2119,24 @@ body {
   overflow-x: auto;
 }
 
-.schedule-table tbody tr.is-selected {
+.schedule-table tbody tr.is-selected,
+.schedule-table tbody tr.is-selected:hover {
   background: var(--ds-background-selected);
+}
+
+/* 選択の主たる目印。border ではなく inset の box-shadow で描く（列幅がずれないため。React 版の入荷確定と同じ） */
+.schedule-table tbody tr.is-selected td:first-child {
+  box-shadow: inset 3px 0 0 var(--ds-border-selected);
+}
+
+/* ホバー中の行と背景色が近いため、文字も太くして選択中であることをはっきりさせる */
+.schedule-table tbody tr.is-selected td {
+  font-weight: 600;
+}
+
+/* 単位区分の最長「パレット」（4 文字）が収まる幅にする（.qty-unit の既定は 2〜3 文字分） */
+#transferStockTable .qty-unit {
+  width: 4.5rem;
 }
 
 .schedule-table tbody tr:hover:not(.is-selected) {
@@ -2130,12 +2147,6 @@ body {
   border: none;
   padding: 0;
   margin: 0;
-}
-
-.transfer-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--ds-space-200);
 }
 
 .transfer-form-field {
@@ -2154,10 +2165,30 @@ body {
   color: var(--ds-text-subtle);
 }
 
+/* 選択行から転記した値。入力はできないが、在庫一覧と同じ濃さで読めるようにする */
 .transfer-form-input--readonly {
   background: var(--ds-background-disabled);
-  color: var(--ds-text-disabled);
+  color: var(--ds-text);
   cursor: default;
+}
+
+/* 移動元棚ロケ → 移動先棚ロケ。確認モーダルと同じボックスで横に並べる。
+   ボックスの幅は、棚ロケコード（例: A-01-01-1）の select に余裕を持たせた幅に固定する */
+.transfer-location-row {
+  display: grid;
+  grid-template-columns: 14rem auto 14rem;
+  justify-content: start; /* 矢印の列（auto）が余白を吸って移動先が右端へ離れないよう、左に詰める */
+  gap: var(--ds-space-050) var(--ds-space-100);
+}
+
+/* 移動先の select は、移動数量の入力欄（.adj-qty-input）と同じく値を太字・中央に置く */
+.transfer-location-select {
+  width: 100%;
+  height: 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  text-align-last: center;
 }
 
 .transfer-form-actions {
@@ -2166,7 +2197,19 @@ body {
   margin-top: var(--ds-space-300);
 }
 
-/* 確認ダイアログ */
+/* 確認モーダル: 棚ロケ（移動元 → 移動先）と移動数量を、フォームと同じボックスで並べる */
+
+.transfer-confirm-locations {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--ds-space-100);
+}
+
+.transfer-confirm-qty {
+  margin-bottom: var(--ds-space-200);
+}
+
+/* 確認ダイアログ（018 / 020 の履歴モーダルで使う） */
 
 .transfer-confirm-dl {
   display: grid;
@@ -2286,7 +2329,8 @@ body {
   gap: var(--ds-space-300);
 }
 
-/* 在庫数量の調整: 現在在庫数 + 調整数 = 調整後在庫数 */
+/* 在庫数量の調整: 現在在庫数 + 調整数 = 調整後在庫数。
+   017（棚ロケ移動登録）の「移動元の現在庫数 − 移動数量 = 移動元の残数」でも同じ部品を使う */
 .adj-qty-section {
   flex: none;
   gap: var(--ds-space-150);
@@ -2609,6 +2653,43 @@ body {
   color: var(--ds-text-subtle);
 }
 
+/* 出荷確定: 在庫不足の行（同じ在庫を確保している明細の数量の合計が在庫数を超えている行）の印 */
+.schedule-shortage-badge {
+  display: inline-block;
+  padding: 0 var(--ds-space-050);
+  border: 1px solid var(--ds-text-danger);
+  border-radius: 3px;
+  background-color: var(--ds-background-danger);
+  font-size: 0.6875rem;
+  color: var(--ds-text-danger);
+}
+/* 一覧・編集モーダルでは「在庫」「不足」の2行で出す */
+.schedule-shortage-badge--stacked {
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.help-hint-list .schedule-shortage-badge {
+  margin: 0 0.25em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* 出荷確定の一覧: 在庫不足の印の列。印が出ない行でも列幅を確保し、印の有無で列の見た目を崩さない。
+   数量のすぐ右に寄せる（数量のセルの右パディングと単位区分の固定幅をなくす） */
+.schedule-table th.schedule-col-shortage,
+.schedule-table td.schedule-shortage-cell {
+  width: 2rem;
+  padding-left: var(--ds-space-050);
+  padding-right: var(--ds-space-050);
+  text-align: left;
+}
+.schedule-table td.schedule-cell-qty-unit--before-shortage {
+  padding-right: 0;
+}
+.schedule-cell-qty-unit--before-shortage .schedule-qty-unit-text {
+  width: auto;
+}
+
 .ds-modal--wide {
   /* メイン画面と同じ項目を並べるため、明細テーブルが横スクロールなしで収まる幅にする */
   max-width: min(84rem, calc(100vw - 3rem));
@@ -2649,6 +2730,59 @@ body {
 .inbound-edit-table td:nth-child(5) { width: 10.5rem; }
 .inbound-edit-table th:nth-child(7),
 .inbound-edit-table td:nth-child(7) { width: 11rem; }
+
+/* 出荷確定の編集モーダル: 在庫を 棚ロケ / ロット番号 / 賞味期限 / 入庫日 の select で選び、在庫不足の印も出すため、入荷確定より列が多い。
+   列: 商品 / 棚ロケ / 数量 / 在庫不足 / ロット番号 / 賞味期限 / 入庫日 / 特記事項 / 操作（商品・特記事項は自動）。
+   見切れを防ぐため、操作ボタンはアイコンにしている（操作列を狭める） */
+.inbound-edit-table.outbound-edit-table th:nth-child(2),
+.inbound-edit-table.outbound-edit-table td:nth-child(2) { width: 8.5rem; }
+/* 数量: 左パディング + 入力4桁(3.5rem) + 間隔 + 単位区分（モーダル内で最も長い単位区分の文字数。表に付けた
+   .outbound-edit-table--unit-N）。右パディングは付けず、在庫不足の印を数量のすぐ右に出す */
+.outbound-edit-table--unit-1 { --unit-chars: 1; }
+.outbound-edit-table--unit-2 { --unit-chars: 2; }
+.outbound-edit-table--unit-3 { --unit-chars: 3; }
+.outbound-edit-table--unit-4 { --unit-chars: 4; }
+.outbound-edit-table--unit-5 { --unit-chars: 5; }
+.outbound-edit-table--unit-6 { --unit-chars: 6; }
+.inbound-edit-table.outbound-edit-table th:nth-child(3),
+.inbound-edit-table.outbound-edit-table td:nth-child(3) {
+  width: calc(var(--ds-space-075) + 3.5rem + var(--ds-space-050) + var(--unit-chars, 4) * 1em);
+  padding-right: 0;
+}
+/* 在庫不足: 2行の印の幅。数量のすぐ右に寄せる */
+.inbound-edit-table.outbound-edit-table th:nth-child(4),
+.inbound-edit-table.outbound-edit-table td:nth-child(4) {
+  width: 2.25rem;
+  padding-left: var(--ds-space-050);
+  padding-right: 0;
+  text-align: left;
+}
+.inbound-edit-table.outbound-edit-table th:nth-child(5),
+.inbound-edit-table.outbound-edit-table td:nth-child(5) { width: 9.5rem; }
+.inbound-edit-table.outbound-edit-table th:nth-child(6),
+.inbound-edit-table.outbound-edit-table td:nth-child(6) { width: 8.5rem; }
+.inbound-edit-table.outbound-edit-table th:nth-child(7),
+.inbound-edit-table.outbound-edit-table td:nth-child(7) { width: 8.5rem; text-align: left; }
+.inbound-edit-table.outbound-edit-table th:nth-child(8),
+.inbound-edit-table.outbound-edit-table td:nth-child(8) { width: auto; }
+/* 操作: アイコンボタン2つ（2rem × 2 + 間隔） */
+.inbound-edit-table.outbound-edit-table th:nth-child(9),
+.inbound-edit-table.outbound-edit-table td:nth-child(9) { width: 5.5rem; }
+.outbound-edit-table .outbound-edit-stock-cell select {
+  width: 100%;
+}
+.inbound-edit-table .schedule-cell-actions .btn.outbound-edit-icon-btn {
+  width: 2rem;
+  padding: 0;
+  justify-content: center;
+}
+.outbound-edit-icon-btn + .outbound-edit-icon-btn {
+  margin-left: var(--ds-space-050);
+}
+.outbound-edit-icon-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
 
 /* 商品セル: 棚分割アイコンを商品 select の左端に重ねて表示する
    （td 自体を flex/absolute にすると表のセルでなくなるため、内側の div で組む） */
@@ -2820,6 +2954,10 @@ body {
 /* 取消側は棚ロケーションが無いので2列 */
 .inbound-confirm-list:not(.inbound-confirm-list--received) {
   grid-template-columns: auto minmax(0, 1fr);
+}
+/* 出荷確定の「出荷済みにする明細」は入庫日も並べるので4列 */
+.inbound-confirm-list.outbound-confirm-list--with-received {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
 }
 .inbound-confirm-list .modal-item-list-row {
   display: contents;
@@ -3278,6 +3416,10 @@ body {
   align-items: center;
   min-height: 1.75rem;
   padding-left: var(--ds-space-100);
+}
+/* 棚分割の印（絶対配置）が商品名に重ならないよう、印がある行は左の余白を印の幅だけ広げる */
+.inbound-edit-flag-icons + .outbound-edit-item-text {
+  padding-left: 1.5rem;
 }
 
 /* === トースト通知 ===

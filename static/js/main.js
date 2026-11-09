@@ -2140,7 +2140,7 @@ function renderInventoryListPagination(totalCount, page) {
 // React の /react/outbound/allocation-check（views/outbound/AllocationCheckView.jsx）と
 // 同じ見た目・振る舞いを、ダミーデータで再現したもの。
 // 「引き当て実行」で結果を取得し、ステータス（引き当て済み / 出荷予定）ごとの
-// 2ブロックに分けて表示する。行クリックで明細（棚ロケ単位の引当内訳）を開閉する。
+// 2ブロックに分けて表示する。行クリックで明細（引き当てた在庫単位の引当内訳）を開閉する。
 //
 // ダミーデータ前提の割り切り（バックエンド実装時に見直す）:
 // - 「引き当て済みに変更」「削除」は画面上のデータを書き換えるだけ
@@ -2178,11 +2178,13 @@ function allocationDateTimeString(offsetDays, hour, minute) {
 // 引き当て成功した棚ロケ1件分。
 // currentQuantity は「その引き当ての直前の在庫数」。画面の残在庫数はここから引当数を引いて求める。
 // expiryOffsetDays は賞味期限（表示日からの日数）。明細でロット番号・賞味期限を指定しているときは、それと揃える
-function allocationStock(locationCode, allocatedQuantity, currentQuantity, lotNumber, expiryOffsetDays) {
+// receivedOffsetDays は入庫日（表示日からの日数。過去日なので負の値）
+function allocationStock(locationCode, allocatedQuantity, currentQuantity, lotNumber, expiryOffsetDays, receivedOffsetDays) {
   return {
     location_code: locationCode,
     lot_number: lotNumber || 'LOT-00001',
     expiry_date: allocationDateString(expiryOffsetDays === undefined ? 120 : expiryOffsetDays),
+    received_at: allocationDateString(receivedOffsetDays === undefined ? -30 : receivedOffsetDays),
     allocated_quantity: allocatedQuantity,
     current_quantity: currentQuantity
   };
@@ -2338,6 +2340,29 @@ function buildAllocationDummyResults() {
           lot_number: '', expiry_date: null,
           quantity: 10, result: true, shortage_quantity: 0,
           allocated_stocks: [allocationStock('D-02-01-1', 10, 500, 'LOT-00060')]
+        }
+      ]
+    },
+    // 棚ロケ・ロット番号・賞味期限が同じで、入庫日だけが違う在庫から引き当てたケース。
+    // 在庫は入庫日も含めて区別されるため、引き当て結果は2行に分かれる（入庫日の古い順に引き当てる）
+    {
+      schedule_id: 205,
+      order_number: 'ORD-20260901-007',
+      outbound_date: allocationDateString(3),
+      created_at: allocationDateTimeString(0, 13, 40),
+      status: 'draft',
+      partner_name: '鈴木物産株式会社',
+      result: true,
+      items: [
+        {
+          schedule_item_id: 2007,
+          item_code: 'ITEM-00010', item_name: 'テスト商品 10', item_unit: '個',
+          lot_number: 'LOT-00070', expiry_date: allocationDateString(90),
+          quantity: 70, result: true, shortage_quantity: 0,
+          allocated_stocks: [
+            allocationStock('E-01-01-1', 30, 30, 'LOT-00070', 90, -40),
+            allocationStock('E-01-01-1', 40, 100, 'LOT-00070', 90, -10)
+          ]
         }
       ]
     }
@@ -2586,9 +2611,9 @@ function toggleAllocationSelectAll(blockKey) {
   renderAllocationSections();
 }
 
-// 棚ロケ単位の値をセル内に積んで表示する。
-// 1つの明細が複数の棚ロケへ分割して引き当てられることがあるため、
-// 棚ロケ・引当数・残在庫数の3列は行数を揃えて縦に並べる。
+// 引き当てた在庫（StockLot）単位の値をセル内に積んで表示する。
+// 1つの明細が複数の在庫へ分割して引き当てられることがあるため、
+// 引き当て結果の列（結果を除く）は行数を揃えて縦に並べる。
 // 引き当てできなかった明細（allocated_stocks が空）は空欄記号を1行だけ出す
 function allocationStockLinesHtml(stocks, render, className) {
   var cls = className || '';
@@ -2624,6 +2649,7 @@ function allocationDetailHtml(schedule) {
         '<span class="allocation-detail-group-start">棚ロケ</span>' +
         '<span>ロット番号</span>' +
         '<span>賞味期限</span>' +
+        '<span>入庫日</span>' +
         '<span class="text-right">引当数</span>' +
         '<span class="text-right">残在庫数</span>' +
         '<span class="text-center">結果</span>' +
@@ -2643,8 +2669,11 @@ function allocationDetailHtml(schedule) {
       allocationStockLinesHtml(item.allocated_stocks, function (s) {
         return s.expiry_date ? allocationFormatDate(s.expiry_date) : ALLOCATION_EMPTY_MARK;
       }) +
+      // 入庫日は引き当て結果側だけに出す（出荷予定の明細では入庫日を指定しないため）。
+      // 在庫は入庫日も含めて区別されるので、棚ロケ・ロット番号・賞味期限が同じでも入庫日が違えば別の行になる
+      allocationStockLinesHtml(item.allocated_stocks, function (s) { return allocationFormatDate(s.received_at); }) +
       allocationStockLinesHtml(item.allocated_stocks, function (s) { return s.allocated_quantity; }, 'text-right') +
-      // 残在庫数は「その棚ロケで引き当てた直後の残数」。
+      // 残在庫数は「その在庫から引き当てた直後の残数」。
       // 引当直前の在庫数（current_quantity）から引当数を引いて求める
       allocationStockLinesHtml(item.allocated_stocks, function (s) {
         return s.current_quantity - s.allocated_quantity;
@@ -3022,7 +3051,7 @@ function renderTransferStockTable(rows) {
   if (rows.length === 0) {
     var emptyRow = document.createElement('tr');
     var emptyCell = document.createElement('td');
-    emptyCell.colSpan = 8;
+    emptyCell.colSpan = 6;
     emptyCell.style.textAlign = 'center';
     emptyCell.style.padding = 'var(--ds-space-300)';
     emptyCell.textContent = hasLocation ? '在庫がありません' : '棚ロケを選択してください';
@@ -3032,13 +3061,12 @@ function renderTransferStockTable(rows) {
     rows.forEach(function (row) {
       var tr = document.createElement('tr');
       tr.innerHTML =
-        '<td>' + row.itemCode + '</td>' +
-        '<td>' + row.itemName + '</td>' +
+        '<td>' + row.itemCode + ' / ' + row.itemName + '</td>' +
+        '<td class="qty-cell"><span class="qty-value">' + row.qty + '</span>' +
+          '<span class="qty-unit">' + row.unit + '</span></td>' +
         '<td>' + (row.lotNo || '‐') + '</td>' +
         '<td>' + (row.expiryDate || '‐') + '</td>' +
         '<td>' + row.receivedAt + '</td>' +
-        '<td class="col-right">' + row.qty + '</td>' +
-        '<td>' + row.unit + '</td>' +
         '<td>' + (row.note || '') + '</td>';
       tr.addEventListener('click', function () {
         if (transferSelectedTr === tr) {
@@ -3062,20 +3090,17 @@ function selectTransferRow(rowData, tr) {
   transferSelectedTr  = tr;
   tr.classList.add('is-selected');
 
-  document.getElementById('transferSrcLocation').value = rowData.location;
-  document.getElementById('transferItemCode').value    = rowData.itemCode;
-  document.getElementById('transferItemName').value    = rowData.itemName;
-  document.getElementById('transferUnitType').value    = rowData.unit;
+  document.getElementById('transferSrcLocation').textContent = rowData.location;
+  document.getElementById('transferItem').value       = formatTransferItem(rowData);
   document.getElementById('transferLotNo').value       = rowData.lotNo || '';
   document.getElementById('transferExpiryDate').value  = rowData.expiryDate || '';
   document.getElementById('transferReceivedAt').value  = rowData.receivedAt;
-  document.getElementById('transferCurrentQty').value  = rowData.qty;
   // 移動先は移動元の棚を除外して作り直す
   populateTransferDestSelect(rowData.location);
   document.getElementById('transferQty').value      = '';
-  document.getElementById('transferAfterQty').value = '';
   document.getElementById('transferReason').value   = '';
   document.getElementById('transferForm').disabled  = false;
+  refreshTransferQty();
   validateTransferForm();
 }
 
@@ -3085,30 +3110,47 @@ function deselectTransferRow() {
   transferSelectedTr  = null;
   var form = document.getElementById('transferForm');
   if (!form) return;
-  ['transferSrcLocation', 'transferItemCode', 'transferItemName', 'transferUnitType',
-   'transferLotNo', 'transferExpiryDate', 'transferReceivedAt', 'transferCurrentQty',
-   'transferDestLocation', 'transferQty', 'transferAfterQty', 'transferReason'
+  ['transferItem', 'transferLotNo', 'transferExpiryDate', 'transferReceivedAt',
+   'transferDestLocation', 'transferQty', 'transferReason'
   ].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.value = '';
   });
+  document.getElementById('transferSrcLocation').textContent = '‐';
   form.disabled = true;
+  refreshTransferQty();
   var btn = document.getElementById('transferRegisterBtn');
   if (btn) btn.disabled = true;
 }
 
+/** 商品は入荷予定登録・在庫調整と同じ「商品コード / 商品名（単位区分）」で表示する */
+function formatTransferItem(row) {
+  return row.itemCode + ' / ' + row.itemName + '（' + row.unit + '）';
+}
+
 function onTransferQtyInput() {
-  recalcTransferAfterQty();
+  refreshTransferQty();
   validateTransferForm();
 }
 
-/** 移動後の残数 = 現在庫数 − 移動数量 */
-function recalcTransferAfterQty() {
-  var afterEl = document.getElementById('transferAfterQty');
-  if (!afterEl) return;
-  if (!transferSelectedRow) { afterEl.value = ''; return; }
+/** 移動元の残数 = 移動元の現在庫数 − 移動数量 を計算して表示する */
+function refreshTransferQty() {
+  var current = transferSelectedRow ? transferSelectedRow.qty : null;
   var qty = parseInt(document.getElementById('transferQty').value, 10);
-  afterEl.value = isNaN(qty) ? '' : String(transferSelectedRow.qty - qty);
+  var after = (current === null || isNaN(qty)) ? null : current - qty;
+  var isNegative = after !== null && after < 0;
+
+  document.getElementById('transferCurrentQty').textContent = current === null ? '‐' : String(current);
+  document.getElementById('transferAfterQty').textContent = after === null ? '‐' : String(after);
+  document.getElementById('transferAfterBox').classList.toggle('is-invalid', isNegative);
+  document.getElementById('transferQtyError').hidden = !isNegative;
+
+  // 単位区分は在庫を選ぶまで空にし、数値が中央からずれないよう要素ごと隠す
+  var unit = transferSelectedRow ? transferSelectedRow.unit : '';
+  document.querySelectorAll('#transferForm .adj-qty-unit').forEach(function (el) {
+    el.textContent = unit;
+    el.hidden = unit === '';
+  });
 }
 
 function validateTransferForm() {
@@ -3133,41 +3175,32 @@ function showTransferConfirmDialog() {
   var reason = document.getElementById('transferReason').value.trim();
   var unit   = transferSelectedRow.unit;
 
-  var rows = [
-    ['移動元棚ロケ',   transferSelectedRow.location],
-    ['商品コード',     transferSelectedRow.itemCode],
-    ['商品名',         transferSelectedRow.itemName],
-    ['単位区分',       unit],
-    ['ロット番号',     transferSelectedRow.lotNo || '‐'],
-    ['賞味期限',       transferSelectedRow.expiryDate || '‐'],
-    ['入庫日',         transferSelectedRow.receivedAt],
-    ['現在庫数',       transferSelectedRow.qty + ' ' + unit],
-    ['移動先棚ロケ',   dest],
-    ['移動数量',       qty + ' ' + unit],
-    ['移動後の残数',   (transferSelectedRow.qty - qty) + ' ' + unit],
-    ['移動理由',       reason]
-  ];
-  var html = '<dl class="transfer-confirm-dl">';
-  rows.forEach(function (pair) {
-    html += '<dt>' + pair[0] + '</dt><dd>' + pair[1] + '</dd>';
+  // 棚ロケ（移動元 → 移動先）→ 移動する在庫 → 移動数量 → 移動理由 の順に並べる
+  document.getElementById('transferConfirmSrc').textContent  = transferSelectedRow.location;
+  document.getElementById('transferConfirmDest').textContent = dest;
+  renderAdjConfirmRows('transferConfirmBody', [
+    ['商品',       formatTransferItem(transferSelectedRow)],
+    ['ロット番号', transferSelectedRow.lotNo || '‐'],
+    ['賞味期限',   transferSelectedRow.expiryDate || '‐'],
+    ['入庫日',     transferSelectedRow.receivedAt]
+  ]);
+  document.getElementById('transferConfirmCurrentQty').textContent = String(transferSelectedRow.qty);
+  document.getElementById('transferConfirmQty').textContent        = String(qty);
+  document.getElementById('transferConfirmAfterQty').textContent   = String(transferSelectedRow.qty - qty);
+  document.querySelectorAll('#transferConfirmModal .adj-qty-unit').forEach(function (el) {
+    el.textContent = unit;
   });
-  html += '</dl>';
-  document.getElementById('transferConfirmBody').innerHTML = html;
-  document.getElementById('transferConfirmModal').style.display = 'flex';
+  renderAdjConfirmRows('transferConfirmReasonBody', [['移動理由', reason]]);
+  openModal('transferConfirmModal');
 }
 
+/** 確定: 本番は DB 更新ののち自分自身に redirect する。初期状態に戻し、完了メッセージをトーストで出す */
 function executeTransfer() {
-  document.getElementById('transferConfirmModal').style.display = 'none';
-  showTransferFlash('棚ロケ移動を登録しました');
-  deselectTransferRow();
-}
-
-function showTransferFlash(message) {
-  var el = document.getElementById('transferFlash');
-  if (!el) return;
-  el.textContent = message;
-  el.style.display = 'flex';
-  setTimeout(function () { el.style.display = 'none'; }, 3000);
+  closeModal('transferConfirmModal');
+  document.getElementById('transferLocationSelect').value = '';
+  document.getElementById('transferKeyword').value = '';
+  onTransferLocationChange();
+  showToast('success', '棚ロケ移動を登録しました');
 }
 
 // === SCR-018 棚ロケ移動履歴 ===

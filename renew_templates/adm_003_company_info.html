@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会社情報 | WMS</title>
+  <link rel="stylesheet" href="../static/css/tokens.css">
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="../static/css/sticky-notes.css">
+  <style>
+    /* 会社情報: 表示と編集で行の高さが変わらないよう、表示値も入力欄と同じ高さ・余白・枠線（透明）で描く */
+    .company-info-grid {
+      display: grid;
+      grid-template-columns: 8rem minmax(0, 1fr);
+      gap: var(--ds-space-150) var(--ds-space-300);
+      align-items: start;
+    }
+    .company-info-label {
+      display: flex;
+      align-items: center;
+      height: 2rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ds-text-subtle);
+    }
+    .company-info-value,
+    .company-info-grid .form-input {
+      box-sizing: border-box;
+      width: 100%;
+      height: 2rem;
+    }
+    .company-info-value {
+      display: flex;
+      align-items: center;
+      padding: 0 var(--ds-space-150);
+      border: 1px solid transparent;
+      font-size: 0.875rem;
+      color: var(--ds-text);
+    }
+    /* 住所1・住所2 を 1 行に横並びにする（住所1 を広めに取る） */
+    .company-info-inline {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: var(--ds-space-100);
+    }
+    .company-info-grid .form-input[aria-invalid="true"] {
+      border-color: var(--ds-text-danger);
+    }
+    /* 編集中の値の列: 入力欄の下にエラー文を出す（エラーがある行だけ高さが増える。他の画面と同じ表示） */
+    .company-info-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .company-info-error {
+      font-size: 0.75rem;
+      color: var(--ds-text-danger);
+    }
+    /* 自社情報カードの注意書き（全荷主共通・表示のみであることを示す） */
+    .company-info-note {
+      margin: 0 0 var(--ds-space-200);
+      font-size: 0.75rem;
+      color: var(--ds-text-subtle);
+    }
+    .company-info-actions {
+      display: flex;
+      gap: var(--ds-space-100);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+
+    <!-- グローバルナビゲーション -->
+    <header class="app-header" role="banner">
+      <a href="../index.html" class="app-header-logo" aria-label="WMS ホーム">WMS</a>
+      <span class="app-header-spacer"></span>
+      <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" aria-label="テーマ切替">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      </button>
+      <div class="app-header-user-menu">
+        <button class="app-header-user-btn" onclick="toggleUserMenu()" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+          管理者
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </button>
+        <div class="app-header-user-dropdown" id="userMenuDropdown" role="menu">
+          <a href="adm_003_company_info.html" class="user-dropdown-item" role="menuitem">会社情報</a>
+          <a href="adm_001_user_list.html" class="user-dropdown-item" role="menuitem">ユーザー管理</a>
+          <a class="user-dropdown-item" role="menuitem" aria-disabled="true">ログアウト</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-body">
+
+      <!-- サイドナビゲーション -->
+      <nav class="app-sidebar" aria-label="メインナビゲーション">
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">マスター定義</p>
+          <a href="001_shelf_location.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z"/></svg>
+            棚ロケ定義
+          </a>
+          <a href="002_item_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 16l-4-4 4-4 1.41 1.41L6.83 12l1.58 1.59L7 16zm10 0l-1.41-1.41L17.17 13l-1.58-1.59L17 8l4 4-4 4z"/></svg>
+            商品マスタ
+          </a>
+          <a href="003_supplier_definition.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            取引先マスタ
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">入荷管理</p>
+          <a href="004_inbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            入荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="005_inbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷予定登録
+            </a>
+            <a href="006_inbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷確定
+            </a>
+            <a href="007_inbound_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              入荷登録
+            </a>
+          </div>
+          <a href="008_inbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            入荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">出荷管理</p>
+          <a href="009_outbound_schedule_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            出荷予定一覧
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="010_outbound_schedule_register.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷予定登録
+            </a>
+            <a href="011_allocation_check.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              引き当てチェック
+            </a>
+            <a href="012_outbound_schedule_confirm.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              出荷確定
+            </a>
+          </div>
+          <a href="013_outbound_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            出荷履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">在庫管理</p>
+          <a href="014_inventory_list.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            在庫管理
+          </a>
+          <div class="side-nav-sub-group">
+            <a href="015_inventory_detail.html" class="side-nav-sub-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              在庫管理（棚ロケ別）
+            </a>
+          </div>
+          <a href="016_inventory_adjustment.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10H7v-2h10v2z"/></svg>
+            在庫調整
+          </a>
+          <a href="020_inventory_adjustment_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            在庫調整履歴
+          </a>
+          <a href="017_location_transfer.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/></svg>
+            棚ロケ移動登録
+          </a>
+          <a href="018_transfer_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚ロケ移動履歴
+          </a>
+        </div>
+
+        <div class="side-nav-group">
+          <p class="side-nav-group-label">棚卸</p>
+          <a href="019_inventory_count.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            棚卸管理
+          </a>
+          <a href="021_inventory_count_history.html" class="side-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.95-2.05L6.64 19.41C8.28 20.99 10.53 22 13 22c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            棚卸数更新履歴
+          </a>
+        </div>
+
+      </nav>
+
+      <!-- メインコンテンツ -->
+      <main class="app-main schedule-main" id="mainContent">
+
+        <h1 class="page-header heading-xl" id="pageTitle">会社情報</h1>
+
+        <!-- 荷主情報（テナントごと。編集できる） -->
+        <section class="section-card" aria-labelledby="shipperTitle">
+          <div class="section-card-header">
+            <h2 class="heading-m" id="shipperTitle">荷主情報</h2>
+            <!-- 表示中: 編集 / 編集中: キャンセル・保存。同じ位置で入れ替える -->
+            <div class="company-info-actions">
+              <button type="button" class="btn btn-default" id="shipperEditBtn" onclick="enterEdit('shipper')">編集</button>
+              <button type="button" class="btn btn-default" id="shipperCancelBtn" onclick="cancelEdit('shipper')" hidden>キャンセル</button>
+              <button type="button" class="btn btn-primary" id="shipperSaveBtn" onclick="saveEdit('shipper')" hidden>保存</button>
+            </div>
+          </div>
+          <hr class="section-divider">
+
+          <!-- 各行は「ラベル｜値」。値の位置が表示中はテキスト、編集中は入力欄に入れ替わる -->
+          <form id="shipperForm" class="company-info-grid" onsubmit="return false;"></form>
+        </section>
+
+        <!-- 自社情報（各テナントに同じ値を持つ。表示のみ） -->
+        <section class="section-card" aria-labelledby="ownTitle">
+          <div class="section-card-header">
+            <h2 class="heading-m" id="ownTitle">自社情報</h2>
+          </div>
+          <hr class="section-divider">
+
+          <p class="company-info-note">全荷主共通の情報です。変更が必要な場合はシステム管理者へ連絡してください。</p>
+          <form id="ownForm" class="company-info-grid" onsubmit="return false;"></form>
+        </section>
+
+        <!-- 設計メモ（モックアップ専用。実装時には表示しない） -->
+        <div class="info-banner" role="note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <div>
+            <p><strong>決定事項</strong></p>
+            <ul>
+              <li>画面名は「会社情報」とし、荷主情報と自社情報のカードを並べる。荷主情報を上（編集する頻度が高い）、自社情報を下に置く</li>
+              <li>荷主情報はテナントごとの値で、この画面で編集できる。1 テナント 1 荷主のため一覧画面は作らない</li>
+              <li>自社情報（倉庫事業者）は既存の <code>Company</code> モデルで持つ。テナントごとに 1 件あり、全テナントに同じ値を入れる（public スキーマには置かない）。<code>User.company</code> は自社を指す（ユーザーは倉庫事業者の従業員のため）</li>
+              <li>荷主情報は <code>Company</code> とは別のモデル <code>common.Shipper</code> で持つ（テナントごとに 1 件。E2_common.md）。文字列の最大長は取引先マスタに合わせる</li>
+              <li>自社情報は表示のみで、編集ボタンは出さない。テナントの画面から直すと、そのテナントの値だけが変わって他のテナントとずれるため。変更はシステム管理者がコマンドで全テナントの値をそろえて直す</li>
+              <li>自社情報だけの画面は作らない（情報量の少ない画面を増やさないため）</li>
+              <li>2 枚のカードは同じ「ラベル｜値」の部品で描き、編集できるかどうかだけを切り替える</li>
+              <li>表示と編集は同じカードで切り替える。切り替えただけでは行の高さとボタンの位置は変えない（表示値も入力欄と同じ高さの枠で描く）</li>
+              <li>荷主情報の必須は会社名・郵便番号・住所1・電話番号（国内の荷主のみを扱う前提。郵便番号・電話番号のない海外の荷主は対象外）。編集中は必須の行のラベルに「*」を付ける（住所は住所1 が必須のため「住所 *」）。エラー文は他の画面と同じく入力欄の下に出し、入力欄の枠も赤くする（エラーのある行は高さが増える。画面ごとの例外を作らないため、行の高さをそろえることより統一を優先する）</li>
+              <li>項目は帳票への印字用。荷主情報は会社名・郵便番号・住所・電話番号・FAX番号・担当者。自社情報は会社名のみ</li>
+              <li>郵便番号はハイフンなしの数字 7 桁で保存する。表示時は「123-4567」、編集時は「1234567」。入力欄は数字以外を受け付けない（ハイフン付きを貼り付けても数字だけ残る）</li>
+              <li>住所は住所1（都道府県〜番地）・住所2（建物名・部屋番号）に分けて持つ。編集時は同じ行に横並び、表示時は空白でつないで 1 行にする（帳票の住所欄 2 行にそのまま使える。都道府県での集計・検索は不要なため細かくは分けない）</li>
+              <li>電話番号・FAX番号は入力も表示もハイフンなし。数字 10〜11 桁で保存する（市外局番の桁数が地域で異なり、ハイフンの位置を機械的に決められないため表示時も整形しない）</li>
+              <li>荷主情報の担当者は荷主側の担当者で、文字列で持つ（倉庫の担当者ではないため、ユーザーは参照しない）</li>
+              <li>荷主ごとの倉庫側担当者は当面持たない。将来持つ場合はテナントごとの値なので、荷主情報のカードに「倉庫側担当者」として置き、今の「担当者」は「荷主側担当者」に名前を改める</li>
+              <li>オペレーターも表示できる。権限設計が未確定のため、編集を管理者に限る制御は今は入れない</li>
+              <li>遷移元は右上のユーザーメニュー。並びは「会社情報」「ユーザー管理」「ログアウト」（D_画面仕様.md）</li>
+            </ul>
+            <p><strong>未決事項</strong></p>
+            <ul>
+              <li>テナント作成時に自社情報・荷主情報の 1 件を作る手順と、自社情報を全テナントで直す手順（カスタムコマンドは作らない。運用で対応し、手順は今は決めない）</li>
+              <li>権限確定後に、編集できるロールを限るか</li>
+              <li>過去の帳票を再出力したときに、発行時点の値を残すか（残す方針を推奨。どの列に持たせるかは帳票の設計で決める）</li>
+            </ul>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer" role="region" aria-label="通知" aria-live="polite"></div>
+
+  <script src="../static/js/sticky-notes.js"></script>
+  <script src="../static/js/main.js"></script>
+  <script>
+    // 項目定義（荷主情報の項目。自社情報は会社名のみを使う）
+    var FIELDS = [
+      { key: 'name',        label: '会社名',   required: true, placeholder: '例: 株式会社サンプル商事' },
+      // 郵便番号はハイフンなしの数字 7 桁で持ち、表示時だけハイフンを入れる
+      { key: 'postalCode',  label: '郵便番号', required: true, placeholder: '例: 1234567', numeric: true, minLength: 7, maxLength: 7, format: formatPostalCode },
+      // 住所は 住所1（都道府県〜番地）・住所2（建物名・部屋番号）に分けて持つ。
+      // 編集時は同じ行に横並び、表示時は空白でつないで 1 行にする（行の高さを変えないため）
+      // 必須は住所1 のみ（建物名がない住所もあるため）
+      { key: 'address',     label: '住所', parts: [
+        { key: 'address1', label: '住所1', required: true, placeholder: '住所1 例: 東京都千代田区サンプル町1-2-3' },
+        { key: 'address2', label: '住所2', placeholder: '住所2 例: サンプルビル4階' }
+      ] },
+      // 電話番号・FAX番号は入力も表示もハイフンなし（固定電話 10 桁・携帯 11 桁）
+      { key: 'phone',       label: '電話番号', required: true, placeholder: '例: 0300000000', numeric: true, minLength: 10, maxLength: 11 },
+      { key: 'fax',         label: 'FAX番号',  placeholder: '例: 0300000001', numeric: true, minLength: 10, maxLength: 11 },
+      { key: 'contactName', label: '担当者',   placeholder: '例: 山田 太郎' }
+    ];
+
+    // カードごとの状態（React では同じ部品を editable の有無で 2 回使う想定）
+    var CARDS = {
+      shipper: {
+        label: '荷主情報',
+        editable: true,
+        isEditing: false,
+        // モック用のダミーデータ（1 テナント 1 荷主のため 1 件のみ）
+        data: {
+          name: '株式会社サンプル商事',
+          postalCode: '1234567',
+          address1: '東京都千代田区サンプル町1-2-3',
+          address2: 'サンプルビル4階',
+          phone: '0300000000',
+          fax: '0300000001',
+          contactName: '山田 太郎'
+        }
+      },
+      own: {
+        label: '自社情報',
+        editable: false,
+        isEditing: false,
+        // 自社情報は会社名のみ
+        omit: ['postalCode', 'address', 'phone', 'fax', 'contactName'],
+        // モック用のダミーデータ（各テナントに同じ値を持つ 1 件）
+        data: {
+          name: 'サンプル倉庫株式会社'
+        }
+      }
+    };
+
+    // 1234567 → 123-4567（7 桁でないときはそのまま返す）
+    function formatPostalCode(value) {
+      return /^\d{7}$/.test(value) ? value.slice(0, 3) + '-' + value.slice(3) : value;
+    }
+
+    // カードに表示する項目
+    function fieldsOf(cardKey) {
+      var omit = CARDS[cardKey].omit || [];
+      return FIELDS.filter(function (f) { return omit.indexOf(f.key) === -1; });
+    }
+
+    // 入力欄で扱うキーの一覧（住所は住所1・住所2 に展開する）
+    function inputDefs(cardKey) {
+      return fieldsOf(cardKey).reduce(function (defs, f) {
+        return defs.concat(f.parts || [f]);
+      }, []);
+    }
+
+    // 行のラベルに「*」を付けるか（住所は住所1 が必須なので付ける）
+    function isRequired(f) {
+      return f.parts ? f.parts.some(function (p) { return p.required; }) : !!f.required;
+    }
+
+    function inputId(cardKey, key) {
+      return cardKey + '-' + key;
+    }
+
+    function createInput(cardKey, def) {
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.id = inputId(cardKey, def.key);
+      input.className = 'form-input';
+      input.placeholder = def.placeholder;
+      input.autocomplete = 'off';
+      input.value = CARDS[cardKey].data[def.key];
+      if (def.required) input.setAttribute('aria-required', 'true');
+      if (def.maxLength) input.maxLength = def.maxLength;
+      if (def.numeric) {
+        input.inputMode = 'numeric';
+        // React の onChange で数字以外を取り除くのに相当（ハイフン付きの貼り付けも数字だけになる）
+        input.addEventListener('input', function (e) {
+          e.target.value = e.target.value.replace(/\D/g, '').slice(0, def.maxLength);
+        });
+      }
+      return input;
+    }
+
+    function displayText(data, f) {
+      var raw = f.parts
+        ? f.parts.map(function (p) { return data[p.key]; }).filter(Boolean).join(' ')
+        : data[f.key];
+      // 未入力の項目は「-」で表示する
+      return raw ? (f.format ? f.format(raw) : raw) : '-';
+    }
+
+    // React の `isEditing ? <input> : <span>` に相当する描画
+    function renderCard(cardKey) {
+      var card = CARDS[cardKey];
+      var form = document.getElementById(cardKey + 'Form');
+      form.innerHTML = '';
+      fieldsOf(cardKey).forEach(function (f) {
+        var label = document.createElement('label');
+        label.className = 'company-info-label';
+        if (card.isEditing) label.htmlFor = inputId(cardKey, f.parts ? f.parts[0].key : f.key);
+        label.textContent = f.label + (card.isEditing && isRequired(f) ? ' *' : '');
+        form.appendChild(label);
+
+        var value;
+        if (card.isEditing) {
+          // 入力欄（住所は住所1・住所2 を横並び）と、その下に入力欄ごとのエラー文の枠を置く
+          value = document.createElement('div');
+          value.className = 'company-info-field';
+          if (f.parts) {
+            var inline = document.createElement('div');
+            inline.className = 'company-info-inline';
+            f.parts.forEach(function (p) { inline.appendChild(createInput(cardKey, p)); });
+            value.appendChild(inline);
+          } else {
+            value.appendChild(createInput(cardKey, f));
+          }
+          (f.parts || [f]).forEach(function (def) {
+            var error = document.createElement('span');
+            error.className = 'company-info-error';
+            error.id = inputId(cardKey, def.key) + '-error';
+            error.setAttribute('role', 'alert');
+            error.hidden = true;
+            value.appendChild(error);
+            // 入力欄はまだ画面に描画していないため、value の中から探す
+            value.querySelector('#' + inputId(cardKey, def.key)).setAttribute('aria-describedby', error.id);
+          });
+        } else {
+          value = document.createElement('span');
+          value.className = 'company-info-value';
+          value.textContent = displayText(card.data, f);
+        }
+        form.appendChild(value);
+      });
+
+      if (!card.editable) return;
+      document.getElementById(cardKey + 'EditBtn').hidden = card.isEditing;
+      document.getElementById(cardKey + 'CancelBtn').hidden = !card.isEditing;
+      document.getElementById(cardKey + 'SaveBtn').hidden = !card.isEditing;
+    }
+
+    // 入力値のエラー文を返す（問題なければ空文字）
+    function validate(def, value) {
+      if (!value) return def.required ? def.label + 'を入力してください' : '';
+      if (def.numeric && (value.length < def.minLength || value.length > def.maxLength)) {
+        var digits = def.minLength === def.maxLength
+          ? def.minLength + ' 桁'
+          : def.minLength + '〜' + def.maxLength + ' 桁';
+        return def.label + 'は ' + digits + 'の数字で入力してください';
+      }
+      return '';
+    }
+
+    function enterEdit(cardKey) {
+      CARDS[cardKey].isEditing = true;
+      renderCard(cardKey);
+      document.getElementById(inputId(cardKey, 'name')).focus();
+    }
+
+    function cancelEdit(cardKey) {
+      CARDS[cardKey].isEditing = false;
+      renderCard(cardKey);
+    }
+
+    function saveEdit(cardKey) {
+      var card = CARDS[cardKey];
+      // 全項目を検査し、エラーは各入力欄の下に出す（他の画面と同じく項目直下に表示。トーストは出さない）
+      var firstInvalid = null;
+      inputDefs(cardKey).forEach(function (def) {
+        var el = document.getElementById(inputId(cardKey, def.key));
+        var errorEl = document.getElementById(inputId(cardKey, def.key) + '-error');
+        var message = validate(def, el.value.trim());
+        // 前回の保存で出したエラー表示は、直っていれば消す
+        errorEl.textContent = message;
+        errorEl.hidden = !message;
+        if (message) {
+          el.setAttribute('aria-invalid', 'true');
+          if (!firstInvalid) firstInvalid = el;
+        } else {
+          el.removeAttribute('aria-invalid');
+        }
+      });
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+      inputDefs(cardKey).forEach(function (def) {
+        card.data[def.key] = document.getElementById(inputId(cardKey, def.key)).value.trim();
+      });
+      card.isEditing = false;
+      renderCard(cardKey);
+      showToast('success', card.label + 'を保存しました');
+    }
+
+    renderCard('shipper');
+    renderCard('own');
+  </script>
+</body>
+</html>
