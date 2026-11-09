@@ -47,10 +47,21 @@ body {
 }
 
 /* === App Layout (CSS Grid) === */
+/* 画面全体をビューポートの高さに固定し、サイドバーと本文（.app-main）を別々にスクロールさせる。
+   100dvh はスマホでアドレスバーの出入りに合わせるため（未対応のブラウザは 100vh を使う） */
 .app-layout {
   display: grid;
   grid-template-rows: 3rem 1fr;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* 印刷時は高さの固定を外し、本文が途中で切れないようにする */
+@media print {
+  .app-layout { height: auto; overflow: visible; }
+  .app-sidebar,
+  .app-main { overflow: visible; }
 }
 
 /* === Header (Atlassian グローバルナビ) === */
@@ -96,6 +107,7 @@ body {
   background-color: var(--ds-surface);
   border-right: 1px solid var(--ds-border);
   padding: var(--ds-space-200) 0;
+  overflow-y: auto;
 }
 
 .side-nav-label {
@@ -182,6 +194,7 @@ body {
 /* === Main Content === */
 .app-main {
   flex: 1;
+  position: relative; /* 本文内の absolute 要素（.visually-hidden など）を本文の中に収め、ページ全体をスクロールさせない */
   overflow-y: auto;
   padding: var(--ds-space-400);
   background-color: var(--ds-surface-sunken);
